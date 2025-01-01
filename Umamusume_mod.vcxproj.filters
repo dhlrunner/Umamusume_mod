@@ -85,9 +85,6 @@
     <ClCompile Include="Source\deps\lz4\xxhash.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\hooks\Unity\il2cpp\il2cpp-tools.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\hooks\Unity\UnityEngine.Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -177,5 +174,6 @@
     <ClInclude Include="Source\hooks\Cute.Http\WWWRequest.h" />
     <ClInclude Include="Source\hooks\Cute.Http\Cute.h" />
     <ClInclude Include="Source\hooks\Gallop\RaceResultScene.h" />
+    <ClInclude Include="Source\hooks\Gallop\GallopStructs.h" />
   </ItemGroup>
 </Project>

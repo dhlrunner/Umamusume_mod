@@ -161,7 +161,6 @@
     <ClCompile Include="Source\hooks\Unity\Unity.cpp" />
     <ClCompile Include="Source\hooks\Unity\il2cpp\il2cpp_symbols.cpp" />
     <ClCompile Include="Source\hooks\Unity\il2cpp\SymbolMapGenerator.cpp" />
-    <ClCompile Include="Source\hooks\Unity\il2cpp\il2cpp-tools.cpp" />
     <ClCompile Include="Source\hooks\Unity\UnityEngine.Application.cpp" />
     <ClCompile Include="Source\hooks\Unity\UnityPlayer.cpp" />
     <ClCompile Include="Source\hooks\Windows\Windows.cpp" />
@@ -194,6 +193,7 @@
     <ClInclude Include="Source\hooks\Cute.Http\Cute.h" />
     <ClInclude Include="Source\hooks\Cute.Http\WWWRequest.h" />
     <ClInclude Include="Source\hooks\Gallop\Gallop.h" />
+    <ClInclude Include="Source\hooks\Gallop\GallopStructs.h" />
     <ClInclude Include="Source\hooks\Gallop\LiveTheaterInfo.h" />
     <ClInclude Include="Source\hooks\Gallop\RaceResultScene.h" />
     <ClInclude Include="Source\hooks\hook.h" />

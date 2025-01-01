@@ -7,7 +7,7 @@ namespace Cute::Http::WWWRequest {
 
 	void* Post_orig = nullptr;
 	void Post_hook(void* _this, Il2CppString* url, char* postdata, void* headers) {
-		Logger::Debug(L"CUTEHOOK", L"Original URL: %s", url->chars);
+		Logger::Debug(SECTION_NAME, L"Original URL: %s", url->chars);
 		wstring url_raw = wstring(url->chars);
 		string url_conv;
 		url_conv.assign(url_raw.begin(), url_raw.end());
@@ -18,7 +18,7 @@ namespace Cute::Http::WWWRequest {
 			posturl.scheme(replaceUrl.scheme());
 			posturl.host(replaceUrl.host());
 			posturl.port(replaceUrl.port());
-			Logger::Debug(L"CUTEHOOK", L"Replaced URL: %s", posturl.str().c_str()); //change this log to Logger::Debug
+			Logger::Debug(SECTION_NAME, L"Replaced URL: %s", posturl.str().c_str()); //change this log to Logger::Debug
 
 		}
 
@@ -29,17 +29,17 @@ namespace Cute::Http::WWWRequest {
 
 
 	void Init() {
-		Logger::Info(L"CUTEHOOK", L"Init");
+		Logger::Info(SECTION_NAME, L"Init");
 		auto Post_addr = il2cpp_symbols::get_method_pointer(
 			"Cute.Http.Assembly.dll", "Cute.Http",
 			"WWWRequest", "Post", 3
 		);
 		if (Post_addr == nullptr) {
-			Logger::Error(L"CUTEHOOK", L"Post_addr is nullptr");
+			Logger::Error(SECTION_NAME, L"Post_addr is nullptr");
 			return;
 		}
 		else {
-			Logger::Info(L"CUTEHOOK", L"Post_addr=%p", Post_addr);
+			Logger::Info(SECTION_NAME, L"Post_addr=%p", Post_addr);
 			MH_CreateHook(Post_addr, &Post_hook, &Post_orig);
 			MH_EnableHook(Post_addr);
 		}

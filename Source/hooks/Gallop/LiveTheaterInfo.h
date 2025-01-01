@@ -5,7 +5,9 @@
 #include "..\..\Settings.h"
 #include "..\..\Utils.h"
 #include "..\..\deps\minhook\include\MinHook.h"
-#include "Gallop.h"
+#include "GallopStructs.h"
+
+#define SECTION_NAME L"GALLOP_LIVETHEATER"
 
 namespace Gallop::LiveTheaterInfo
 {

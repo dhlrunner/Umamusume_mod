@@ -6,6 +6,8 @@
 
 #include "..\..\tools\http\url.hpp"
 
+#define SECTION_NAME L"CUTEHOOK"
+
 namespace Cute::Http::WWWRequest {
 	extern Url CurrentUrl;
 	extern Url LastUrl;

@@ -2,7 +2,7 @@
 
 namespace Cute {
 	void Init() {
-		Logger::Info(L"CUTEHOOK", L"Init");
+		Logger::Info(SECTION_NAME, L"Init");
 		
 		//Init Cute.Http
 		Http::WWWRequest::Init();

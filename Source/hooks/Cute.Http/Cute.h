@@ -6,6 +6,8 @@
 
 #include "WWWRequest.h"
 
+#define SECTION_NAME L"CUTEHOOK"
+
 namespace Cute {
 	void Init();
 }
