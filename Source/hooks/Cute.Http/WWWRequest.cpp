@@ -34,14 +34,6 @@ namespace Cute::Http::WWWRequest {
 			"Cute.Http.Assembly.dll", "Cute.Http",
 			"WWWRequest", "Post", 3
 		);
-		if (Post_addr == nullptr) {
-			Logger::Error(SECTION_NAME, L"Post_addr is nullptr");
-			return;
-		}
-		else {
-			Logger::Info(SECTION_NAME, L"Post_addr=%p", Post_addr);
-			MH_CreateHook(Post_addr, &Post_hook, &Post_orig);
-			MH_EnableHook(Post_addr);
-		}
+		EnableHook(Post_addr, &Post_hook, &Post_orig, L"Cute_WWWRequest_Post");
 	}
 }

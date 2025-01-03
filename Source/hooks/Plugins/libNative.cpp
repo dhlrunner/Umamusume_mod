@@ -180,20 +180,10 @@ namespace libnative {
 		}
 		auto LZ4_decompress_safe_ext_ptr = GetProcAddress(libnative_module, "LZ4_decompress_safe_ext");
 		Logger::Debug(L"LIBNATIVE", L"LZ4_decompress_safe_ext at %p", LZ4_decompress_safe_ext_ptr);
-		if (LZ4_decompress_safe_ext_ptr == nullptr) {
-			Logger::Error(L"LIBNATIVE", L"LZ4_decompress_safe_ext is nullptr\n");
-			return;
-		}
-		MH_CreateHook(LZ4_decompress_safe_ext_ptr, LZ4_decompress_safe_ext_hook, &LZ4_decompress_safe_ext_orig);
-		MH_EnableHook(LZ4_decompress_safe_ext_ptr);
+		EnableHook(LZ4_decompress_safe_ext_ptr, &LZ4_decompress_safe_ext_hook, &LZ4_decompress_safe_ext_orig, L"LZ4_decompress_safe_ext");
 
 		auto LZ4_compress_default_ext_ptr = GetProcAddress(libnative_module, "LZ4_compress_default_ext");
 		Logger::Debug(L"LIBNATIVE", L"LZ4_compress_default_ext at %p", LZ4_compress_default_ext_ptr);
-		if (LZ4_compress_default_ext_ptr == nullptr) {
-			Logger::Error(L"LIBNATIVE", L"LZ4_compress_default_ext is nullptr\n");
-			return;
-		}
-		MH_CreateHook(LZ4_compress_default_ext_ptr, LZ4_compress_default_ext_hook, &LZ4_compress_default_ext_orig);
-		MH_EnableHook(LZ4_compress_default_ext_ptr);
+		EnableHook(LZ4_compress_default_ext_ptr, &LZ4_compress_default_ext_hook, &LZ4_compress_default_ext_orig, L"LZ4_compress_default_ext");
 	}
 }

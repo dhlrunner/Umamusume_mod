@@ -11,4 +11,5 @@
 #include "../../deps/minhook/include/MinHook.h"
 
 bool InitHooks_DLLMain();
+void InitHooks_BeforeBoot();
 void InitHooks_AfterIl2cppInit();

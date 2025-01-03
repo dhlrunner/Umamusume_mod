@@ -4,7 +4,7 @@
 #include "..\Unity\il2cpp\il2cpp-tabledefs.h"
 #include "..\..\Settings.h"
 #include "..\..\Utils.h"
-#include "..\..\deps\minhook\include\MinHook.h"
+#include "..\hook-helper.h"
 #include "GallopStructs.h"
 
 #define SECTION_NAME L"GALLOP_LIVETHEATER"

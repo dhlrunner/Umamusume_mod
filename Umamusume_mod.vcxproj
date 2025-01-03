@@ -155,9 +155,12 @@
     <ClCompile Include="Source\hooks\Cute.Http\WWWRequest.cpp" />
     <ClCompile Include="Source\hooks\Gallop\Gallop.cpp" />
     <ClCompile Include="Source\hooks\Gallop\LiveTheaterInfo.cpp" />
+    <ClCompile Include="Source\hooks\Gallop\RaceResultCutInHelper.cpp" />
     <ClCompile Include="Source\hooks\Gallop\RaceResultScene.cpp" />
+    <ClCompile Include="Source\hooks\hook-helper.cpp" />
     <ClCompile Include="Source\hooks\hook.cpp" />
     <ClCompile Include="Source\hooks\Plugins\libNative.cpp" />
+    <ClCompile Include="Source\hooks\Unity\il2cpp\il2cpp-hook.cpp" />
     <ClCompile Include="Source\hooks\Unity\Unity.cpp" />
     <ClCompile Include="Source\hooks\Unity\il2cpp\il2cpp_symbols.cpp" />
     <ClCompile Include="Source\hooks\Unity\il2cpp\SymbolMapGenerator.cpp" />
@@ -195,9 +198,12 @@
     <ClInclude Include="Source\hooks\Gallop\Gallop.h" />
     <ClInclude Include="Source\hooks\Gallop\GallopStructs.h" />
     <ClInclude Include="Source\hooks\Gallop\LiveTheaterInfo.h" />
+    <ClInclude Include="Source\hooks\Gallop\RaceResultCutInHelper.h" />
     <ClInclude Include="Source\hooks\Gallop\RaceResultScene.h" />
+    <ClInclude Include="Source\hooks\hook-helper.h" />
     <ClInclude Include="Source\hooks\hook.h" />
     <ClInclude Include="Source\hooks\Plugins\libNative.h" />
+    <ClInclude Include="Source\hooks\Unity\il2cpp\il2cpp-hook.h" />
     <ClInclude Include="Source\hooks\Unity\Unity.h" />
     <ClInclude Include="Source\hooks\Unity\il2cpp\il2cpp-api-functions.h" />
     <ClInclude Include="Source\hooks\Unity\il2cpp\il2cpp-api-functions.hpp" />

@@ -24,7 +24,7 @@ HMODULE __stdcall LoadLibraryW__hook(const wchar_t* path) {
 		HMODULE module = reinterpret_cast<decltype(LoadLibraryW)*>(LoadLibraryW_orig)(path);
 		Logger::Debug(L"HOOK", L"GameAssembly handle=%p", module);
 		il2cpp_symbols::init(module);
-		
+		il2cpphook_init(GetProcAddress(module, il2cpp_symbols::GetObsfucatedFnName("il2cpp_init")));
 	}
 	return reinterpret_cast<decltype(LoadLibraryW)*>(LoadLibraryW_orig)(path);
 }

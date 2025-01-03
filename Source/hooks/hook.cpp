@@ -23,6 +23,11 @@ bool InitHooks_DLLMain()
 	return true;
 }
 
+void InitHooks_BeforeBoot()
+{
+	
+}
+
 void InitHooks_AfterIl2cppInit()
 {
 	libnative::Init(GetActiveWindow());

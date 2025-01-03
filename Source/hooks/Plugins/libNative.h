@@ -4,7 +4,7 @@
 #include "../../tools/Logger.hpp"
 #include "../../tools/http/url.hpp"
 #include "../../Settings.h"
-#include "../../deps/minhook/include/MinHook.h"
+#include "../hook-helper.h"
 #include "../Unity/il2cpp/il2cpp-tools.hpp"
 #include "../Cute.Http/WWWRequest.h"
 

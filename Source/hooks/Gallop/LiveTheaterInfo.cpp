@@ -18,15 +18,7 @@ namespace Gallop::LiveTheaterInfo {
 				"umamusume.dll", "Gallop",
 				"LiveTheaterInfo", "CheckDress", 2
 			));
-		if (CheckDress_addr == nullptr) {
-			Logger::Error(SECTION_NAME, L"CheckDress_addr is nullptr");
-			return;
-		}
-		else {
-			Logger::Info(SECTION_NAME, L"CheckDress_addr=%p", CheckDress_addr);
-			MH_CreateHook(CheckDress_addr, &CheckDress_hook, &CheckDress_orig);
-			MH_EnableHook(CheckDress_addr);
-		}
+		EnableHook(CheckDress_addr, &CheckDress_hook, &CheckDress_orig, L"LiveTheaterInfo_CheckDress");
 		
 	}
 }

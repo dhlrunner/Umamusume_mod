@@ -53,5 +53,4 @@ namespace Gallop
 		int64_t EndTime;
 		int32_t _getCondition;
 	};
-
 }

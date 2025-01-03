@@ -6,9 +6,11 @@
 #include "..\..\Utils.h"
 #include "..\hook-helper.h"
 
-#define SECTION_NAME L"GALLOP_RACERESULTSCENE"
+#include "GallopStructs.h"
 
-namespace Gallop::RaceResultScene
+#define SECTION_NAME L"GALLOP_RACECUTIN"
+
+namespace Gallop::RaceResultCutInHelper
 {
 	void Init();
 }

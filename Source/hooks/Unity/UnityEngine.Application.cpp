@@ -22,14 +22,7 @@ namespace UnityEngine::Application {
 		Logger::Info(L"UNITYHOOK", L"UnityEngine.Application Hook Init");
 
 		auto set_fps_addr = il2cpp_resolve_icall("UnityEngine.Application::set_targetFrameRate(System.Int32)");
-		if (set_fps_addr == nullptr) {
-			Logger::Error(L"UNITYHOOK", L"Failed to resolve UnityEngine.Application::set_targetFrameRate");
-			return;
-		}
-		else {
-			MH_CreateHook(set_fps_addr, &set_targetFrameRate_hook, reinterpret_cast<LPVOID*>(&set_targetFrameRate_orig));
-			MH_EnableHook(set_fps_addr);
-		}
+		EnableHook(set_fps_addr, &set_targetFrameRate_hook, &set_targetFrameRate_orig, L"set_targetFrameRate");
 		
 	}
 }

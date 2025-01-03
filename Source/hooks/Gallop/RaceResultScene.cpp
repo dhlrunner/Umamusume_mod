@@ -28,31 +28,13 @@ namespace Gallop::RaceResultScene
 				"RaceResultScene", "GetMotionVariationId", 1
 			)
 			);
-		if (GetMotionVariationId_addr == nullptr) {
-			Logger::Error(SECTION_NAME, L"GetMotionVariationId_addr is nullptr");
-			return;
-		}
-		else {
-			Logger::Info(SECTION_NAME, L"GetMotionVariationId_addr=%p", GetMotionVariationId_addr);
-			MH_CreateHook(GetMotionVariationId_addr, &GetMotionVariationId_hook, &GetMotionVariationId_orig);
-			MH_EnableHook(GetMotionVariationId_addr);
-		}
+		EnableHook(GetMotionVariationId_addr, &GetMotionVariationId_hook, &GetMotionVariationId_orig, L"GetMotionVariationId");
 
 		auto PlayFinishOrderAnim_addr = il2cpp_symbols::get_method_pointer(
 			"umamusume.dll", "Gallop",
 			"RaceResultScene", "PlayFinishOrderAnim", 1
 		);
-
-		if (PlayFinishOrderAnim_addr == nullptr) {
-			Logger::Error(SECTION_NAME, L"PlayFinishOrderAnim_addr is nullptr");
-			return;
-		}
-		else {
-			Logger::Info(SECTION_NAME, L"PlayFinishOrderAnim_addr=%p", PlayFinishOrderAnim_addr);
-			MH_CreateHook(PlayFinishOrderAnim_addr, &PlayFinishOrderAnim_hook, &PlayFinishOrderAnim_orig);
-			MH_EnableHook(PlayFinishOrderAnim_addr);
-		}
-
+		EnableHook(PlayFinishOrderAnim_addr, &PlayFinishOrderAnim_hook, &PlayFinishOrderAnim_orig, L"PlayFinishOrderAnim");
 
 	}
 }

@@ -12,6 +12,10 @@
 #include "../../tools/Logger.hpp"
 
 
+namespace il2cpp_symbols {
+	LPCSTR GetObsfucatedFnName(LPCSTR name);
+}
+
 template<typename T>
 struct MethodInfo_t
 {
