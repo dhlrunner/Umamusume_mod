@@ -188,4 +188,7 @@
     <ClInclude Include="Source\hooks\hook-helper.h" />
     <ClInclude Include="Source\hooks\Unity\il2cpp\il2cpp-hook.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
 </Project>
