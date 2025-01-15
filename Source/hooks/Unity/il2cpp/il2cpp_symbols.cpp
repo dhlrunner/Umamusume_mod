@@ -51,7 +51,10 @@ namespace il2cpp_symbols
 	{
 		il2cpp_function_map = il2cpp::GenarateSymbolMap();
 		init_functions(game_module);
-		il2cpp_domain = il2cpp_domain_get();
+		//wprintf(L"il2cpp_domain_get() enter\n");
+		//auto ptr = il2cpp_domain_get();
+		//wprintf(L"il2cpp_domain_get() ret %p\n", ptr);
+		//il2cpp_domain = il2cpp_domain_get();
 	}
 
 	void call_init_callbacks()

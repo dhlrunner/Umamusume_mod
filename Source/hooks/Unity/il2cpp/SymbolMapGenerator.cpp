@@ -4,7 +4,7 @@
 #include "SymbolMapGenerator.hpp"
 
 namespace il2cpp {
-    const uint32_t START_RVA = 0x8c6714;
+    const uint32_t START_RVA = 0x7834a2;
 
     const std::vector<std::string> SYMBOL_LIST = {
         "il2cpp_init",
@@ -34,6 +34,7 @@ namespace il2cpp {
         "il2cpp_assembly_get_image",
         "il2cpp_class_for_each",
         "il2cpp_class_enum_basetype",
+        "il2cpp_class_is_inited",
         "il2cpp_class_is_generic",
         "il2cpp_class_is_inflated",
         "il2cpp_class_is_assignable_from",
@@ -123,6 +124,8 @@ namespace il2cpp {
         "il2cpp_gc_foreach_heap",
         "il2cpp_stop_gc_world",
         "il2cpp_start_gc_world",
+        "il2cpp_gc_alloc_fixed",
+        "il2cpp_gc_free_fixed",
         "il2cpp_gchandle_new",
         "il2cpp_gchandle_new_weakref",
         "il2cpp_gchandle_get_target",
@@ -133,10 +136,11 @@ namespace il2cpp {
         "il2cpp_offset_of_array_length_in_array_object_header",
         "il2cpp_offset_of_array_bounds_in_array_object_header",
         "il2cpp_allocation_granularity",
-        "il2cpp_unity_liveness_calculation_begin",
-        "il2cpp_unity_liveness_calculation_end",
+        "il2cpp_unity_liveness_allocate_struct",
         "il2cpp_unity_liveness_calculation_from_root",
         "il2cpp_unity_liveness_calculation_from_statics",
+        "il2cpp_unity_liveness_finalize",
+        "il2cpp_unity_liveness_free_struct",
         "il2cpp_method_get_return_type",
         "il2cpp_method_get_declaring_type",
         "il2cpp_method_get_name",
@@ -206,6 +210,7 @@ namespace il2cpp {
         "il2cpp_type_get_attrs",
         "il2cpp_type_equals",
         "il2cpp_type_get_assembly_qualified_name",
+        "il2cpp_type_get_reflection_name",
         "il2cpp_type_is_static",
         "il2cpp_type_is_pointer_type",
         "il2cpp_image_get_assembly",
@@ -225,13 +230,15 @@ namespace il2cpp {
         "il2cpp_unity_install_unitytls_interface",
         "il2cpp_custom_attrs_from_class",
         "il2cpp_custom_attrs_from_method",
+        "il2cpp_custom_attrs_from_field",
         "il2cpp_custom_attrs_get_attr",
         "il2cpp_custom_attrs_has_attr",
         "il2cpp_custom_attrs_construct",
         "il2cpp_custom_attrs_free",
         "il2cpp_class_set_userdata",
         "il2cpp_class_get_userdata_offset",
-        "il2cpp_set_default_thread_affinity"
+        "il2cpp_set_default_thread_affinity",
+        "il2cpp_unity_set_android_network_up_state_func"
     };
 
     //오류클래스 정의
@@ -322,7 +329,7 @@ namespace il2cpp {
             const char* name = reinterpret_cast<const char*>(image + name_offset);
             map[symbol] = std::string(name);
 
-            rva += (rva == START_RVA) ? 0x35 : 0x30;
+            rva += (rva == START_RVA) ? 0x28 : 0x26;
         }
 
         UnmapViewOfFile(image);
