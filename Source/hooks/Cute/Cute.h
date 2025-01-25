@@ -3,7 +3,8 @@
 #include "..\..\Settings.h"
 #include "..\Unity\il2cpp\il2cpp_symbols.hpp"
 
-#include "WWWRequest.h"
+#include "Http.WWWRequest.h"
+#include "Core.Device.h"
 
 #define SECTION_NAME L"CUTEHOOK"
 

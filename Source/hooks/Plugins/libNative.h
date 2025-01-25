@@ -6,7 +6,7 @@
 #include "../../Settings.h"
 #include "../hook-helper.h"
 #include "../Unity/il2cpp/il2cpp-tools.hpp"
-#include "../Cute.Http/WWWRequest.h"
+#include "../Cute/Http.WWWRequest.h"
 
 #include <string>
 

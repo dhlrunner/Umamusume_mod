@@ -1,4 +1,4 @@
-#include "WWWRequest.h"
+#include "Http.WWWRequest.h"
 using namespace std;
 
 namespace Cute::Http::WWWRequest {
@@ -18,7 +18,7 @@ namespace Cute::Http::WWWRequest {
 			posturl.scheme(replaceUrl.scheme());
 			posturl.host(replaceUrl.host());
 			posturl.port(replaceUrl.port());
-			Logger::Debug(SECTION_NAME, L"Replaced URL: %s", posturl.str().c_str()); //change this log to Logger::Debug
+			Logger::Debug(SECTION_NAME, L"Replaced URL: %S", posturl.str().c_str()); //change this log to Logger::Debug
 
 		}
 

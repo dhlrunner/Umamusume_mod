@@ -100,10 +100,10 @@
     <ClCompile Include="Source\hooks\Gallop\Gallop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\hooks\Cute.Http\WWWRequest.cpp">
+    <ClCompile Include="Source\hooks\Cute\Http.WWWRequest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\hooks\Cute.Http\Cute.cpp">
+    <ClCompile Include="Source\hooks\Cute\Cute.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\hooks\Gallop\RaceResultScene.cpp">
@@ -116,6 +116,39 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\hooks\Unity\il2cpp\il2cpp-hook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\Live.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\CutIn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\CharacterBuildInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\StoryCharacter3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\Live.Cutt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\GallopUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Cute\Core.Device.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\MasterEventMotionData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\ModelController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Unity\UnityEngine.CoreModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\Screen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -180,13 +213,25 @@
     <ClInclude Include="Source\hooks\Unity\Unity.h" />
     <ClInclude Include="Source\hooks\Gallop\LiveTheaterInfo.h" />
     <ClInclude Include="Source\hooks\Gallop\Gallop.h" />
-    <ClInclude Include="Source\hooks\Cute.Http\WWWRequest.h" />
-    <ClInclude Include="Source\hooks\Cute.Http\Cute.h" />
+    <ClInclude Include="Source\hooks\Cute\Http.WWWRequest.h" />
+    <ClInclude Include="Source\hooks\Cute\Cute.h" />
     <ClInclude Include="Source\hooks\Gallop\RaceResultScene.h" />
     <ClInclude Include="Source\hooks\Gallop\GallopStructs.h" />
     <ClInclude Include="Source\hooks\Gallop\RaceResultCutInHelper.h" />
     <ClInclude Include="Source\hooks\hook-helper.h" />
     <ClInclude Include="Source\hooks\Unity\il2cpp\il2cpp-hook.h" />
+    <ClInclude Include="Source\hooks\Gallop\Live.h" />
+    <ClInclude Include="Source\hooks\Gallop\CutIn.h" />
+    <ClInclude Include="Source\hooks\Gallop\CharacterBuildInfo.h" />
+    <ClInclude Include="Source\hooks\Gallop\StoryCharacter3D.h" />
+    <ClInclude Include="Source\hooks\Gallop\Live.Cutt.h" />
+    <ClInclude Include="Source\hooks\Unity\UnityStructs.h" />
+    <ClInclude Include="Source\hooks\Gallop\GallopUtil.h" />
+    <ClInclude Include="Source\hooks\Cute\Core.Device.h" />
+    <ClInclude Include="Source\hooks\Gallop\MasterEventMotionData.h" />
+    <ClInclude Include="Source\hooks\Gallop\ModelController.h" />
+    <ClInclude Include="Source\hooks\Unity\UnityEngine.CoreModule.h" />
+    <ClInclude Include="Source\hooks\Gallop\Screen.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

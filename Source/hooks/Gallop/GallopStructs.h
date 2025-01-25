@@ -3,6 +3,7 @@
 
 namespace Gallop 
 {
+
 	//Gallop Structs
 	//Gallop.CharaDressIdSet
 	struct __declspec(align(8)) CharaDressIdSet {
@@ -53,4 +54,115 @@ namespace Gallop
 		int64_t EndTime;
 		int32_t _getCondition;
 	};
+
+	//Gallop.CutIn.CutInCharacterCreateInfo
+	struct CutInCharacterCreateInfo
+	{
+		LPVOID unknown1; //0x00
+		LPVOID unknown2; //0x08
+		int _characterType; // 0x10
+		int _charaIndex; // 0x14
+		LPVOID _parent; // 0x18
+		int _charaId; // 0x20
+		int _clothId; // 0x24
+		int _headId; // 0x28
+		int IsUseDressDataHeadModelSubId; // 0x2C
+		int _zekkenNo; // 0x30
+		bool _isWet; // 0x34
+		bool _isDirt; // 0x35
+		short unknown3; // 0x36
+		int OverrideClothCategory; // 0x38
+	};
+
+	//Gallop.CutIn.Cutt.TimelineKeyCharacterType
+	enum class TimelineKeyCharacterType
+	{
+		User,
+		Target,
+		FixRank,
+		FixCharaId,
+		CardId,
+		Mob
+	};
+
+	//Gallop.MobBuildInfo
+	struct MobBuildInfo {
+	public:
+		int32_t faceKindId;
+		int32_t hairKindId;
+		int32_t hairColorId;
+		int32_t DressColorId;
+		float HairCutoff;
+		int32_t AttachmentModelId;
+	};
+
+
+	//Gallop.CharacterBuildInfo
+	struct CharacterBuildInfo {
+	public:
+		char dummy[0x10];
+		int32_t _cardId;
+		int32_t _charaId;
+		int32_t _mobId;
+		int32_t _headModelSubId;
+		bool _isUseDressDataHeadModelSubId;
+		int32_t _bodyModelSubId;
+		int32_t _dressId;
+		int32_t _controllerType;
+		int32_t _zekken;
+		int dummy5;
+		Il2CppString* _name;
+		int32_t _genderType;
+		int32_t _heightType;
+		int32_t _bodySize;
+		int32_t _bustType;
+		float _height;
+		int32_t _skinType;
+		int32_t _socksType;
+		int32_t _defaultPersonalityType;
+		int32_t _raceGateInPersonalityType;
+		int32_t _raceRunPersonalityType;
+		int32_t _raceOverRunPersonalityType;
+		int32_t _raceRunningType;
+		int32_t _zekkenColor;
+		int32_t _zekkenFontColor;
+		int32_t _zekkenFontStyle;
+		void* _wetTextureArray;
+		void* _dirtTextureArray;
+		void* _sweatLocator;
+		void* _sweatObject;
+
+		int32_t _frameColor;
+		int32_t _popularity;
+		int32_t _npcType;
+		void* _charaBuildPathInfo;
+		void* _clothBuildPathInfo;
+		MasterDressData* _dressElement;
+		int32_t _backDancerColorId;
+		struct MobBuildInfo _mobInfo;
+		bool _isPersonalDress;
+		int32_t _miniMobTailId;
+		int32_t _miniMobParentCharaId;
+		int32_t _overrideClothCategory;
+		int32_t _loadHashKey;
+		bool _isPreCreatedLoadHashKey;
+		bool _initialized;
+
+
+	};
+
+	//Gallop.CySpringDataContainer.Category
+	namespace CySpringDataContainer {
+		enum class Category {
+			Invalid = -1,
+			Live,
+			Race,
+			Story,
+			Home,
+			Training
+		};
+	}
+
+	
 }
+

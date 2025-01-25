@@ -6,5 +6,6 @@ namespace Cute {
 		
 		//Init Cute.Http
 		Http::WWWRequest::Init();
+		Core::Device::Init();
 	}
 }	

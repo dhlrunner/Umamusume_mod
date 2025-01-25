@@ -3,7 +3,7 @@
 #include "../hooks/Gallop/Gallop.h"
 #include "../hooks/Unity/Unity.h"
 #include "../hooks/Windows/Windows.hpp"
-#include "../hooks/Cute.Http/Cute.h"
+#include "../hooks/Cute/Cute.h"
 
 #include "../../tools/Logger.hpp"
 #include "../../tools/imgui/ImguiWindows.hpp"

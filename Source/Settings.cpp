@@ -1,8 +1,19 @@
-#include "Settings.h"
+﻿#include "Settings.h"
 
 namespace Settings {
+	/// <summary>
+	/// settings.json 에서 가져온 값
+	/// </summary>
 	GlobalUmaSettings* Global;
+
+	/// <summary>
+	/// 설정 초기값
+	/// </summary>
 	const GlobalUmaSettings* InitialValue;
+
+	/// <summary>
+	/// 런타임중 필요한 설정값
+	/// </summary>
 	LocalUmaSettings* Local;
 
 	std::vector<std::string> dicts;
@@ -92,7 +103,7 @@ namespace Settings {
 			else {
 				Local->vsync_count = 0;
 			}
-
+			Global->walkMotionAllUrara = document.HasMember("walkMotionAllUrara") ? document["walkMotionAllUrara"].GetBool() : InitialValue->walkMotionAllUrara;
 			Global->isTapEffectEnabled = document.HasMember("isTapEffectEnabled") ? document["isTapEffectEnabled"].GetBool() : InitialValue->isTapEffectEnabled;
 
 
