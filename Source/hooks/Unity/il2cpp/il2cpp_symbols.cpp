@@ -17,9 +17,6 @@ Il2CppString* il2cpp_string_new16(const wchar_t* value)
 	return il2cpp_string_new_utf16(value, wcslen(value));
 }
 
-
-
-
 namespace il2cpp_symbols
 {
 	Il2CppDomain* il2cpp_domain = nullptr;
@@ -236,15 +233,18 @@ namespace il2cpp_symbols
 		auto assembly = il2cpp_domain_assembly_open(il2cpp_domain, assemblyName);
 		if (assembly)
 		{
-			auto image = il2cpp_assembly_get_image(assembly);
+			auto image = il2cpp_assembly_get_image(assembly);		
 			if (image)
 			{
+				//printf("get_method_pointer %s\n", image->name);
 				auto klass = il2cpp_class_from_name(image, namespaze, klassName);
 				if (klass)
 				{
+					//printf("get_class %s\n", klass->name);
 					auto method = il2cpp_class_get_method_from_name(klass, name, argsCount);
 					if (method)
 					{
+						//printf("get_method %s\n", method->name);
 						return method->methodPointer;
 					}
 				}

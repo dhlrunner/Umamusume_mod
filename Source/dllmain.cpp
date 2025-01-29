@@ -38,6 +38,10 @@ BOOL WINAPI DllMain(HINSTANCE, DWORD reason, LPVOID)
 		InitHooks_DLLMain();
 		return TRUE;
 	}
+	else if (reason == DLL_PROCESS_DETACH) {
+		Logger::Info(L"HOOK", L"Modding DLL Detatching");
+		MH_Uninitialize();
+	}
 
 	return TRUE;
 }

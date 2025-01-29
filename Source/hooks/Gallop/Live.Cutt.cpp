@@ -3,14 +3,6 @@
 using namespace Unity;
 namespace Gallop::Live::Cutt 
 {
-	void* AlterUpdate_orig = nullptr;
-	void AlterUpdate_hook(void* _this, float liveTime) {
-		//printf("AlterUpdate time=%.2f \n", liveTime);
-		if (!Settings::Local->stopLiveCam) {
-			return reinterpret_cast<decltype(AlterUpdate_hook)*>
-				(AlterUpdate_orig)(_this, liveTime);
-		}
-	}
 
 	void* AlterUpdate_CameraLookAt_orig = nullptr;
 	void AlterUpdate_CameraLookAt_hook(void* _this, void* sheet, int currentFrame, float currentTime, Vector3_t* outLookAt) {
@@ -180,13 +172,7 @@ namespace Gallop::Live::Cutt
 
 	void Init() 
 	{
-		Logger::Info(SECTION_NAME, L"Init");
-
-		auto AlterUpdate_addr = il2cpp_symbols::get_method_pointer(
-			"umamusume.dll", "Gallop.Live.Cutt",
-			"LiveTimelineControl", "AlterUpdate", 1
-		);
-		EnableHook(AlterUpdate_addr, &AlterUpdate_hook, &AlterUpdate_orig, L"AlterUpdate");
+		Logger::Info(SECTION_NAME, L"Init");		
 
 		auto AlterUpdate_CameraLookAt_addr = il2cpp_symbols::get_method_pointer(
 			"umamusume.dll", "Gallop.Live.Cutt",

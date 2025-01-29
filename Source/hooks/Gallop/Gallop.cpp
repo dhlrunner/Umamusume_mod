@@ -3,10 +3,11 @@
 namespace Gallop
 {
 	void Init() {
-		Logger::Info(L"GALLOPHOOK_MAIN", L"Init");
+		Logger::Info(SECTION_NAME, L"Init");
 
 		Live::Init();
 		Live::Cutt::Init();
+		Live::Cutt::LiveTimelineControl::Init();
 		LiveTheaterInfo::Init();
 		RaceResultScene::Init();
 		RaceResultCutInHelper::Init();
@@ -17,6 +18,14 @@ namespace Gallop
 		MasterEventMotionData::Init();
 		ModelController::Init();
 		Screen::Init();
+		SceneManager::Init();
+		GraphicSettings::Init();
+		CutInModelController::Init();
+		ResourcePath::Init();
+		RaceUIFinishOrderFlash::Init();
+		CameraController::Init();
+		SingleModeStartResultCharaViewer::Init();
+		GameSystem::Init();
 
 	}
 }

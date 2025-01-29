@@ -3,8 +3,9 @@
 bool EnableHook(LPVOID pTarget, LPVOID pDetour, LPVOID* ppOriginal, const wchar_t* hookName) {
 	// Create a hook for the target function if pTarget is not nullptr
 	if (pTarget != nullptr) {
-		if (MH_CreateHook(pTarget, pDetour, ppOriginal) != MH_OK) {
-			Logger::Error(SECTION_NAME, L"MH_CreateHook Failed for target \"%s\"", hookName);
+		auto cRet = MH_CreateHook(pTarget, pDetour, ppOriginal);
+		if (cRet != MH_OK) {
+			Logger::Error(SECTION_NAME, L"MH_CreateHook Failed for target \"%s\", Status %d", hookName, cRet);
 			return false;
 		}
 		else {

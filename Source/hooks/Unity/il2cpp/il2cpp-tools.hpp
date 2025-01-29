@@ -1,7 +1,7 @@
 // il2cpp-tools.hpp
 
 #pragma once
-
+#include "il2cpp-api-functions.hpp"
 #include "il2cpp_symbols.hpp"
 #include "il2cpp-tabledefs.h"
 
@@ -33,4 +33,43 @@ namespace il2cpp {
     inline Il2CppDelegate* CreateDelegateStatic(R(*fn)()) {
         return CreateDelegateStatic(reinterpret_cast<R(*)(void*)>(fn));
     }
+
+    inline Il2CppObject* GetSingletonInstance(Il2CppClass* klass)
+    {
+        if (!klass || !klass->parent)
+        {
+            return nullptr;
+        }
+        auto instanceField = il2cpp_class_get_field_from_name(klass, "_instance");
+        if (!instanceField)
+        {
+            instanceField = il2cpp_class_get_field_from_name(klass, "instance");
+            if (!instanceField)
+            {
+                return nullptr;
+            }
+        }
+        Il2CppObject* instance;
+        il2cpp_field_static_get_value(instanceField, &instance);
+        return instance;
+    }
+
+    class IEnumerator {
+	private:
+		Il2CppObject* enumerator;
+    public:
+        IEnumerator(Il2CppObject* enumerator) {
+			this->enumerator = enumerator;
+        }
+        bool MoveNext() {
+            auto moveNext = reinterpret_cast<bool(*)(Il2CppObject*)>(il2cpp_class_get_method_from_name(enumerator->klass, "MoveNext", 0)->methodPointer);
+            return moveNext(enumerator);
+        }
+        Il2CppObject* GetCurrent() {
+            auto getCurrent = reinterpret_cast<Il2CppObject * (*)(Il2CppObject*)>(il2cpp_class_get_method_from_name(enumerator->klass, "get_Current", 0)->methodPointer);
+            return getCurrent(enumerator);
+        };
+    };
+
+
 }

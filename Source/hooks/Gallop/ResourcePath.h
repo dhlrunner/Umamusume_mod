@@ -6,14 +6,13 @@
 #include "..\..\Settings.h"
 #include "..\..\Utils.h"
 #include "..\hook-helper.h"
-#include "..\Unity\UnityEngine.CoreModule.h"
 #include "GallopStructs.h"
 
 
-#define SECTION_NAME L"GALLOP_SCREEN"
+#define SECTION_NAME L"GALLOP_RESOURCEPATH"
 
-namespace Gallop::Screen
+namespace Gallop::ResourcePath
 {
-	Il2CppObject* ChangeScreenOrientation_hook(ScreenOrientation targetOrientation, bool isForce);
+
 	void Init();
 }

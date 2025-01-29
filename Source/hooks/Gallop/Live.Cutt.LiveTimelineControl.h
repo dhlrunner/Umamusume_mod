@@ -1,4 +1,5 @@
 #pragma once
+#include "..\..\Global.h"
 #include "..\..\tools\Logger.hpp"
 #include "..\Unity\il2cpp\il2cpp_symbols.hpp"
 #include "..\Unity\il2cpp\il2cpp-tabledefs.h"
@@ -6,14 +7,13 @@
 #include "..\..\Settings.h"
 #include "..\..\Utils.h"
 #include "..\hook-helper.h"
-#include "..\Unity\UnityEngine.CoreModule.h"
 #include "GallopStructs.h"
 
 
-#define SECTION_NAME L"GALLOP_SCREEN"
+#define SECTION_NAME L"GALLOP_LIVETIMELINECTRL"
 
-namespace Gallop::Screen
+namespace Gallop::Live::Cutt::LiveTimelineControl
 {
-	Il2CppObject* ChangeScreenOrientation_hook(ScreenOrientation targetOrientation, bool isForce);
+
 	void Init();
 }

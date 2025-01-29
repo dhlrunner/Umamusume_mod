@@ -5,10 +5,14 @@
 #include "..\..\Settings.h"
 #include "..\..\Utils.h"
 #include "..\hook-helper.h"
+#include "UnityStructs.h"
 
+#define SECTION_NAME L"UNITYASSETBUNDLE"
+using namespace Unity;
 
-namespace UnityEngine::Application
+namespace UnityEngine::AssetBundle
 {
-	Il2CppString* get_persistentDataPath_hook();
+	extern void* (*LoadInternal)(Il2CppString*, unsigned int, unsigned long);
+
 	void Init();
 }

@@ -30,14 +30,22 @@ void InitHooks_BeforeBoot()
 
 void InitHooks_AfterIl2cppInit()
 {
+	//il2cpp_dump();
+
 	libnative::Init(GetActiveWindow());
 
 	//Unity Init
 	Unity::HookInit();
+
+	//Cyan Init
+	Cyan::Init();
 
 	//Gallop Init
 	Gallop::Init();
 
 	//Cute Init
 	Cute::Init();
+
+	//thread start
+	BackgroundWorker::Init();
 }

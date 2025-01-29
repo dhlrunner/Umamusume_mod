@@ -163,6 +163,76 @@ namespace Gallop
 		};
 	}
 
+	//Gallop.ModelLoader.ZekkenColor
+	enum class ZekkenColor {
+		DeepBlue,
+		DeepRed,
+		DeepGreen,
+		Black,
+		White,
+		Count,
+		Default = 3
+	};
+
+	//Gallop.ModelLoader.ZekkenFontColor
+	enum class ZekkenFontColor
+	{
+		Black,
+		White,
+		Yellow,
+		Count,
+		Default = 1
+	};
+
+	//Gallop.ModelLoader.ControllerType
+	enum class ControllerType
+	{
+		Default,
+		Race,
+		Training,
+		EventTimeline,
+		Live,
+		HomeStand,
+		HomeTalk,
+		HomeWalk,
+		CutIn,
+		TrainingTop,
+		SingleRace,
+		Simple,
+		Mini,
+		Paddock,
+		Champions
+	};
+
+	//Gallop.ModelLoader.TrackSuitColor
+	enum class TrackSuitColor
+	{
+		White,
+		Black,
+		Red,
+		Blue,
+		Yellow,
+		Green,
+		Orange,
+		Peach
+	};
+
+	struct CutInModelController_Context {
+		int CardId;
+		int CharaId;
+		int DressId;
+		int HeadId;
+		int ZekkenNo;
+		ZekkenColor ZekkenColor;
+		ZekkenFontColor ZekkenFontColor;
+		TrackSuitColor FrameColor;
+		ControllerType ControllerType;
+		bool IsWet;
+		bool IsDirt;
+		CySpringDataContainer::Category  _overrideClothCategory;
+		bool IsUseDressDataHeadModelSubId;
+	};
+
 	
 }
 

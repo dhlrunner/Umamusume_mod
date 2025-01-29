@@ -5,10 +5,16 @@
 #include "..\..\Settings.h"
 #include "..\..\Utils.h"
 #include "..\hook-helper.h"
+#include "UnityStructs.h"
 
+#define SECTION_NAME L"UNITY_INPUT"
 
-namespace UnityEngine::Application
+using namespace Unity;
+
+namespace UnityEngine::InputLegacyModule
 {
-	Il2CppString* get_persistentDataPath_hook();
+	extern bool (*GetKeyDown)(KeyCode);
+	extern bool (*GetKey)(KeyCode);
+
 	void Init();
 }

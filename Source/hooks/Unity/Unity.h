@@ -1,7 +1,9 @@
 #pragma once
 #include "../../tools/Logger.hpp"
-#include "../Unity/UnityEngine.Application.h"
-#include "../Unity/UnityEngine.CoreModule.h"
+#include "UnityEngine.Application.h"
+#include "UnityEngine.CoreModule.h"
+#include "UnityEngine.InputLegacyModule.h"
+#include "UnityEngine.AssetBundleModule.h"
 
 namespace Unity {
 	void HookInit();

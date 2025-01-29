@@ -1,4 +1,5 @@
 #pragma once
+#include "..\..\Global.h"
 #include "..\..\tools\Logger.hpp"
 #include "..\Unity\il2cpp\il2cpp_symbols.hpp"
 #include "..\Unity\il2cpp\il2cpp-tabledefs.h"

@@ -2,6 +2,22 @@
 
 namespace UnityEngine::Application {
 
+	Il2CppString* (*get_persistentDataPath_addr)();
+
+	void* get_persistentDataPath_orig = nullptr;
+	Il2CppString* get_persistentDataPath_hook() {
+		Il2CppString* ret = reinterpret_cast<decltype(get_persistentDataPath_hook)*>
+			(get_persistentDataPath_orig)();
+
+		if (strlen(Settings::Global->customDataPath) > 0) {
+			Il2CppString* custompath = il2cpp_string_new(Settings::Global->customDataPath);
+			//wprintf(L"[unityengine_get_persistentDataPath] originalpersistentpath=%s, replacedpersistentpath=%s\n", ret->start_char, custompath->start_char);
+			return custompath;
+		}
+
+		return ret;
+	}
+
 	void* set_targetFrameRate_orig = nullptr;
 	void set_targetFrameRate_hook(int value)
 	{
@@ -22,7 +38,11 @@ namespace UnityEngine::Application {
 		Logger::Info(L"UNITYHOOK", L"UnityEngine.Application Hook Init");
 
 		auto set_fps_addr = il2cpp_resolve_icall("UnityEngine.Application::set_targetFrameRate(System.Int32)");
-		EnableHook(set_fps_addr, &set_targetFrameRate_hook, &set_targetFrameRate_orig, L"set_targetFrameRate");
+		EnableHook(set_fps_addr, &set_targetFrameRate_hook, &set_targetFrameRate_orig, L"Unity_set_targetFrameRate");
+
+		get_persistentDataPath_addr = reinterpret_cast<Il2CppString * (*)()>(il2cpp_resolve_icall("UnityEngine.Application::get_persistentDataPath()"));
+		EnableHook(get_persistentDataPath_addr, &get_persistentDataPath_hook, &get_persistentDataPath_orig, L"Unity_get_persistentDataPath");
+
 		
 	}
 }

@@ -151,6 +151,57 @@
     <ClCompile Include="Source\hooks\Gallop\Screen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\SceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\GraphicSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\CutInModelController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\ResourcePath.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\RaceUIFinishOrderFlash.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\Live.Cutt.LiveTimelineControl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\CameraController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\SingleModeStartResultCharaViewer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Global.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Unity\il2cpp\il2cpp_dump.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Unity\UnityEngine.InputLegacyModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\BackgroundWorker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\GameSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\GallopDialogUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Cyan\Cyan.Loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Cyan\Cyan.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Unity\UnityEngine.AssetBundleModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\stdinclude.h">
@@ -232,6 +283,24 @@
     <ClInclude Include="Source\hooks\Gallop\ModelController.h" />
     <ClInclude Include="Source\hooks\Unity\UnityEngine.CoreModule.h" />
     <ClInclude Include="Source\hooks\Gallop\Screen.h" />
+    <ClInclude Include="Source\hooks\Gallop\SceneManager.h" />
+    <ClInclude Include="Source\hooks\Gallop\GraphicSettings.h" />
+    <ClInclude Include="Source\hooks\Gallop\CutInModelController.h" />
+    <ClInclude Include="Source\hooks\Gallop\ResourcePath.h" />
+    <ClInclude Include="Source\hooks\Gallop\RaceUIFinishOrderFlash.h" />
+    <ClInclude Include="Source\Global.h" />
+    <ClInclude Include="Source\hooks\Gallop\Live.Cutt.LiveTimelineControl.h" />
+    <ClInclude Include="Source\hooks\Gallop\CameraController.h" />
+    <ClInclude Include="Source\hooks\Gallop\SingleModeStartResultCharaViewer.h" />
+    <ClInclude Include="Source\hooks\Unity\il2cpp\il2cpp_dump.h" />
+    <ClInclude Include="Source\hooks\Unity\UnityEngine.InputLegacyModule.h" />
+    <ClInclude Include="Source\hooks\BackgroundWorker.h" />
+    <ClInclude Include="Source\hooks\Gallop\GameSystem.h" />
+    <ClInclude Include="Source\hooks\GallopDialogUtil.h" />
+    <ClInclude Include="Source\hooks\Cyan\Cyan.Loader.h" />
+    <ClInclude Include="Source\hooks\Cyan\Cyan.h" />
+    <ClInclude Include="Source\hooks\Cyan\CyanStructs.h" />
+    <ClInclude Include="Source\hooks\Unity\UnityEngine.AssetBundleModule.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

@@ -23,9 +23,19 @@ namespace Gallop::Live
 
 	}
 
+	void* Director_get_LiveTotalTime_orig = nullptr;
+	float Director_get_LiveTotalTime_hook(Il2CppObject* _instance) {
+		float ret = reinterpret_cast<decltype(Director_get_LiveTotalTime_hook)*>(Director_get_LiveTotalTime_orig)(_instance);
+		Global::liveTotalTimeSec = ret;
+		if (Settings::Local->isLiveTimeManual) {
+			ret = 9999.9;
+		}
+		return ret;
+	}
 
 	void Init()
 	{
+		Logger::Info(SECTION_NAME, L"Init");
 		auto FadeGui_SetAlpha_addr = il2cpp_symbols::get_method_pointer(
 			"umamusume.dll", "Gallop.Live",
 			"FadeGui", "SetAlpha", 1
@@ -37,5 +47,13 @@ namespace Gallop::Live
 			"LiveTimelineCamera", "AlterUpdate", 1
 		);
 		EnableHook(LiveTimelineCamera_AlterUpdate_addr, &LiveTimelineCamera_AlterUpdate_hook, &LiveTimelineCamera_AlterUpdate_orig, L"LiveTimelineCamera_AlterUpdate");
+
+		auto Director_get_LiveTotalTime_addr = reinterpret_cast<float(*)()>(il2cpp_symbols::get_method_pointer(
+			"umamusume.dll", "Gallop.Live",
+			"Director", "get_LiveTotalTime", 0
+		));
+		EnableHook(Director_get_LiveTotalTime_addr, &Director_get_LiveTotalTime_hook, &Director_get_LiveTotalTime_orig, L"Director_get_LiveTotalTime");
+
+
 	}
 }
