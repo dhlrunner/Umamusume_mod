@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <wtypes.h>
+#include "hooks/Unity/il2cpp/il2cpp_symbols.hpp"
 
 namespace Global 
 {
@@ -10,7 +12,11 @@ namespace Global
 	extern float liveTotalTimeSec;
 	extern float oldLiveTime;
 	extern float liveTimelineManualScale;
-	
+	extern bool showFinishOrderFlash;
+	extern bool isShowingSeekbar;
+	//extern int currSceneID;
+	extern Il2CppString* currSceneName;
+	extern bool isKimuraChallenge;
 
 	extern bool settingUpImageEffect;
 
@@ -19,5 +25,9 @@ namespace Global
 	extern bool imgui_settingwnd_open;
 
 	extern bool gameTerminating;
+
+	extern HWND currenthWnd;
+
+	extern bool Game_HookFinished;
 
 }

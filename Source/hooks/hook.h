@@ -7,8 +7,9 @@
 #include "../hooks/Cyan/Cyan.h"
 
 #include "../../tools/Logger.hpp"
-#include "../../tools/imgui/ImguiWindows.hpp"
+#include "../../tools/imgui/ImguiWindows.h"
 #include "../../Settings.h"
+#include "../Global.h"
 #include "../../deps/minhook/include/MinHook.h"
 
 #include "Unity/il2cpp/il2cpp_dump.h"

@@ -9,7 +9,7 @@
 #include <WS2tcpip.h>
 #include <Windows.h>
 #include "stdio.h"
-#include "tools/PEDump/PEDump.hpp"
+#include "tools/PEDump/PEDump.h"
 
 #include <locale>
 #include <filesystem>
@@ -48,7 +48,7 @@
 //Hooks
 #include "hooks/hook.h"
 #include "hooks/Windows/Windows.hpp"
-#include "tools/imgui/imguiwindows.hpp"
+#include "tools/imgui/imguiwindows.h"
 #include "hooks/Unity/il2cpp/il2cpp_symbols.hpp"
 #include "hooks/Unity/il2cpp/SymbolMapGenerator.hpp"
 #include "hooks/Unity/Unity.h"

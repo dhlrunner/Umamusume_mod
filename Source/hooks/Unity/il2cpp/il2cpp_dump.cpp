@@ -300,12 +300,13 @@ std::string dump_type(const Il2CppType* type) {
 	return outPut.str();
 }
 
-void il2cpp_dump() {
+void il2cpp_dump(Il2CppObject* dialog) {
 	//initialize
 	auto domain = il2cpp_domain_get();
 	il2cpp_thread_attach(domain);
 	//start dump
-	cout << "dumping..." << endl;
+	GallopDialog::SetDialogMessage(dialog, L"dumping...");
+	//cout << "dumping..." << endl;
 	size_t size;
 	auto assemblies = il2cpp_domain_get_assemblies(domain, &size);
 	std::stringstream imageOutput;
@@ -322,12 +323,16 @@ void il2cpp_dump() {
 		for (int j = 0; j < classCount; ++j) {
 			auto klass = il2cpp_image_get_class(image, j);
 			auto type = il2cpp_class_get_type(const_cast<Il2CppClass*>(klass));
+			
 			//LOGD("type name : %s", il2cpp_type_get_name(type));
 			auto outPut = imageStr.str() + dump_type(type);
 			outPuts.emplace_back(outPut);
 		}
+		wchar_t msg[1024];
+		swprintf_s(msg, L"Dumping class in %S", il2cpp_image_get_name(image));
+		GallopDialog::SetDialogMessage(dialog, msg);
 	}
-	cout << "write dump file" << endl;
+	GallopDialog::SetDialogMessage(dialog,L"Writeing dump file...");
 	std::ofstream outStream("umamusume.exe.local\\dump.cs");
 	outStream << imageOutput.str();
 	auto count = outPuts.size();
@@ -335,5 +340,5 @@ void il2cpp_dump() {
 		outStream << outPuts[i];
 	}
 	outStream.close();
-	cout << "dump done!" << endl;
+	GallopDialog::SetDialogMessage(dialog, L"dump done!");
 }

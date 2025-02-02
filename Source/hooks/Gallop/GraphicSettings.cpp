@@ -4,7 +4,7 @@ namespace Gallop::GraphicSettings
 {
 	void* ApplyGraphicsQuality_orig = nullptr;
 	void ApplyGraphicsQuality_hook(Il2CppObject* thisObj, int quality, bool force) {
-		Logger::Info(SECTION_NAME, L"setGraphicsQuality: %d -> %d\n", quality, Settings::Local->graphics_quality);
+		Logger::Info(SECTION_NAME, L"setGraphicsQuality: %d -> %d", quality, Settings::Local->graphics_quality);
 		return reinterpret_cast<decltype(ApplyGraphicsQuality_hook)*>(ApplyGraphicsQuality_orig)(thisObj,
 			Settings::Local->graphics_quality == -1 ? quality : Settings::Local->graphics_quality,
 			true);

@@ -12,6 +12,8 @@
 using namespace std;
 namespace GallopDialog 
 {
-	void ShowTextDialog(wstring title, wstring text);
+	Il2CppObject* ShowTextDialog(wstring title, wstring text, bool canClose = true);
+	void SetDialogMessage(Il2CppObject* targetDialogObj, wstring text);
+	void CloseDialog(Il2CppObject* targetDialogObj);
 	void ShowToast(wstring text);
 }

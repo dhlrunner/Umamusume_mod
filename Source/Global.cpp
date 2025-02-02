@@ -3,7 +3,7 @@
 namespace Global
 {
 	//글로벌 변수값 초기화
-	bool showFinishOrderFlash = false;
+	bool showFinishOrderFlash = true;
 	int liveTimeLineFPS = 0;
 	float liveTimeSec = 0.0f;
 	float liveTotalTimeSec = 0.0f;
@@ -16,4 +16,11 @@ namespace Global
 	bool imgui_settingwnd_open = false;
 
 	bool gameTerminating = false;
+
+	bool isShowingSeekbar = false;
+	//int currSceneID = -1;
+	Il2CppString* currSceneName;
+	bool isKimuraChallenge = false;
+	HWND currenthWnd = NULL;
+	bool Game_HookFinished = false;
 }

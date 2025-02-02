@@ -147,6 +147,9 @@
     <ClCompile Include="Source\deps\imgui\imgui_draw.cpp" />
     <ClCompile Include="Source\deps\imgui\imgui_tables.cpp" />
     <ClCompile Include="Source\deps\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Source\deps\implot\implot.cpp" />
+    <ClCompile Include="Source\deps\implot\implot_demo.cpp" />
+    <ClCompile Include="Source\deps\implot\implot_items.cpp" />
     <ClCompile Include="Source\deps\lz4\lz4.c" />
     <ClCompile Include="Source\deps\lz4\lz4frame.c" />
     <ClCompile Include="Source\deps\lz4\lz4hc.c" />
@@ -165,6 +168,7 @@
     <ClCompile Include="Source\hooks\Cute\Http.WWWRequest.cpp" />
     <ClCompile Include="Source\hooks\Gallop\CutIn.cpp" />
     <ClCompile Include="Source\hooks\Gallop\CutInModelController.cpp" />
+    <ClCompile Include="Source\hooks\Gallop\CySpringUpdater.cpp" />
     <ClCompile Include="Source\hooks\Gallop\Gallop.cpp" />
     <ClCompile Include="Source\hooks\Gallop\GallopUtil.cpp" />
     <ClCompile Include="Source\hooks\Gallop\GameSystem.cpp" />
@@ -217,6 +221,8 @@
     <ClInclude Include="Source\deps\imgui\imstb_rectpack.h" />
     <ClInclude Include="Source\deps\imgui\imstb_textedit.h" />
     <ClInclude Include="Source\deps\imgui\imstb_truetype.h" />
+    <ClInclude Include="Source\deps\implot\implot.h" />
+    <ClInclude Include="Source\deps\implot\implot_internal.h" />
     <ClInclude Include="Source\deps\lz4\lz4.h" />
     <ClInclude Include="Source\deps\lz4\lz4frame.h" />
     <ClInclude Include="Source\deps\lz4\lz4frame_static.h" />
@@ -236,6 +242,7 @@
     <ClInclude Include="Source\hooks\Gallop\CharacterBuildInfo.h" />
     <ClInclude Include="Source\hooks\Gallop\CutIn.h" />
     <ClInclude Include="Source\hooks\Gallop\CutInModelController.h" />
+    <ClInclude Include="Source\hooks\Gallop\CySpringUpdater.h" />
     <ClInclude Include="Source\hooks\Gallop\Gallop.h" />
     <ClInclude Include="Source\hooks\Gallop\GallopStructs.h" />
     <ClInclude Include="Source\hooks\Gallop\GallopUtil.h" />
@@ -290,12 +297,12 @@
     <ClInclude Include="Source\Settings.h" />
     <ClInclude Include="Source\tools\http\httplib.h" />
     <ClInclude Include="Source\tools\http\url.hpp" />
-    <ClInclude Include="Source\tools\imgui\ImguiWindows.hpp" />
+    <ClInclude Include="Source\tools\imgui\ImguiWindows.h" />
     <ClInclude Include="Source\tools\kiero\kiero.h" />
     <ClInclude Include="Source\tools\Logger.hpp" />
     <ClInclude Include="Source\tools\PEDump\PEDump.h" />
     <ClInclude Include="Source\stdinclude.h" />
-    <ClInclude Include="Source\tools\PEDump\PEDump.hpp" />
+    <ClInclude Include="Source\tools\PEDump\PEDump.h" />
     <ClInclude Include="Source\tools\stb_image.h" />
     <ClInclude Include="Source\tools\string.hpp" />
     <ClInclude Include="Source\Utils.h" />

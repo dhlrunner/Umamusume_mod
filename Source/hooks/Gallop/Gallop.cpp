@@ -26,6 +26,6 @@ namespace Gallop
 		CameraController::Init();
 		SingleModeStartResultCharaViewer::Init();
 		GameSystem::Init();
-
+		Gallop::Model::Component::CySpringUpdater::Init();
 	}
 }

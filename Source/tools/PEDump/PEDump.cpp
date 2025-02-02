@@ -1,5 +1,5 @@
-#include "PEDump.hpp"
-#include <vector>
+#include "PEDump.h"
+
 
 //void log_info(const char* info, ...);
 
@@ -30,7 +30,7 @@ void pedump(HMODULE mod, const std::string& name)
 	MODULEINFO mi{ 0 };
 	DWORD ri;
 
-	HANDLE file = CreateFileA(name.c_str(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE file = CreateFileA(name.c_str(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (file != INVALID_HANDLE_VALUE) {
 		if (!GetModuleInformation(GetCurrentProcess(), mod, &mi, sizeof(mi)))
 			return;

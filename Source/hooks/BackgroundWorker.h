@@ -1,6 +1,7 @@
 #pragma once
 #include "..\..\tools\Logger.hpp"
 #include "Unity\il2cpp\il2cpp_symbols.hpp"
+#include "Unity\il2cpp\il2cpp_dump.h"
 #include "Unity\UnityEngine.InputLegacyModule.h"
 #include "Unity\UnityEngine.CoreModule.h"
 #include "Unity\UnityStructs.h"
@@ -9,6 +10,7 @@
 #include "Gallop/GallopStructs.h"
 #include "Gallop/GallopUtil.h"
 #include "GallopDialogUtil.h"
+#include "../tools/PEDump/PEDump.h"
 
 #include <thread>
 #include <string>

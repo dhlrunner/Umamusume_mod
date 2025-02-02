@@ -1,6 +1,6 @@
 // Description: Windows API hooks.
 #include "Windows.hpp"
-#include "../Plugins/libNative.h"
+
 
 using namespace std;
 
@@ -9,11 +9,15 @@ void* LoadLibraryW_orig = nullptr;
 HMODULE __stdcall LoadLibraryW__hook(const wchar_t* path) {
 	
 	if (path == L"cri_ware_unity.dll"s) {
-		/*auto h = GetModuleHandle(L"GameAssembly.dll");
-		Logger::Debug(L"HOOK", L"GameAssembly handle=%p", h);
-		pedump(h, "umamusume.exe.local\\GameAssembly.dumped.dll");*/
+		//auto h = GetModuleHandle(L"GameAssembly.dll");
+		//Logger::Debug(L"HOOK", L"GameAssembly handle=%p", h);
+		//pedump(h, "umamusume.exe.local\\GameAssembly.dumped.dll");
 		static bool loaded = false;
 		if (!loaded) {
+			/*auto h = GetModuleHandle(L"GameAssembly.dll");
+			Logger::Debug(L"HOOK", L"Dumping GameAssembly handle=%p", h);
+			pedump(h, "umamusume.exe.local\\GameAssembly.dumped.dll");*/
+			//while (true) {}
 			InitHooks_AfterIl2cppInit();
 			loaded = true;
 
@@ -25,6 +29,7 @@ HMODULE __stdcall LoadLibraryW__hook(const wchar_t* path) {
 		Logger::Debug(L"HOOK", L"GameAssembly handle=%p", module);
 		il2cpp_symbols::init(module);
 		il2cpphook_init(GetProcAddress(module, il2cpp_symbols::GetObsfucatedFnName("il2cpp_init")));
+		Global::currenthWnd = GetActiveWindow();
 	}
 	return reinterpret_cast<decltype(LoadLibraryW)*>(LoadLibraryW_orig)(path);
 }

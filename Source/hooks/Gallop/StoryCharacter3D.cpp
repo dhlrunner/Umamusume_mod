@@ -86,10 +86,10 @@ namespace Gallop::StoryCharacter3D
 					printf("!story3d random set %d %d %d %d\n", charaId, clothId, mobId, headId);
 				}
 				else {
-					charaId = sett->story3dCharID;
-					clothId = sett->story3dClothID;
-					mobId = sett->story3dMobid;
-					headId = sett->story3dHeadID;
+					charaId = Settings::Local->story3dCharID;
+					clothId = Settings::Local->story3dClothID;
+					mobId = Settings::Local->story3dMobid;
+					headId = Settings::Local->story3dHeadID;
 					printf("story3d set %d %d %d %d\n", charaId, clothId, mobId, headId);
 				}*/
 

@@ -22,6 +22,7 @@
 #include "CameraController.h"
 #include "SingleModeStartResultCharaViewer.h"
 #include "GameSystem.h"
+#include "CySpringUpdater.h"
 
 #define SECTION_NAME L"GALLOPHOOK_MAIN"
 

@@ -202,6 +202,18 @@
     <ClCompile Include="Source\hooks\Unity\UnityEngine.AssetBundleModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\deps\implot\implot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\deps\implot\implot_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\deps\implot\implot_items.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\CySpringUpdater.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\stdinclude.h">
@@ -224,7 +236,7 @@
     <ClInclude Include="Source\deps\imgui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="Source\hooks\Unity\UnityPlayer.hpp" />
     <ClInclude Include="Source\hooks\Windows\Windows.hpp" />
-    <ClInclude Include="Source\tools\imgui\ImguiWindows.hpp" />
+    <ClInclude Include="Source\tools\imgui\ImguiWindows.h" />
     <ClInclude Include="Source\tools\kiero\kiero.h" />
     <ClInclude Include="Source\tools\Logger.hpp" />
     <ClInclude Include="Source\tools\stb_image.h" />
@@ -240,7 +252,7 @@
     <ClInclude Include="Source\deps\lz4\lz4hc.h" />
     <ClInclude Include="Source\deps\lz4\lz4frame_static.h" />
     <ClInclude Include="Source\deps\lz4\xxhash.h" />
-    <ClInclude Include="Source\tools\PEDump\PEDump.hpp" />
+    <ClInclude Include="Source\tools\PEDump\PEDump.h" />
     <ClInclude Include="Source\hooks\Unity\il2cpp\il2cpp-api-functions.h" />
     <ClInclude Include="Source\hooks\Unity\il2cpp\il2cpp-api-functions.hpp" />
     <ClInclude Include="Source\hooks\Unity\il2cpp\il2cpp-api-types.h" />
@@ -301,6 +313,9 @@
     <ClInclude Include="Source\hooks\Cyan\Cyan.h" />
     <ClInclude Include="Source\hooks\Cyan\CyanStructs.h" />
     <ClInclude Include="Source\hooks\Unity\UnityEngine.AssetBundleModule.h" />
+    <ClInclude Include="Source\deps\implot\implot.h" />
+    <ClInclude Include="Source\deps\implot\implot_internal.h" />
+    <ClInclude Include="Source\hooks\Gallop\CySpringUpdater.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

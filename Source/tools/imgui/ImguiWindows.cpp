@@ -1,15 +1,42 @@
-﻿#include "ImguiWindows.hpp"
+﻿#include "ImguiWindows.h"
 
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+using namespace UnityEngine::Application;
 namespace ImGuiWindows {
 	typedef HRESULT(__stdcall* Present) (IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags);
 	typedef HRESULT(__stdcall* ResizeBuffers)(IDXGISwapChain* pSwapChain, UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags);
 
-	bool HookEnd = false;
+	struct ScrollingBuffer {
+		int MaxSize;
+		int Offset;
+		ImVector<ImVec2> Data;
+		ScrollingBuffer(int max_size = 2000) {
+			MaxSize = max_size;
+			Offset = 0;
+			Data.reserve(MaxSize);
+		}
+		void AddPoint(float x, float y) {
+			if (Data.size() < MaxSize)
+				Data.push_back(ImVec2(x, y));
+			else {
+				Data[Offset] = ImVec2(x, y);
+				Offset = (Offset + 1) % MaxSize;
+			}
+		}
+		void Erase() {
+			if (Data.size() > 0) {
+				Data.shrink(0);
+				Offset = 0;
+			}
+		}
+	};
+
 	bool imguiShow = false;
 	bool imguiSettingWndOpened = false;
+
+	static ImVector<ImRect> s_GroupPanelLabelStack;
 
 	Present oPresent;
 	ResizeBuffers oResizeBuffers;
@@ -990,6 +1017,9 @@ namespace ImGuiWindows {
 		0xCC, 0x45, 0x58, 0xF2, 0x4E, 0xA3, 0x6B, 0xB5, 0xCC, 0x5A, 0xB3, 0x8C, 0x28, 0x19, 0xFF, 0xD9
 	};
 
+	const int MAX_FPS_VALUES = 100;               // 최근 100개의 FPS 값을 저장
+	static ScrollingBuffer fpsValues;                  // FPS 값들을 저장할 큐
+
 	int UILoop();
 	void InitImGui();
 
@@ -1032,12 +1062,13 @@ namespace ImGuiWindows {
 				InitImGui();
 				Logger::Info(L"IMGUI", L"pSwapChain=%p 3D11DeviceAddr=%p", g_pSwapChain, pDevice);
 				init = true;
+				
 			}
 
 			else
 				return oPresent(pSwapChain, SyncInterval, Flags);
 		}
-		if (HookEnd)
+		if (Global::Game_HookFinished)
 			UILoop();
 
 		return oPresent(pSwapChain, SyncInterval, Flags);
@@ -1185,7 +1216,7 @@ namespace ImGuiWindows {
 		ImGui::CreateContext();
 		Logger::Info(L"IMGUI", L"CreateContext() End");
 
-		//ImPlot::CreateContext();
+		ImPlot::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
 		//io.MouseDrawCursor = true;
@@ -1199,16 +1230,167 @@ namespace ImGuiWindows {
 		IM_ASSERT(ret);
 
 		ImGui::MergeIconsWithLatestFont(16.f, false);
+		//UILoop();
 		//imguiwindow();
+	}
+
+	void BeginGroupPanel(const char* name, const ImVec2& size = ImVec2(0.0f, 0.0f));
+	void BeginGroupPanel(const char* name, const ImVec2& size)
+	{
+		ImGui::BeginGroup();
+
+		auto cursorPos = ImGui::GetCursorScreenPos();
+		auto itemSpacing = ImGui::GetStyle().ItemSpacing;
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+
+		auto frameHeight = ImGui::GetFrameHeight();
+		ImGui::BeginGroup();
+
+		ImVec2 effectiveSize = size;
+		//if (size.x < 0.0f)
+		//	effectiveSize.x = ImGui::GetContentRegionAvailWidth();
+		//else
+		effectiveSize.x = size.x;
+		ImGui::Dummy(ImVec2(effectiveSize.x, 0.0f));
+
+		ImGui::Dummy(ImVec2(frameHeight * 0.5f, 0.0f));
+		ImGui::SameLine(0.0f, 0.0f);
+		ImGui::BeginGroup();
+		ImGui::Dummy(ImVec2(frameHeight * 0.5f, 0.0f));
+		ImGui::SameLine(0.0f, 0.0f);
+		ImGui::TextUnformatted(name);
+		auto labelMin = ImGui::GetItemRectMin();
+		auto labelMax = ImGui::GetItemRectMax();
+		ImGui::SameLine(0.0f, 0.0f);
+		ImGui::Dummy(ImVec2(0.0, frameHeight + itemSpacing.y));
+		ImGui::BeginGroup();
+
+		//ImGui::GetWindowDrawList()->AddRect(labelMin, labelMax, IM_COL32(255, 0, 255, 255));
+
+		ImGui::PopStyleVar(2);
+
+#if IMGUI_VERSION_NUM >= 17301
+		ImGui::GetCurrentWindow()->ContentRegionRect.Max.x -= frameHeight * 0.5f;
+		ImGui::GetCurrentWindow()->WorkRect.Max.x -= frameHeight * 0.5f;
+		ImGui::GetCurrentWindow()->InnerRect.Max.x -= frameHeight * 0.5f;
+#else
+		ImGui::GetCurrentWindow()->ContentsRegionRect.Max.x -= frameHeight * 0.5f;
+#endif
+		ImGui::GetCurrentWindow()->Size.x -= frameHeight;
+
+		auto itemWidth = ImGui::CalcItemWidth();
+		ImGui::PushItemWidth(ImMax(0.0f, itemWidth - frameHeight));
+
+		s_GroupPanelLabelStack.push_back(ImRect(labelMin, labelMax));
+	}
+
+	void EndGroupPanel()
+	{
+		ImGui::PopItemWidth();
+
+		auto itemSpacing = ImGui::GetStyle().ItemSpacing;
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+
+		auto frameHeight = ImGui::GetFrameHeight();
+
+		ImGui::EndGroup();
+
+		//ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(0, 255, 0, 64), 4.0f);
+
+		ImGui::EndGroup();
+
+		ImGui::SameLine(0.0f, 0.0f);
+		ImGui::Dummy(ImVec2(frameHeight * 0.5f, 0.0f));
+		ImGui::Dummy(ImVec2(0.0, frameHeight - frameHeight * 0.5f - itemSpacing.y));
+
+		ImGui::EndGroup();
+
+		auto itemMin = ImGui::GetItemRectMin();
+		auto itemMax = ImGui::GetItemRectMax();
+		//ImGui::GetWindowDrawList()->AddRectFilled(itemMin, itemMax, IM_COL32(255, 0, 0, 64), 4.0f);
+
+		auto labelRect = s_GroupPanelLabelStack.back();
+		s_GroupPanelLabelStack.pop_back();
+
+		ImVec2 halfFrame = ImVec2(frameHeight * 0.25f, frameHeight) * 0.5f;
+		ImRect frameRect = ImRect(itemMin + halfFrame, itemMax - ImVec2(halfFrame.x, 0.0f));
+		labelRect.Min.x -= itemSpacing.x;
+		labelRect.Max.x += itemSpacing.x;
+		for (int i = 0; i < 4; ++i)
+		{
+			switch (i)
+			{
+				// left half-plane
+			case 0: ImGui::PushClipRect(ImVec2(-FLT_MAX, -FLT_MAX), ImVec2(labelRect.Min.x, FLT_MAX), true); break;
+				// right half-plane
+			case 1: ImGui::PushClipRect(ImVec2(labelRect.Max.x, -FLT_MAX), ImVec2(FLT_MAX, FLT_MAX), true); break;
+				// top
+			case 2: ImGui::PushClipRect(ImVec2(labelRect.Min.x, -FLT_MAX), ImVec2(labelRect.Max.x, labelRect.Min.y), true); break;
+				// bottom
+			case 3: ImGui::PushClipRect(ImVec2(labelRect.Min.x, labelRect.Max.y), ImVec2(labelRect.Max.x, FLT_MAX), true); break;
+			}
+
+			ImGui::GetWindowDrawList()->AddRect(
+				frameRect.Min, frameRect.Max,
+				ImColor(ImGui::GetStyleColorVec4(ImGuiCol_Border)),
+				halfFrame.x);
+
+			ImGui::PopClipRect();
+		}
+
+		ImGui::PopStyleVar(2);
+
+#if IMGUI_VERSION_NUM >= 17301
+		ImGui::GetCurrentWindow()->ContentRegionRect.Max.x += frameHeight * 0.5f;
+		ImGui::GetCurrentWindow()->WorkRect.Max.x += frameHeight * 0.5f;
+		ImGui::GetCurrentWindow()->InnerRect.Max.x += frameHeight * 0.5f;
+#else
+		ImGui::GetCurrentWindow()->ContentsRegionRect.Max.x += frameHeight * 0.5f;
+#endif
+		ImGui::GetCurrentWindow()->Size.x += frameHeight;
+
+		ImGui::Dummy(ImVec2(0.0f, 0.0f));
+
+		ImGui::EndGroup();
+	}
+
+	static void HelpMarker(const char* desc)
+	{
+		ImGui::TextDisabled("(?)");
+		if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort))
+		{
+			ImGui::BeginTooltip();
+			ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+			ImGui::TextUnformatted(desc);
+			ImGui::PopTextWrapPos();
+			ImGui::EndTooltip();
+		}
+	}
+
+	static void HelpMarker(void* image, int width, int height, const char* desc)
+	{
+		ImGui::TextDisabled("(?)");
+		if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort))
+		{
+			ImGui::BeginTooltip();
+			ImGui::Image(ImTextureID(image), ImVec2(width, height));
+			ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+			ImGui::TextUnformatted(desc);
+			ImGui::PopTextWrapPos();
+			ImGui::EndTooltip();
+		}
 	}
 
 	// Main code loop
 	int UILoop()
 	{
-
+		//printf("uiloop in\n");
 		// Our state
 		bool show_demo_window = false;
-		bool show_tool_window = true;
+		bool show_tool_window = false;
 		bool show_obj_window = false;
 
 		bool enable_edit = false;
@@ -1223,21 +1405,7 @@ namespace ImGuiWindows {
 		bool done = false;
 		//while (!done)
 		{
-			//printf("imgui_loop in\n");
-			// Poll and handle messages (inputs, window resize, etc.)
-			// See the WndProc() function below for our to dispatch events to the Win32 backend.
-			//MSG msg;
-			/*while (::PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
-			{
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
-				if (msg.message == WM_QUIT)
-					done = true;
-			}
-			if (done)
-				break;*/
-
-				// Start the Dear ImGui frame
+			
 			ImGui_ImplDX11_NewFrame();
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
@@ -1249,39 +1417,31 @@ namespace ImGuiWindows {
 
 
 
-			/*ImGui::Begin("Hello World!", (bool*)0, ImGuiWindowFlags_NoTitleBar);
-			ImGui::SetWindowSize({ 0,0 });
-			ImGui::SetWindowPos({99999,99999});
-			ImGui::End();*/
-
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.f);
 			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(43.f / 255.f, 43.f / 255.f, 43.f / 255.f, 100.f / 255.f));
 			ImGui::RenderNotifications();
 			ImGui::PopStyleVar(1); // Don't forget to Pop()
 			ImGui::PopStyleColor(1);
 
-			/*
-			if (toastImGui) {
-				ImGui::InsertNotification({ ImGuiToastType_Success, 3000, toastMessage });
-				toastImGui = false;
-			}
+			
+			
 
 
-			bool isCamStopped = sett->stopLiveCam;
-
-			if (currSceneID == 4) {
+			bool isCamStopped = Settings::Local->stopLiveCam;
+			//wprintf();
+			if (wcsncmp(Global::currSceneName->chars, L"Live", Global::currSceneName->length) == 0) {
 				int width = 0, height = 0;
 				float currentFps = ImGui::GetIO().Framerate;
 				static float t = 0;
 				t += ImGui::GetIO().DeltaTime;
 				RECT rect;
-				if (GetWindowRect(currenthWnd, &rect))
+				if (GetWindowRect(Global::currenthWnd, &rect))
 				{
 					width = rect.right - rect.left;
 					height = rect.bottom - rect.top;
 				}
 
-				if (g_sett->isShowLivePerfInfo) {
+				if (Settings::Global->isShowLivePerfInfo) {
 					ImGui::Begin("Status Bar", NULL,
 						ImGuiWindowFlags_NoTitleBar |
 						ImGuiWindowFlags_NoResize |
@@ -1303,14 +1463,15 @@ namespace ImGuiWindows {
 					ImGui::SetWindowSize(ImVec2(static_cast<float>(width), 0));
 
 
-					ImGui::Text("%02d:%02d / %02d:%02d | Current: %.3f sec |", static_cast<int>(liveTimeSec) / 60, static_cast<int>(liveTimeSec) % 60,
-						static_cast<int>(liveTotalTimeSec) / 60, static_cast<int>(liveTotalTimeSec) % 60, liveTimeSec);
+					ImGui::Text("%02d:%02d / %02d:%02d | Current: %.3f sec |", static_cast<int>(Global::liveTimeSec) / 60, static_cast<int>(Global::liveTimeSec) % 60,
+						static_cast<int>(Global::liveTotalTimeSec) / 60, static_cast<int>(Global::liveTotalTimeSec) % 60, Global::liveTimeSec);
 					ImGui::SameLine();
 
 					//ImGui::SameLine(width - 150); // Adjust this value accordingly
 					ImGui::Text("출력: %s (%d hz) | 게임: %dx%d %.1f fps | 제한: %d fps | 카메라 %s | 타임라인 %s",
-						GPUName,
-						getCurrentDisplayHz(), width, height, currentFps, g_sett->maxFps, sett->stopLiveCam ? "수동" : "자동", sett->isLiveTimeManual ? "수동" : "자동");
+						"",//GPUName,
+						0,//getCurrentDisplayHz(),
+						width, height, currentFps, Settings::Global->maxFps, Settings::Local->stopLiveCam ? "수동" : "자동", Settings::Local->isLiveTimeManual ? "수동" : "자동");
 
 					ImGui::End();
 				}
@@ -1319,7 +1480,7 @@ namespace ImGuiWindows {
 
 				//Fps graph
 
-				if (g_sett->isShowLiveFPSGraph) {
+				if (Settings::Global->isShowLiveFPSGraph) {
 					ImGui::SetNextWindowPos(ImVec2(width - 600, 0), ImGuiCond_Always); // 오른쪽 상단에 위치
 					ImGui::SetNextWindowSize(ImVec2(600, 300), ImGuiCond_Always);      // 윈도우 크기 설정
 
@@ -1361,11 +1522,11 @@ namespace ImGuiWindows {
 
 					if (isHovered) {
 						ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1);
-						isShowingSeekbar = true;
+						Global::isShowingSeekbar = true;
 					}
 					else {
 						ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.0001);
-						isShowingSeekbar = false;
+						Global::isShowingSeekbar = false;
 					}
 
 
@@ -1381,31 +1542,31 @@ namespace ImGuiWindows {
 
 
 						// Seek bar 그리기
-						ImGui::Text("%02d:%02d", static_cast<int>(liveTimeSec) / 60, static_cast<int>(liveTimeSec) % 60);
+						ImGui::Text("%02d:%02d", static_cast<int>(Global::liveTimeSec) / 60, static_cast<int>(Global::liveTimeSec) % 60);
 						ImGui::SameLine();
 						ImGui::PushItemWidth(-60);
-						if (ImGui::SliderFloat("##seekbar", &liveTimeSec, 0.0f, liveTotalTimeSec, "%.5f"))
+						if (ImGui::SliderFloat("##seekbar", &Global::liveTimeSec, 0.0f, Global::liveTotalTimeSec, "%.5f"))
 						{
-							sett->isLiveTimeManual = true;
+							Settings::Local->isLiveTimeManual = true;
 						}
 						//ImGui::PopItemWidth();
 						ImGui::SameLine();
-						ImGui::Text("%02d:%02d", static_cast<int>(liveTotalTimeSec) / 60, static_cast<int>(liveTotalTimeSec) % 60);
+						ImGui::Text("%02d:%02d", static_cast<int>(Global::liveTotalTimeSec) / 60, static_cast<int>(Global::liveTotalTimeSec) % 60);
 
-						if (ImGui::Button(sett->isLiveTimeManual ? "▶" : "||", ImVec2(40, 40))) {
-							sett->isLiveTimeManual = !sett->isLiveTimeManual;
+						if (ImGui::Button(Settings::Local->isLiveTimeManual ? "▶" : "||", ImVec2(40, 40))) {
+							Settings::Local->isLiveTimeManual = !Settings::Local->isLiveTimeManual;
 						}
 						ImGui::SameLine();
 						if (ImGui::Button("|◀"))
 						{
-							liveTimeSec = 0.0f;
+							Global::liveTimeSec = 0.0f;
 						}
 						ImGui::SameLine();
 						ImGui::Button("■");
 						ImGui::SameLine();
 						if (ImGui::Button("▶|"))
 						{
-							liveTimeSec = liveTotalTimeSec;
+							Global::liveTimeSec = Global::liveTotalTimeSec;
 						}
 
 
@@ -1426,7 +1587,7 @@ namespace ImGuiWindows {
 			}
 			else
 			{
-				isShowingSeekbar = false;
+				Global::isShowingSeekbar = false;
 			}
 
 
@@ -1435,84 +1596,84 @@ namespace ImGuiWindows {
 				ImGui::ShowDemoWindow(&show_demo_window);
 
 			// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-			if (imgui_settingwnd_open)
+			if (Global::imgui_settingwnd_open)
 			{
 				static float f = 0.0f;
 				static int counter = 0;
 
 
-				ImGui::Begin("설정 메뉴 (토글 키: F12)", &imgui_settingwnd_open);
+				ImGui::Begin("설정 메뉴 (토글 키: F12)", &Global::imgui_settingwnd_open);
 
 
 
 				//ImGui::SetNextWindowPos();
-				ImGui::Text("Host: %s", g_sett->customHost);
+				ImGui::Text("Host: %s", Settings::Global->customHost);
 
 				if (ImGui::CollapsingHeader("게임 시스템", ImGuiTreeNodeFlags_DefaultOpen)) {
 
 					BeginGroupPanel("그래픽");
-					if (ImGui::Checkbox("수직 동기", &g_sett->enableVSync)) {
-						if (g_sett->enableVSync) {
-							sett->vsync_count = 1;
+					if (ImGui::Checkbox("수직 동기", &Settings::Global->enableVSync)) {
+						if (Settings::Global->enableVSync) {
+							Settings::Local->vsync_count = 1;
 						}
 						else {
-							sett->vsync_count = 0;
+							Settings::Local->vsync_count = 0;
 						}
 					} ImGui::SameLine(); HelpMarker("수직 동기화를 적용합니다.");
-					ImGui::Checkbox("자동 fps 설정", &g_sett->autoFpsSet); ImGui::SameLine(); HelpMarker("모니터 Hz 수에 맞춰서 fps를 자동 설정합니다.");
-					ImGui::SliderInt("FPS 제한", &g_sett->maxFps, 0, 240); ImGui::SameLine(); HelpMarker("제한할 fps를 설정합니다. \"자동 fps 설정\" 이 비활성화 된 경우에만 작동합니다.\n(0인 경우 제한없음)");
+					ImGui::Checkbox("자동 fps 설정", &Settings::Global->autoFpsSet); ImGui::SameLine(); HelpMarker("모니터 Hz 수에 맞춰서 fps를 자동 설정합니다.");
+					ImGui::SliderInt("FPS 제한", &Settings::Global->maxFps, 0, 240); ImGui::SameLine(); HelpMarker("제한할 fps를 설정합니다. \"자동 fps 설정\" 이 비활성화 된 경우에만 작동합니다.\n(0인 경우 제한없음)");
 					if (ImGui::Button("적용")) {
-						set_fps_hook(g_sett->maxFps);
+						UnityEngine::Application::set_targetFrameRate_hook(Settings::Global->maxFps);
 					} ImGui::SameLine(); HelpMarker("fps 제한을 적용합니다.");
 
-					ImGui::Checkbox("강제 가로모드", &g_sett->forceLandscape); ImGui::SameLine(); HelpMarker("게임을 가로 모드로 고정합니다.\n변경 내용은 게임 리셋 시 적용됩니다.");
-					ImGui::Checkbox("자동 전체화면", &g_sett->autoFullscreen); ImGui::SameLine(); HelpMarker("가로모드 시 자동으로 전체화면이 됩니다.");
-					if (ImGui::Checkbox("고품질 그래픽", &g_sett->highQuality)) {
-						if (g_sett->highQuality) {
-							sett->graphics_quality = 2;
-							sett->antialiasing = 8;
+					ImGui::Checkbox("강제 가로모드", &Settings::Global->forceLandscape); ImGui::SameLine(); HelpMarker("게임을 가로 모드로 고정합니다.\n변경 내용은 게임 리셋 시 적용됩니다.");
+					ImGui::Checkbox("자동 전체화면", &Settings::Global->autoFullscreen); ImGui::SameLine(); HelpMarker("가로모드 시 자동으로 전체화면이 됩니다.");
+					if (ImGui::Checkbox("고품질 그래픽", &Settings::Global->highQuality)) {
+						if (Settings::Global->highQuality) {
+							Settings::Local->graphics_quality = 2;
+							Settings::Local->antialiasing = 8;
 							int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 							int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 						}
 						else {
-							sett->graphics_quality = -1;
-							sett->antialiasing = -1;
+							Settings::Local->graphics_quality = -1;
+							Settings::Local->antialiasing = -1;
 						}
 					} ImGui::SameLine(); HelpMarker("안티 에일리어싱, MSAA 허용 등 전반적인 3D 그래픽 품질을 높입니다.\n변경 내용은 게임 리셋 시 적용됩니다.");
-					ImGui::SliderFloat("UI 배율", &g_sett->uiScale, 0.1, 10.0, "%.1f"); ImGui::SameLine(); HelpMarker("GUI의 배율을 설정합니다.\n변경 내용은 게임 리셋 시 적용됩니다.");
-					ImGui::SliderFloat("3D 해상도 배율", &g_sett->virtualResolutionMultiple, 0.1, 10.0, "%.1f"); ImGui::SameLine(); HelpMarker("3D 렌더링 해상도의 배율을 설정합니다.\n1080P 해상도에서 앨리어싱 문제를 크게 줄일 수 있습니다.\n일부 2D 이미지의 배경이 너무 작아질 수 있습니다.\n권장 값: 4k 미만: 2.0; 4K 이상: 1.5. 기본값:1.0.");
-					if (ImGui::Button("Test"))
-						set_antialiasing_hook(8);
+					ImGui::SliderFloat("UI 배율", &Settings::Global->uiScale, 0.1, 10.0, "%.1f"); ImGui::SameLine(); HelpMarker("GUI의 배율을 설정합니다.\n변경 내용은 게임 리셋 시 적용됩니다.");
+					ImGui::SliderFloat("3D 해상도 배율", &Settings::Global->virtualResolutionMultiple, 0.1, 10.0, "%.1f"); ImGui::SameLine(); HelpMarker("3D 렌더링 해상도의 배율을 설정합니다.\n1080P 해상도에서 앨리어싱 문제를 크게 줄일 수 있습니다.\n일부 2D 이미지의 배경이 너무 작아질 수 있습니다.\n권장 값: 4k 미만: 2.0; 4K 이상: 1.5. 기본값:1.0.");
+					//if (ImGui::Button("Test"))
+					//	set_antialiasing_hook(8);
 
 					EndGroupPanel();
 
 					BeginGroupPanel("배속");
-					float timescale = get_TimeScale();
+					float timescale = UnityEngine::CoreModule::get_TimeScale();
 					if (ImGui::SliderFloat("게임 배속", &timescale, 0.0, 10.0, "%.4f")) {
-						set_TimeScale(timescale);
+						UnityEngine::CoreModule::set_TimeScale(timescale);
 					}ImGui::SameLine(); HelpMarker("게임의 배속을 설정합니다.\n단축키: LCtrl+PGUP, LCtrl+PGDN");
 					if (ImGui::Button("정지"))
-						set_TimeScale(0.0);
+						UnityEngine::CoreModule::set_TimeScale(0.0);
 					ImGui::SameLine();
 					HelpMarker("배속을 0.0으로 설정합니다.\n단축키: LCtrl+P");
 					ImGui::SameLine();
 					if (ImGui::Button("초기화"))
-						set_TimeScale(1.0);
+						UnityEngine::CoreModule::set_TimeScale(1.0);
 					ImGui::SameLine(); HelpMarker("배속을 기본값인 1.0으로 설정합니다.\n단축키: LCtrl+END");
 					EndGroupPanel();
 
 
 					BeginGroupPanel("시스템");
-					ImGui::Checkbox("강제 리셋 허용", &g_sett->gotoTitleOnError); ImGui::SameLine(); HelpMarker("게임 내에서 강제적으로 타이틀 화면으로 돌아가는 동작을 허용합니다.");
-					if (ImGui::Checkbox("클릭 이펙트 켜기", &g_sett->isTapEffectEnabled))
+					ImGui::Checkbox("강제 리셋 허용", &Settings::Global->gotoTitleOnError); ImGui::SameLine(); HelpMarker("게임 내에서 강제적으로 타이틀 화면으로 돌아가는 동작을 허용합니다.");
+					if (ImGui::Checkbox("클릭 이펙트 켜기", &Settings::Global->isTapEffectEnabled))
 					{
-						if (g_sett->isTapEffectEnabled) {
-							GameObject_SetActive("Gallop.GameSystem/SystemManagerRoot/SystemSingleton/UIManager/SystemCanvas/TapEffectCanvas", true);
+						if (Settings::Global->isTapEffectEnabled) {
+							UnityEngine::CoreModule::GameObject_SetActive("Gallop.GameSystem/SystemManagerRoot/SystemSingleton/UIManager/SystemCanvas/TapEffectCanvas", true);
 
 							printf("tapeffect on\n");
 						}
 						else {
-							GameObject_SetActive("Gallop.GameSystem/SystemManagerRoot/SystemSingleton/UIManager/SystemCanvas/TapEffectCanvas", false);
+							UnityEngine::CoreModule::GameObject_SetActive("Gallop.GameSystem/SystemManagerRoot/SystemSingleton/UIManager/SystemCanvas/TapEffectCanvas", false);
 							printf("tapeffect off\n");
 						}
 
@@ -1523,19 +1684,19 @@ namespace ImGuiWindows {
 
 				}
 				if (ImGui::CollapsingHeader("캐릭터", ImGuiTreeNodeFlags_DefaultOpen)) {
-					ImGui::Checkbox("스토리용 3D 모델 강제 변경 활성화", &sett->changeStoryChar);
+					ImGui::Checkbox("스토리용 3D 모델 강제 변경 활성화", &Settings::Local->changeStoryChar);
 
 				}
 
 				if (ImGui::CollapsingHeader("레이스", ImGuiTreeNodeFlags_DefaultOpen)) {
-					ImGui::SliderFloat("등수 표시기 출력 위치", &g_sett->rankUIShowMeter, 0.0, 3000.0, "%.2f M"); ImGui::SameLine(); HelpMarker("레이스 시작 후 등수 표시기를 출력할 위치를 정합니다.\n(LCtrl+슬라이더 클릭으로 직접 입력 가능)");
-					ImGui::SliderFloat("등수 표시기 숨김 위치", &g_sett->rankUIHideoffset, 0.0, 9999.0, "%.2f"); ImGui::SameLine(); HelpMarker("등수 표시기를 숨길 타이밍을 지정합니다.\n(LCtrl+슬라이더 클릭으로 직접 입력 가능)");
-					ImGui::Checkbox("착순 마크 표시", &showFinishOrderFlash); ImGui::SameLine(); HelpMarker("레이스 결과 화면에서 착순 애니메이션을 표시합니다.");
+					ImGui::SliderFloat("등수 표시기 출력 위치", &Settings::Global->rankUIShowMeter, 0.0, 3000.0, "%.2f M"); ImGui::SameLine(); HelpMarker("레이스 시작 후 등수 표시기를 출력할 위치를 정합니다.\n(LCtrl+슬라이더 클릭으로 직접 입력 가능)");
+					ImGui::SliderFloat("등수 표시기 숨김 위치", &Settings::Global->rankUIHideoffset, 0.0, 9999.0, "%.2f"); ImGui::SameLine(); HelpMarker("등수 표시기를 숨길 타이밍을 지정합니다.\n(LCtrl+슬라이더 클릭으로 직접 입력 가능)");
+					ImGui::Checkbox("착순 마크 표시", &Global::showFinishOrderFlash); ImGui::SameLine(); HelpMarker("레이스 결과 화면에서 착순 애니메이션을 표시합니다.");
 				}
 
 				if (ImGui::CollapsingHeader("라이브", ImGuiTreeNodeFlags_DefaultOpen)) {
-					ImGui::Checkbox("라이브 카메라 멈추기", &sett->stopLiveCam); ImGui::SameLine(); HelpMarker("라이브에서 카메라 워크를 정지합니다.\n단축키: S");
-					ImGui::Checkbox("라이브 제목 창 출력", &g_sett->showLiveTitleWindow); ImGui::SameLine(); HelpMarker("라이브 시작 시 제목 창을 표시합니다.");
+					ImGui::Checkbox("라이브 카메라 멈추기", &Settings::Local->stopLiveCam); ImGui::SameLine(); HelpMarker("라이브에서 카메라 워크를 정지합니다.\n단축키: S");
+					ImGui::Checkbox("라이브 제목 창 출력", &Settings::Global->showLiveTitleWindow); ImGui::SameLine(); HelpMarker("라이브 시작 시 제목 창을 표시합니다.");
 
 					BeginGroupPanel("타임라인");
 
@@ -1544,42 +1705,42 @@ namespace ImGuiWindows {
 
 					//printf("%02d:%02d", minutes, remainingSeconds);
 
-					ImGui::Text("%02d:%02d / %02d:%02d", static_cast<int>(liveTimeSec) / 60, static_cast<int>(liveTimeSec) % 60,
-						static_cast<int>(liveTotalTimeSec) / 60, static_cast<int>(liveTotalTimeSec) % 60);
+					ImGui::Text("%02d:%02d / %02d:%02d", static_cast<int>(Global::liveTimeSec) / 60, static_cast<int>(Global::liveTimeSec) % 60,
+						static_cast<int>(Global::liveTotalTimeSec) / 60, static_cast<int>(Global::liveTotalTimeSec) % 60);
 
-					if (ImGui::SliderFloat("시간 조정", &liveTimeSec, 0.0, liveTotalTimeSec, "%.3f Sec")) {
-						sett->isLiveTimeManual = true;
+					if (ImGui::SliderFloat("시간 조정", &Global::liveTimeSec, 0.0, Global::liveTotalTimeSec, "%.3f Sec")) {
+						Settings::Local->isLiveTimeManual = true;
 					}ImGui::SameLine(); HelpMarker("라이브 타임라인을 설정합니다.\n단축키: Ctrl+LeftArrow, Ctrl+RightArrow");
 
 					ImGui::PushMultiItemsWidths(1, ImGui::CalcItemWidth());
 					ImGui::Indent(5.0f);
 					ImGui::PushID(0);
 					if (ImGui::Button("+")) {
-						sett->isLiveTimeManual = true;
-						liveTimeSec = liveTimeSec + liveTimelineManualScale;
+						Settings::Local->isLiveTimeManual = true;
+						Global::liveTimeSec = Global::liveTimeSec + Global::liveTimelineManualScale;
 					}ImGui::SameLine(0, g.Style.ItemInnerSpacing.x);
-					if (ImGui::InputScalar("##scale", ImGuiDataType_Float, &liveTimelineManualScale, NULL, NULL, "%.3f")) {}; ImGui::SameLine();
+					if (ImGui::InputScalar("##scale", ImGuiDataType_Float, &Global::liveTimelineManualScale, NULL, NULL, "%.3f")) {}; ImGui::SameLine();
 					if (ImGui::Button("-")) {
-						sett->isLiveTimeManual = true;
-						liveTimeSec = liveTimeSec - liveTimelineManualScale;
+						Settings::Local->isLiveTimeManual = true;
+						Global::liveTimeSec = Global::liveTimeSec - Global::liveTimelineManualScale;
 					}ImGui::SameLine();
 					ImGui::PopID();
 					ImGui::PopItemWidth();
-					if (ImGui::Checkbox("수동 조정", &sett->isLiveTimeManual)) {
+					if (ImGui::Checkbox("수동 조정", &Settings::Local->isLiveTimeManual)) {
 						//ImGui::InsertNotification({ ImGuiToastType_Success, 3000, "Hello World! This is a success! %s", "수동 조정이 활성화되었습니다." });
 						//showAlertMessage(5.0, "수동 조정이 활성화되었습니다.");
 					} ImGui::SameLine(); HelpMarker("타임라인 수동 조정을 활성화합니다.");
-					ImGui::SliderInt("타겟 타임라인 갱신 fps 설정", &liveTimeLineFPS, 0, g_sett->maxFps);
+					ImGui::SliderInt("타겟 타임라인 갱신 fps 설정", &Global::liveTimeLineFPS, 0, Settings::Global->maxFps);
 					EndGroupPanel();
 					//ImGui::Checkbox("isCameraShake", &IsCamShake);
 
 				}
 
 				if (ImGui::CollapsingHeader("???", ImGuiTreeNodeFlags_DefaultOpen)) {
-					ImGui::Checkbox("키무라 챌린지", &isKimuraChallenge); ImGui::SameLine(); HelpMarker(texture_kimura, kimura_image_width, kimura_image_height, "\"야떼미로-\"");
-					ImGui::Checkbox("Urara", &g_sett->walkMotionAllUrara); ImGui::SameLine(); HelpMarker("홈화면 캐릭터들의 도보 모션을 전부 우라라 전용 모션으로 설정합니다.");
-					ImGui::Checkbox("◆", &g_sett->homeAllDiamond); ImGui::SameLine(); HelpMarker("Just Diamond.");
-					ImGui::Checkbox("Win.564", &g_sett->winMotion564); ImGui::SameLine(); HelpMarker("1착 모션이 캐릭터에 관계없이 전부 골드쉽 모션으로 바뀝니다.\n어이어이, 헛소리 하지 마! 이번에야말로 고루시짱의 시대잖냐아아앗!");
+					ImGui::Checkbox("키무라 챌린지", &Global::isKimuraChallenge); ImGui::SameLine(); HelpMarker(texture_kimura, kimura_image_width, kimura_image_height, "\"야떼미로-\"");
+					ImGui::Checkbox("Urara", &Settings::Global->walkMotionAllUrara); ImGui::SameLine(); HelpMarker("홈화면 캐릭터들의 도보 모션을 전부 우라라 전용 모션으로 설정합니다.");
+					ImGui::Checkbox("◆", &Settings::Global->homeAllDiamond); ImGui::SameLine(); HelpMarker("Just Diamond.");
+					ImGui::Checkbox("Win.564", &Settings::Global->winMotion564); ImGui::SameLine(); HelpMarker("1착 모션이 캐릭터에 관계없이 전부 골드쉽 모션으로 바뀝니다.\n어이어이, 헛소리 하지 마! 이번에야말로 고루시짱의 시대잖냐아아앗!");
 					//int id = 1001;
 					//if (ImGui::InputInt("GetCharaNameByCharaId", &id, 1, 9999)) {
 					//	//_setmode(_fileno(stdout), _O_U16TEXT); // <=== Windows madness
@@ -1596,17 +1757,17 @@ namespace ImGuiWindows {
 						ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail().x, 360), false, window_flags);
 
 
-						for_each(hooked_addr.begin(), hooked_addr.end(), [&](hookStr& item) {
-							ImGui::Text("[%s]", item.assemblyName);
-							ImGui::SameLine();
-							ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%s.", item.namespaceName);
-							ImGui::SameLine();
-							ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "%s.", item.className);
-							ImGui::SameLine();
-							ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f), "%s(%d)", item.methodName, item.argsCount);
-							ImGui::SameLine();
-							ImGui::Text(" = 0x%p ", item.addr);
-							});
+						//for_each(hooked_addr.begin(), hooked_addr.end(), [&](hookStr& item) {
+						//	ImGui::Text("[%s]", item.assemblyName);
+						//	ImGui::SameLine();
+						//	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%s.", item.namespaceName);
+						//	ImGui::SameLine();
+						//	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.5f, 1.0f), "%s.", item.className);
+						//	ImGui::SameLine();
+						//	ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f), "%s(%d)", item.methodName, item.argsCount);
+						//	ImGui::SameLine();
+						//	ImGui::Text(" = 0x%p ", item.addr);
+						//	});
 						ImGui::EndChild();
 						ImGui::TreePop();
 					}
@@ -1614,11 +1775,11 @@ namespace ImGuiWindows {
 
 
 
-					if (masterDBconnection != nullptr) {
-						//std::wstring path = masterDBconnection->dbPath->start_char;
-						ImGui::Text("MasterDBConnection ptr: 0x%p", masterDBconnection->Handle);
-						//ImGui::Text("MasterDBPath: %s", path);
-					}
+					//if (masterDBconnection != nullptr) {
+					//	//std::wstring path = masterDBconnection->dbPath->start_char;
+					//	ImGui::Text("MasterDBConnection ptr: 0x%p", masterDBconnection->Handle);
+					//	//ImGui::Text("MasterDBPath: %s", path);
+					//}
 					else {
 						ImGui::Text("MasterDBConnection ptr: nullptr");
 						//ImGui::Text("MasterDBPath: nullptr");
@@ -1636,7 +1797,7 @@ namespace ImGuiWindows {
 					//	//Il2CppString* q_res = query_GetText(dbQuery, 2);
 					//	//wprintf(L"GetText = %s\n", q_res->start_char);
 					//}
-					ImGui::Text("Livecam1 x=% 04.3f, y=% 04.3f, z=% 04.3f", liveCam_pos1.x, liveCam_pos1.y, liveCam_pos1.z);
+					//ImGui::Text("Livecam1 x=% 04.3f, y=% 04.3f, z=% 04.3f", liveCam_pos1.x, liveCam_pos1.y, liveCam_pos1.z);
 
 					//if (liveCam_Lookat != NULL) {
 					//	ImGui::Text("liveCam_Lookat x=% 04.3f, y=% 04.3f, z=% 04.3f", liveCam_Lookat.x, liveCam_Lookat.y, liveCam_Lookat.z);
@@ -1669,10 +1830,10 @@ namespace ImGuiWindows {
 
 				ImGui::Separator();
 
-				ImGui::Checkbox("콘솔 커멘드 입력 활성화", &sett->isCanInputCommands);
+				ImGui::Checkbox("콘솔 커멘드 입력 활성화", &Settings::Local->isCanInputCommands);
 
 				if (ImGui::Button("타이틀로 돌아가기 (게임 리셋)")) {
-					ResetGame();
+					UnityEngine::CoreModule::ResetGame();
 				} ImGui::SameLine(); HelpMarker("단축키: LCtrl+R");
 
 				if (ImGui::Button("게임 종료"))
@@ -1707,31 +1868,7 @@ namespace ImGuiWindows {
 
 			}
 
-			// 3. Show another simple window.
-
-			if (show_obj_window)
-			{
-				ImGui::Begin("Obj Window", &show_obj_window);
-
-				//쉔접疳榴써뭐
-				static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
-
-				for (int i = 0; i < rootObjList.size(); i++)
-				{
-
-					void* currentObj = rootObjList[i];
-
-					//零寧硅땜鮫
-					ImGuiTreeNodeFlags node_flags = base_flags;
-
-					//objRecursion(currentObj, base_flags);
-
-				}
-
-
-				ImGui::End();
-			}
-			// Rendering
+			
 			ImGui::Render();
 			//const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
 			pContext->OMSetRenderTargets(1, &mainRenderTargetView, NULL);
@@ -1742,8 +1879,8 @@ namespace ImGuiWindows {
 		}
 
 
-		*/
-		}
+		
+		
 		return 0;
 	}
 }

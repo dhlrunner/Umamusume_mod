@@ -7,12 +7,7 @@ using namespace Global;
 
 namespace BackgroundWorker
 {
-	void ResetGame() {
-		LoadSceneParameters p = { 0 };
-		p.LoadSceneMode = 0; //Single
-		p.LocalPhysicsMode = 0;
-		LoadScene(il2cpp_string_new(string("_Boot").data()), &p);
-	}
+	
 
 	void keyDownCheckThread() {
 		printf("KeyDownCheckThread IN!!!\n");
@@ -25,6 +20,7 @@ namespace BackgroundWorker
 			bool f10 = GetKeyDown(KeyCode::F10);
 			bool f11 = GetKeyDown(KeyCode::F11);
 			bool f9 = GetKeyDown(KeyCode::F9);
+			bool f8 = GetKeyDown(KeyCode::F8);
 			if (ret) {
 				printf("S is Pressed!!!!\n");
 				while (GetKeyDown(KeyCode::S)) {}
@@ -127,6 +123,13 @@ namespace BackgroundWorker
 				//bool b = ShowWindow(imguiWnd, imguiShow ? SW_HIDE : SW_SHOW);
 				//imguiShow = !imguiShow;
 				imgui_settingwnd_open = !imgui_settingwnd_open;
+				/*auto dialog = GallopDialog::ShowTextDialog(L"Test", L"Close in 3 sec", false);
+				Sleep(1000);
+				GallopDialog::SetDialogMessage(dialog, L"Close in 2 sec");
+				Sleep(1000);
+				GallopDialog::SetDialogMessage(dialog, L"Close in 1 sec");
+				Sleep(1000);
+				GallopDialog::CloseDialog(dialog);*/
 				printf("Show setting screen \n");
 			}
 			if (f10) {
@@ -148,6 +151,18 @@ namespace BackgroundWorker
 				else
 					GallopDialog::ShowToast(L"라이브 타임라인 수동 조작이 비활성화 되었습니다.");
 			}
+			if (f8) {
+				printf("Dump il2cpp start");
+				while (GetKeyDown(KeyCode::F8)) {}
+				auto dialog = GallopDialog::ShowTextDialog(L"Dump il2cpp", L"Please wait...", false);
+				auto h = GetModuleHandle(L"GameAssembly.dll");
+				GallopDialog::SetDialogMessage(dialog, L"Dumping GameAssembly.dll ...");
+				pedump(h, "umamusume.exe.local\\GameAssembly.dumped.dll");
+				il2cpp_dump(dialog);
+				Sleep(1000);
+				GallopDialog::CloseDialog(dialog);
+			}
+
 			/*else if (alt) {
 				printf("LAlt is pressed!!!!!\n");
 				while (alt) {

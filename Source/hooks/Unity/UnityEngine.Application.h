@@ -10,5 +10,6 @@
 namespace UnityEngine::Application
 {
 	Il2CppString* get_persistentDataPath_hook();
+	void set_targetFrameRate_hook(int value);
 	void Init();
 }

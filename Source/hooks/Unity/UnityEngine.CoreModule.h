@@ -19,7 +19,7 @@ namespace UnityEngine::CoreModule
 	extern void (*LoadScene)(Il2CppString*, LoadSceneParameters*);
 	extern void (*set_TimeScale)(float);
 	extern float (*get_TimeScale)();
-
+	void ResetGame();
 	void GameObject_SetActive(const char* path, bool value);
 	void Screen_set_orientation_hook(ScreenOrientation orientation);
 	void Init();

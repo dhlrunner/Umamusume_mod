@@ -30,8 +30,10 @@ void InitHooks_BeforeBoot()
 
 void InitHooks_AfterIl2cppInit()
 {
-	//il2cpp_dump();
+	//init global
+	Global::currSceneName = il2cpp_string_new16(L"");
 
+	//il2cpp_dump();
 	libnative::Init(GetActiveWindow());
 
 	//Unity Init
@@ -45,6 +47,9 @@ void InitHooks_AfterIl2cppInit()
 
 	//Cute Init
 	Cute::Init();
+
+	//Set the flag
+	Global::Game_HookFinished = true;
 
 	//thread start
 	BackgroundWorker::Init();

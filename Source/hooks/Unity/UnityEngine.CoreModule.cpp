@@ -11,6 +11,13 @@ namespace UnityEngine::CoreModule
 	void (*set_TimeScale)(float);
 	float (*get_TimeScale)();
 
+	void ResetGame() {
+		LoadSceneParameters p = { 0 };
+		p.LoadSceneMode = 0; //Single
+		p.LocalPhysicsMode = 0;
+		LoadScene(il2cpp_string_new(string("_Boot").data()), &p);
+	}
+
 	void GameObject_SetActive(const char* path, bool enable) {
 		Il2CppObject* gobj = (Il2CppObject*)GameObject_Find(il2cpp_string_new(string(path).data()));
 		auto gobj_setActive = reinterpret_cast<void (*)
@@ -76,6 +83,15 @@ namespace UnityEngine::CoreModule
 		reinterpret_cast<decltype(Application_Quit_hook)*>(Application_Quit_orig)(code);
 	}
 
+	void* LoadSceneAsyncNameIndexInternal_orig = nullptr;
+	void* LoadSceneAsyncNameIndexInternal_hook(Il2CppString* sceneName, int sceneBuildIndex, LoadSceneParameters* parameters, bool mustCompleteNextFrame) 
+	{
+		//wcscpy_s(Global::currSceneName, sceneName->length, sceneName->chars);
+		Logger::Debug(SECTION_NAME, L"LoadSceneAsyncNameIndexInternal hooked name=%s", Global::currSceneName);
+		Global::currSceneName = sceneName;
+		return reinterpret_cast<decltype(LoadSceneAsyncNameIndexInternal_hook)*>(LoadSceneAsyncNameIndexInternal_orig)(sceneName, sceneBuildIndex, parameters, mustCompleteNextFrame);
+	}
+
 	void Init() 
 	{
 		Logger::Info(SECTION_NAME, L"Init");
@@ -87,7 +103,7 @@ namespace UnityEngine::CoreModule
 				"Screen", "set_orientation", 1));
 		EnableHook(Screen_set_orientation_addr, &Screen_set_orientation_hook, &Screen_set_orientation_orig, L"Screen_set_orientation");
 
-		GameObject_Find = reinterpret_cast<void* (*)(Il2CppString*)>(il2cpp_symbols::get_method_pointer(
+		GameObject_Find = reinterpret_cast<void* (*)(Il2CppString*)>(il2cpp_symbols::get_method_pointer(  
 			"UnityEngine.CoreModule.dll", "UnityEngine",
 			"GameObject", "Find", 1
 		));
@@ -142,6 +158,9 @@ namespace UnityEngine::CoreModule
 
 		auto Application_Quit_addr = il2cpp_resolve_icall("UnityEngine.Application::Quit(System.Int32)");
 		EnableHook(Application_Quit_addr, &Application_Quit_hook, &Application_Quit_orig, L"Application_Quit");
+
+		auto LoadSceneAsyncNameIndexInternal_addr = il2cpp_resolve_icall("UnityEngine.SceneManagement.SceneManagerAPIInternal::LoadSceneAsyncNameIndexInternal_Injected(System.String,System.Int32,UnityEngine.SceneManagement.LoadSceneParameters&,System.bool)");
+		EnableHook(LoadSceneAsyncNameIndexInternal_addr, &LoadSceneAsyncNameIndexInternal_hook, &LoadSceneAsyncNameIndexInternal_orig, L"LoadSceneAsyncNameIndexInternal");
 
 	}
 }
