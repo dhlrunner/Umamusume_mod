@@ -16,7 +16,7 @@ void CreateConsole()
 	auto _ = freopen("CONOUT$", "w", stdout);
 	_ = freopen("CONOUT$", "w", stderr);
 	_ = freopen("CONIN$", "r", stdin);
-
+	
 	SetConsoleTitle(L"Umamusume - Debug Console");
 
 	HANDLE hInput = GetStdHandle(STD_INPUT_HANDLE);
@@ -26,6 +26,7 @@ void CreateConsole()
 
 	// set this to avoid turn japanese texts into question mark
 	SetConsoleOutputCP(CP_UTF8);
+	//_setmode(_fileno(stdout), _O_U16TEXT);
 	std::locale::global(std::locale(""));
 
 }

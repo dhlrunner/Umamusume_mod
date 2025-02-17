@@ -1,4 +1,4 @@
-// Description: Windows API hooks.
+﻿// Description: Windows API hooks.
 #include "Windows.hpp"
 
 
@@ -30,6 +30,8 @@ HMODULE __stdcall LoadLibraryW__hook(const wchar_t* path) {
 		il2cpp_symbols::init(module);
 		il2cpphook_init(GetProcAddress(module, il2cpp_symbols::GetObsfucatedFnName("il2cpp_init")));
 		Global::currenthWnd = GetActiveWindow();
+		Utils::RemoveProtection(module);
+		Utils::RemoveProtection(GetModuleHandle(L"umamusume.exe"));
 	}
 	return reinterpret_cast<decltype(LoadLibraryW)*>(LoadLibraryW_orig)(path);
 }

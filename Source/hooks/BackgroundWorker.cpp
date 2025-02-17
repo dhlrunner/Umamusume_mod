@@ -10,7 +10,7 @@ namespace BackgroundWorker
 	
 
 	void keyDownCheckThread() {
-		printf("KeyDownCheckThread IN!!!\n");
+		Logger::Debug(SECTION_NAME, L"KeyDownCheckThread IN!!!");
 
 		while (true) {
 			bool ret = GetKeyDown(KeyCode::S); //S
@@ -21,6 +21,7 @@ namespace BackgroundWorker
 			bool f11 = GetKeyDown(KeyCode::F11);
 			bool f9 = GetKeyDown(KeyCode::F9);
 			bool f8 = GetKeyDown(KeyCode::F8);
+			bool f7 = GetKeyDown(KeyCode::F7);
 			if (ret) {
 				printf("S is Pressed!!!!\n");
 				while (GetKeyDown(KeyCode::S)) {}
@@ -162,7 +163,38 @@ namespace BackgroundWorker
 				Sleep(1000);
 				GallopDialog::CloseDialog(dialog);
 			}
-
+			if (f7) {
+				while (GetKeyDown(KeyCode::F7)) {}
+				//auto c = il2cpp_symbols::get_class("umamusume.dll", "Gallop", "StaticVariableDefine/Data/SQLiteSaveLoadHelper");
+				////il2cpp_runtime_object_init(c);
+				//printf("SQLiteSaveLoadHelper = %p\n", c);
+				//FieldInfo* keyField = il2cpp_class_get_field_from_name(c->klass, "ENCODE_KEY_ARRAY");
+				//Il2CppArraySize_t<unsigned char>* ENCODE_KEY_ARRAY;
+				//il2cpp_field_static_get_value(keyField, &ENCODE_KEY_ARRAY);
+				////il2cpp_field_static_get_value
+				//printf("byte[] ENCODE_KEY_ARRAY = { ");
+				//for (int i = 0; i < ENCODE_KEY_ARRAY->max_length; i++) {
+				//	printf("%d,", ENCODE_KEY_ARRAY->vector[i]);
+				//}
+				//printf(" };\n");
+				auto get_masterCharaData = reinterpret_cast<Il2CppObject * (*)(Il2CppObject * _this)>(il2cpp_symbols::get_method_pointer("umamusume.dll", "Gallop", "MasterDataManager", "get_masterCharaData", 0));
+				auto masterCharaData = get_masterCharaData(il2cpp::GetSingletonInstance(il2cpp_symbols::get_class("umamusume.dll", "Gallop", "MasterDataManager")));
+				//auto Get = reinterpret_cast<Il2CppObject * (*)(Il2CppObject * _this, int id)>(il2cpp_symbols::get_method_pointer("umamusume.dll", "Gallop", "MasterCharaData", "Get", 1));
+				//Logger::Debug(SECTION_NAME, L"Get ptr=%p", Get);
+				//auto d = Get(masterCharaData, 1001);
+				//auto name = il2cpp_class_get_method_from_name_type<Il2CppString * (*)(Il2CppObject * _this)>(d->klass, "get_Name", 0)->methodPointer(d);
+				Il2CppDictionary<int, Il2CppObject*>* dict = il2cpp_class_get_method_from_name_type<Il2CppDictionary<int, Il2CppObject*> * (*)(Il2CppObject * _this)>(masterCharaData->klass, "get_dictionary", 0)->methodPointer(masterCharaData);
+				for (int i = 0; i < dict->count; i++) {
+					auto name = il2cpp_class_get_method_from_name_type<Il2CppString * (*)(Il2CppObject * _this)>(dict->get_Values()[i]->klass, "get_Name", 0)->methodPointer(dict->get_Values()[i]);
+					int id;
+					il2cpp_field_get_value(dict->get_Values()[i],il2cpp_class_get_field_from_name(dict->get_Values()[i]->klass, "Id"), &id);
+					wprintf(L"MasterCharaData_CharaData test name=%S, id=%d\n", Utils::ConvertWstringToUTF8(name->chars).c_str(), id);
+				}
+				
+				//Il2CppString* name = get_Name(d);
+				//wprintf(L"MasterCharaData_CharaData test name=%S\n", Utils::ConvertWstringToUTF8( name->chars).c_str());
+				//MessageBoxW(0, name->chars, L"", 0);
+			}
 			/*else if (alt) {
 				printf("LAlt is pressed!!!!!\n");
 				while (alt) {
@@ -174,10 +206,21 @@ namespace BackgroundWorker
 			//std::this_thread::sleep_for(std::chrono::milliseconds(5));
 			if (gameTerminating) 
 			{
-				Logger::Info(SECTION_NAME, L"Game Terminating.. Exit loop");
+				Logger::Debug(SECTION_NAME, L"Game Terminating.. Exit loop");
 				break;
 			}
 		}
+	}
+
+	void Update() 
+	{
+		Logger::Debug(SECTION_NAME, L"Update thread in");
+		while (!gameTerminating) {
+
+		}
+
+		Logger::Info(SECTION_NAME, L"Exit update thread");
+
 	}
 
 	void Init()
@@ -185,14 +228,21 @@ namespace BackgroundWorker
 		Logger::Info(SECTION_NAME, L"Init");
 		Logger::Info(SECTION_NAME, L"Starting thread");
 
-		auto t = thread([]() {
+		auto t1 = thread([]() {
 			auto tr = il2cpp_thread_attach(il2cpp_domain_get());
 			keyDownCheckThread();
 			il2cpp_thread_detach(tr);
 		});
 		
-		Logger::Info(SECTION_NAME, L"Thread ID: %d", t.get_id());
-		t.detach();
+		Logger::Info(SECTION_NAME, L"Thread ID: %d", t1.get_id());
+		t1.detach();
 
+		auto t2 = thread([]() {
+			auto tr = il2cpp_thread_attach(il2cpp_domain_get());
+			Update();
+			il2cpp_thread_detach(tr);
+		});
+		Logger::Info(SECTION_NAME, L"Thread ID: %d", t2.get_id());
+		t2.detach();
 	}
 }

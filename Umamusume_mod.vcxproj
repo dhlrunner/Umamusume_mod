@@ -168,6 +168,7 @@
     <ClCompile Include="Source\hooks\Cute\Http.WWWRequest.cpp" />
     <ClCompile Include="Source\hooks\Gallop\CutIn.cpp" />
     <ClCompile Include="Source\hooks\Gallop\CutInModelController.cpp" />
+    <ClCompile Include="Source\hooks\Gallop\CySpringNative.cpp" />
     <ClCompile Include="Source\hooks\Gallop\CySpringUpdater.cpp" />
     <ClCompile Include="Source\hooks\Gallop\Gallop.cpp" />
     <ClCompile Include="Source\hooks\Gallop\GallopUtil.cpp" />
@@ -176,6 +177,8 @@
     <ClCompile Include="Source\hooks\Gallop\Live.Cutt.cpp" />
     <ClCompile Include="Source\hooks\Gallop\LiveTheaterInfo.cpp" />
     <ClCompile Include="Source\hooks\Gallop\Live.Cutt.LiveTimelineControl.cpp" />
+    <ClCompile Include="Source\hooks\Gallop\MasterDataManager.cpp" />
+    <ClCompile Include="Source\hooks\Gallop\MasterDressData.cpp" />
     <ClCompile Include="Source\hooks\Gallop\MasterEventMotionData.cpp" />
     <ClCompile Include="Source\hooks\Gallop\ModelController.cpp" />
     <ClCompile Include="Source\hooks\Gallop\RaceResultCutInHelper.cpp" />
@@ -186,7 +189,10 @@
     <ClCompile Include="Source\hooks\Gallop\SceneManager.cpp" />
     <ClCompile Include="Source\hooks\Gallop\Screen.cpp" />
     <ClCompile Include="Source\hooks\Gallop\SingleModeStartResultCharaViewer.cpp" />
+    <ClCompile Include="Source\hooks\Gallop\StandaloneWindowResize.cpp" />
     <ClCompile Include="Source\hooks\Gallop\StoryCharacter3D.cpp" />
+    <ClCompile Include="Source\hooks\Gallop\UIManager.cpp" />
+    <ClCompile Include="Source\hooks\Gallop\WorkDressData.cpp" />
     <ClCompile Include="Source\hooks\hook-helper.cpp" />
     <ClCompile Include="Source\hooks\hook.cpp" />
     <ClCompile Include="Source\hooks\Plugins\libNative.cpp" />
@@ -199,6 +205,7 @@
     <ClCompile Include="Source\hooks\Unity\UnityEngine.AssetBundleModule.cpp" />
     <ClCompile Include="Source\hooks\Unity\UnityEngine.CoreModule.cpp" />
     <ClCompile Include="Source\hooks\Unity\UnityEngine.InputLegacyModule.cpp" />
+    <ClCompile Include="Source\hooks\Unity\UnityEngine.UI.cpp" />
     <ClCompile Include="Source\hooks\Unity\UnityPlayer.cpp" />
     <ClCompile Include="Source\hooks\Windows\Windows.cpp" />
     <ClCompile Include="Source\Settings.cpp" />
@@ -242,6 +249,7 @@
     <ClInclude Include="Source\hooks\Gallop\CharacterBuildInfo.h" />
     <ClInclude Include="Source\hooks\Gallop\CutIn.h" />
     <ClInclude Include="Source\hooks\Gallop\CutInModelController.h" />
+    <ClInclude Include="Source\hooks\Gallop\CySpringNative.h" />
     <ClInclude Include="Source\hooks\Gallop\CySpringUpdater.h" />
     <ClInclude Include="Source\hooks\Gallop\Gallop.h" />
     <ClInclude Include="Source\hooks\Gallop\GallopStructs.h" />
@@ -252,6 +260,8 @@
     <ClInclude Include="Source\hooks\Gallop\Live.h" />
     <ClInclude Include="Source\hooks\Gallop\LiveTheaterInfo.h" />
     <ClInclude Include="Source\hooks\Gallop\Live.Cutt.LiveTimelineControl.h" />
+    <ClInclude Include="Source\hooks\Gallop\MasterDataManager.h" />
+    <ClInclude Include="Source\hooks\Gallop\MasterDressData.h" />
     <ClInclude Include="Source\hooks\Gallop\MasterEventMotionData.h" />
     <ClInclude Include="Source\hooks\Gallop\ModelController.h" />
     <ClInclude Include="Source\hooks\Gallop\RaceResultCutInHelper.h" />
@@ -261,11 +271,15 @@
     <ClInclude Include="Source\hooks\Gallop\SceneManager.h" />
     <ClInclude Include="Source\hooks\Gallop\Screen.h" />
     <ClInclude Include="Source\hooks\Gallop\SingleModeStartResultCharaViewer.h" />
+    <ClInclude Include="Source\hooks\Gallop\StandaloneWindowResize.h" />
     <ClInclude Include="Source\hooks\Gallop\StoryCharacter3D.h" />
+    <ClInclude Include="Source\hooks\Gallop\UIManager.h" />
+    <ClInclude Include="Source\hooks\Gallop\WorkDressData.h" />
     <ClInclude Include="Source\hooks\hook-helper.h" />
     <ClInclude Include="Source\hooks\hook.h" />
     <ClInclude Include="Source\hooks\Plugins\libNative.h" />
     <ClInclude Include="Source\hooks\Unity\il2cpp\il2cpp-hook.h" />
+    <ClInclude Include="Source\hooks\Unity\il2cpp\il2cppDictionary.hpp" />
     <ClInclude Include="Source\hooks\Unity\il2cpp\il2cpp_dump.h" />
     <ClInclude Include="Source\hooks\Unity\Unity.h" />
     <ClInclude Include="Source\hooks\Unity\il2cpp\il2cpp-api-functions.h" />
@@ -291,6 +305,7 @@
     <ClInclude Include="Source\hooks\Unity\UnityEngine.AssetBundleModule.h" />
     <ClInclude Include="Source\hooks\Unity\UnityEngine.CoreModule.h" />
     <ClInclude Include="Source\hooks\Unity\UnityEngine.InputLegacyModule.h" />
+    <ClInclude Include="Source\hooks\Unity\UnityEngine.UI.h" />
     <ClInclude Include="Source\hooks\Unity\UnityPlayer.hpp" />
     <ClInclude Include="Source\hooks\Unity\UnityStructs.h" />
     <ClInclude Include="Source\hooks\Windows\Windows.hpp" />
@@ -302,7 +317,6 @@
     <ClInclude Include="Source\tools\Logger.hpp" />
     <ClInclude Include="Source\tools\PEDump\PEDump.h" />
     <ClInclude Include="Source\stdinclude.h" />
-    <ClInclude Include="Source\tools\PEDump\PEDump.h" />
     <ClInclude Include="Source\tools\stb_image.h" />
     <ClInclude Include="Source\tools\string.hpp" />
     <ClInclude Include="Source\Utils.h" />

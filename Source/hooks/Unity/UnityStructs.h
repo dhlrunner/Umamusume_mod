@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 namespace Unity
 {
 	// Unity Structs
@@ -392,4 +392,20 @@ namespace Unity
 		Joystick8Button19 = 509, // 0x000001FD
 	};
 
+	struct RefreshRate
+	{
+	public:
+		unsigned int numerator;
+		unsigned int denominator;
+		unsigned int value;
+	};
+
+	struct Resolution_t
+	{
+	public:
+		int32_t width;
+		int32_t height;
+		int32_t herz;
+		char _stackDummy[1024]; //이거 안하면 stack around the variable was corrupted 에러남
+	};
 }

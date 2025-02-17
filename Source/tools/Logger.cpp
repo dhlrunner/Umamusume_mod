@@ -75,9 +75,10 @@ std::wstring Logger::GetCurrentDateTime()
     localtime_r(&nowTimeT, &timeInfo);
 #endif
 
-    // 포매팅(yyyy-MM-dd HH:mm:ss.fff)
+    // 포매팅(HH:mm:ss.fff)
     std::wstringstream wss;
-    wss << std::put_time(&timeInfo, L"%Y-%m-%d %H:%M:%S")
+    //%Y-%m-%d
+    wss << std::put_time(&timeInfo, L"%H:%M:%S")
         << L"." << std::setw(3) << std::setfill(L'0') << ms.count();
 
     return wss.str();

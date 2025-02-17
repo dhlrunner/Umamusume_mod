@@ -23,4 +23,8 @@ namespace Global
 	bool isKimuraChallenge = false;
 	HWND currenthWnd = NULL;
 	bool Game_HookFinished = false;
+
+	std::vector<Gallop::MasterCharaData_CharaData*> MasterCharaData;
+
+	bool isNeedFullscreen = false;
 }

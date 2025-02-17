@@ -8,5 +8,7 @@ namespace Unity {
 		UnityEngine::CoreModule::Init();
 		UnityEngine::InputLegacyModule::Init();
 		UnityEngine::AssetBundle::Init();
+		UnityEngine::UI::Init();
+		
 	}
 }

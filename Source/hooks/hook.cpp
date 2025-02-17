@@ -15,8 +15,7 @@ bool InitHooks_DLLMain()
 	//Enable windows api hooks
 	WinHook_init();
 	
-	//Imgui init
-	ImGuiWindows::InitKiero();
+	
 
 	
 	
@@ -30,6 +29,9 @@ void InitHooks_BeforeBoot()
 
 void InitHooks_AfterIl2cppInit()
 {
+	//Imgui init
+	ImGuiWindows::InitKiero();
+
 	//init global
 	Global::currSceneName = il2cpp_string_new16(L"");
 
@@ -53,4 +55,6 @@ void InitHooks_AfterIl2cppInit()
 
 	//thread start
 	BackgroundWorker::Init();
+
+
 }

@@ -4,7 +4,7 @@ namespace Gallop
 {
 	void Init() {
 		Logger::Info(SECTION_NAME, L"Init");
-
+		Gallop::StandaloneWindowResize::Init();
 		Live::Init();
 		Live::Cutt::Init();
 		Live::Cutt::LiveTimelineControl::Init();
@@ -27,5 +27,8 @@ namespace Gallop
 		SingleModeStartResultCharaViewer::Init();
 		GameSystem::Init();
 		Gallop::Model::Component::CySpringUpdater::Init();
+		Gallop::WorkDressData::Init();
+		Gallop::CySpringNative::Init();
+		Gallop::MasterDataManager::Init();
 	}
 }

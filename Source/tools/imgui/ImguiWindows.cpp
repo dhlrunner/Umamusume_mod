@@ -1203,11 +1203,12 @@ namespace ImGuiWindows {
 		HMODULE hMod = GetCurrentModule();
 		DisableThreadLibraryCalls(hMod);
 		CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)MainThread, hMod, 0, nullptr);
+		
 	}
 
 	void InitImGui() {
 
-
+		il2cpp_thread_attach(il2cpp_domain_get());
 		Logger::Info(L"IMGUI", L"Initializing ImGui");
 
 		ImVec2 size = ImVec2(750.0f, 900.0f);
@@ -1224,7 +1225,10 @@ namespace ImGuiWindows {
 		ImGui_ImplWin32_Init(umaWindow);
 		ImGui_ImplDX11_Init(pDevice, pContext);
 		static const ImWchar ranges[] = { 0x0001, 0xffff, 0 };
-		io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\malgun.ttf", 25.0f, NULL, ranges);
+		ImFontConfig config;
+		config.MergeMode = true;
+		io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\malgun.ttf", 25.0f, NULL, io.Fonts->GetGlyphRangesKorean());
+		io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\meiryo.ttc", 25.0f, &config, io.Fonts->GetGlyphRangesJapanese());
 		ImGui::StyleColorsDark();
 		bool ret = LoadTextureFromMemory(야떼미로, sizeof(야떼미로) / sizeof(야떼미로[0]), &texture_kimura, &kimura_image_width, &kimura_image_height);
 		IM_ASSERT(ret);
@@ -1685,13 +1689,66 @@ namespace ImGuiWindows {
 				}
 				if (ImGui::CollapsingHeader("캐릭터", ImGuiTreeNodeFlags_DefaultOpen)) {
 					ImGui::Checkbox("스토리용 3D 모델 강제 변경 활성화", &Settings::Local->changeStoryChar);
-
+					
 				}
 
 				if (ImGui::CollapsingHeader("레이스", ImGuiTreeNodeFlags_DefaultOpen)) {
 					ImGui::SliderFloat("등수 표시기 출력 위치", &Settings::Global->rankUIShowMeter, 0.0, 3000.0, "%.2f M"); ImGui::SameLine(); HelpMarker("레이스 시작 후 등수 표시기를 출력할 위치를 정합니다.\n(LCtrl+슬라이더 클릭으로 직접 입력 가능)");
 					ImGui::SliderFloat("등수 표시기 숨김 위치", &Settings::Global->rankUIHideoffset, 0.0, 9999.0, "%.2f"); ImGui::SameLine(); HelpMarker("등수 표시기를 숨길 타이밍을 지정합니다.\n(LCtrl+슬라이더 클릭으로 직접 입력 가능)");
 					ImGui::Checkbox("착순 마크 표시", &Global::showFinishOrderFlash); ImGui::SameLine(); HelpMarker("레이스 결과 화면에서 착순 애니메이션을 표시합니다.");
+					
+					BeginGroupPanel("캐릭터 모션 고정");
+
+					static char numberStr[7] = "";
+
+
+					// InputText for 6-character integer value
+					if (ImGui::InputText("CardID", numberStr, sizeof(numberStr), ImGuiInputTextFlags_CharsDecimal)) {
+						// Optional: Validate and convert the input to an integer
+						int number;
+						bool inputError = false;
+						try {
+							// Validate and convert the input to an integer
+							number = std::stoi(numberStr);
+							Settings::Local->cardid = number;
+							inputError = false;
+						}
+						catch (const std::invalid_argument&) {
+							// Handle invalid input (non-numeric characters)
+							inputError = true;
+							std::cerr << "Invalid input: not a number" << std::endl;
+						}
+						catch (const std::out_of_range&) {
+							// Handle out-of-range input
+							inputError = true;
+							std::cerr << "Invalid input: out of range" << std::endl;
+						}
+
+						
+						
+					}
+					static ImGuiTextFilter filter;
+					ImGui::Text("Search:");
+					filter.Draw("##searchbar", 340.f);
+					ImGui::BeginChild("listbox child", ImVec2(340, 400));
+					for (int i = 0; i < Global::MasterCharaData.size(); i++) {
+						//auto charObj = Global::MasterCharaData->get_Values()[i];
+						//auto name = il2cpp_class_get_method_from_name_type<Il2CppString * (*)(Il2CppObject * _this)>(charObj->klass, "get_Name", 0)->methodPointer(charObj);
+						auto nameC = Utils::ConvertWstringToUTF8(Global::MasterCharaData[i]->Name->chars);
+						//std::wcout << Global::MasterCharaData[i]->Name->chars;
+						//std::cout << "\n";
+						if (filter.PassFilter((std::to_string(i) + nameC).c_str())) {
+							std::string label = nameC + "##" + std::to_string(i); //do this or you will have problems selecting elements with the same name
+							ImGui::Selectable(label.c_str());
+							//if (ImGui::Selectable(label.c_str()))
+								//Menu::Config.skins[selector] = i; //used for skinchanger, ignore
+						}
+
+					}
+
+					ImGui::EndChild();
+
+					EndGroupPanel();
 				}
 
 				if (ImGui::CollapsingHeader("라이브", ImGuiTreeNodeFlags_DefaultOpen)) {

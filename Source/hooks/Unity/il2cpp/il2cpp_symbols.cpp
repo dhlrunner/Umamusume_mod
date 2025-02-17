@@ -17,6 +17,11 @@ Il2CppString* il2cpp_string_new16(const wchar_t* value)
 	return il2cpp_string_new_utf16(value, wcslen(value));
 }
 
+void* get_class_from_instance(const void* instance)
+{
+	return *static_cast<void* const*>(std::assume_aligned<alignof(void*)>(instance));
+}
+
 namespace il2cpp_symbols
 {
 	Il2CppDomain* il2cpp_domain = nullptr;

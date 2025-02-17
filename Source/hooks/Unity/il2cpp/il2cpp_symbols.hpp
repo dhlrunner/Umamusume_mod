@@ -123,6 +123,8 @@ constexpr int IgnoreNumberOfArguments = -1;
 
 Il2CppString* il2cpp_string_new16(const wchar_t* value);
 
+void* get_class_from_instance(const void* instance);
+
 namespace il2cpp_symbols
 {
 	extern Il2CppDomain* il2cpp_domain;
@@ -170,6 +172,22 @@ namespace il2cpp_symbols
 		const std::function<bool(const MethodInfo*)>& predict)
 	{
 		return reinterpret_cast<T>(find_method(assemblyName, namespaze, klassName, predict));
+	}
+
+	template <typename T = void*>
+	void iterate_IEnumerable(const void* obj, std::invocable<T> auto&& receiver)
+	{
+		const auto klass = get_class_from_instance(obj);
+		const auto getEnumeratorMethod = reinterpret_cast<void* (*)(const void*)>(il2cpp_class_get_method_from_name((Il2CppClass*)klass, "GetEnumerator", 0)->methodPointer);
+		const auto enumerator = getEnumeratorMethod(obj);
+		const auto enumeratorClass = get_class_from_instance(enumerator);
+		const auto getCurrentMethod = reinterpret_cast<T(*)(void*)>(il2cpp_class_get_method_from_name((Il2CppClass*)enumeratorClass, "get_Current", 0)->methodPointer);
+		const auto moveNextMethod = reinterpret_cast<bool(*)(void*)>(il2cpp_class_get_method_from_name((Il2CppClass*)enumeratorClass, "MoveNext", 0)->methodPointer);
+
+		while (moveNextMethod(enumerator))
+		{
+			static_cast<decltype(receiver)>(receiver)(getCurrentMethod(enumerator));
+		}
 	}
 }
 

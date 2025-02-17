@@ -233,6 +233,83 @@ namespace Gallop
 		bool IsUseDressDataHeadModelSubId;
 	};
 
-	
+	enum class SpringUpdateMode
+	{
+		// Token: 0x04015662 RID: 87650
+		ModeNormal,
+		// Token: 0x04015663 RID: 87651
+		Mode60FPS,
+		// Token: 0x04015664 RID: 87652
+		SkipFrame,
+		// Token: 0x04015665 RID: 87653
+		SkipFramePostAlways
+	};
+
+	enum class CharacterClothMode
+	{
+		// Token: 0x0400F80C RID: 63500
+		None = -1,
+		// Token: 0x0400F80D RID: 63501
+		Race,
+		// Token: 0x0400F80E RID: 63502
+		Live,
+		// Token: 0x0400F80F RID: 63503
+		LiveTheater,
+		// Token: 0x0400F810 RID: 63504
+		Home,
+		// Token: 0x0400F811 RID: 63505
+		All
+	};
+
+	//Gallop.MasterCharaData.CharaData
+	struct MasterCharaData_CharaData {
+		int32_t Id;                     // 0x10
+		int32_t BirthYear;              // 0x14
+		int32_t BirthMonth;             // 0x18
+		int32_t BirthDay;               // 0x1C
+		int32_t LastYear;               // 0x20
+		int32_t Sex;                    // 0x24
+		Il2CppString* ImageColorMain;     // 0x28
+		Il2CppString* ImageColorSub;      // 0x30
+		Il2CppString* UiColorMain;        // 0x38
+		Il2CppString* UiColorSub;         // 0x40
+		Il2CppString* UiTrainingColor1;   // 0x48
+		Il2CppString* UiTrainingColor2;   // 0x50
+		Il2CppString* UiBorderColor;      // 0x58
+		Il2CppString* UiNumColor1;        // 0x60
+		Il2CppString* UiNumColor2;        // 0x68
+		Il2CppString* UiTurnColor;        // 0x70
+		Il2CppString* UiWipeColor1;       // 0x78
+		Il2CppString* UiWipeColor2;       // 0x80
+		Il2CppString* UiWipeColor3;       // 0x88
+		Il2CppString* UiSpeechColor1;     // 0x90
+		Il2CppString* UiSpeechColor2;     // 0x98
+		Il2CppString* UiNameplateColor1;  // 0xA0
+		Il2CppString* UiNameplateColor2;  // 0xA8
+		int32_t Height;                 // 0xB0
+		int32_t Bust;                   // 0xB4
+		int32_t Scale;                  // 0xB8
+		int32_t Skin;                   // 0xBC
+		int32_t Shape;                  // 0xC0
+		int32_t Socks;                  // 0xC4
+		int32_t PersonalDress;          // 0xC8
+		int32_t TailModelId;            // 0xCC
+		int32_t RaceRunningType;        // 0xD0
+		int32_t EarRandomTimeMin;       // 0xD4
+		int32_t EarRandomTimeMax;       // 0xD8
+		int32_t TailRandomTimeMin;      // 0xDC
+		int32_t TailRandomTimeMax;      // 0xE0
+		int32_t StoryEarRandomTimeMin;  // 0xE4
+		int32_t StoryEarRandomTimeMax;  // 0xE8
+		int32_t StoryTailRandomTimeMin; // 0xEC
+		int32_t StoryTailRandomTimeMax; // 0xF0
+		int32_t AttachmentModelId;      // 0xF4
+		int32_t MiniMayuShaderType;     // 0xF8
+		int64_t StartDate;              // 0x100
+		int32_t CharaCategory;          // 0x108
+		int32_t LoveRankLimit;          // 0x10C
+
+		Il2CppString* Name;
+	};
 }
 

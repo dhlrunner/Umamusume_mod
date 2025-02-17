@@ -23,6 +23,10 @@
 #include "SingleModeStartResultCharaViewer.h"
 #include "GameSystem.h"
 #include "CySpringUpdater.h"
+#include "WorkDressData.h"
+#include "CySpringNative.h"
+#include "MasterDataManager.h"
+#include "StandaloneWindowResize.h"
 
 #define SECTION_NAME L"GALLOPHOOK_MAIN"
 

@@ -1,6 +1,9 @@
 ﻿#pragma once
 #include <wtypes.h>
+#include <vector>
 #include "hooks/Unity/il2cpp/il2cpp_symbols.hpp"
+#include "hooks/Unity/il2cpp/il2cppDictionary.hpp"
+#include "hooks/Gallop/GallopStructs.h"
 
 namespace Global 
 {
@@ -29,5 +32,8 @@ namespace Global
 	extern HWND currenthWnd;
 
 	extern bool Game_HookFinished;
+	extern std::vector<Gallop::MasterCharaData_CharaData*> MasterCharaData;
+
+	extern bool isNeedFullscreen;
 
 }

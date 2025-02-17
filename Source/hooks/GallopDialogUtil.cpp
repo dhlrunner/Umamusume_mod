@@ -47,7 +47,7 @@ namespace GallopDialog
 	}
 
 	/// <summary>
-	/// 다이얼로그 닫기 (모두)
+	/// 다이얼로그 닫기
 	/// </summary>
 	/// <param name="targetDialogObj">타겟 다이얼로그 오브젝트</param>
 	void CloseDialog(Il2CppObject* targetDialogObj) 

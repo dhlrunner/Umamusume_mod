@@ -214,6 +214,27 @@
     <ClCompile Include="Source\hooks\Gallop\CySpringUpdater.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\MasterDressData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\WorkDressData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\CySpringNative.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\MasterDataManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\StandaloneWindowResize.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\UIManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Unity\UnityEngine.UI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\stdinclude.h">
@@ -316,6 +337,14 @@
     <ClInclude Include="Source\deps\implot\implot.h" />
     <ClInclude Include="Source\deps\implot\implot_internal.h" />
     <ClInclude Include="Source\hooks\Gallop\CySpringUpdater.h" />
+    <ClInclude Include="Source\hooks\Gallop\MasterDressData.h" />
+    <ClInclude Include="Source\hooks\Gallop\WorkDressData.h" />
+    <ClInclude Include="Source\hooks\Gallop\CySpringNative.h" />
+    <ClInclude Include="Source\hooks\Gallop\MasterDataManager.h" />
+    <ClInclude Include="Source\hooks\Unity\il2cpp\il2cppDictionary.hpp" />
+    <ClInclude Include="Source\hooks\Gallop\StandaloneWindowResize.h" />
+    <ClInclude Include="Source\hooks\Gallop\UIManager.h" />
+    <ClInclude Include="Source\hooks\Unity\UnityEngine.UI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

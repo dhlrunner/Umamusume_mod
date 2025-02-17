@@ -1,4 +1,5 @@
-#include "Utils.h"
+﻿#include "Utils.h"
+
 
 namespace Utils {
 	DWORD GetCurrentDisplayHz() {
@@ -36,4 +37,33 @@ namespace Utils {
 		return result;
 	}
 
+	std::string ConvertWstringToUTF8(const std::wstring& src)
+	{
+		if (src.empty()) {
+			return std::string();
+		}
+
+		int size_needed = WideCharToMultiByte(CP_UTF8, 0, &src[0], (int)src.size(), NULL, 0, NULL, NULL);
+		std::string result(size_needed, 0);
+		WideCharToMultiByte(CP_UTF8, 0, &src[0], (int)src.size(), &result[0], size_needed, NULL, NULL);
+		return result;
+	}
+
+	void RemoveProtection(HMODULE module) 
+	{
+		if (module == NULL) {
+			std::cerr << "GetModuleHandle failed: " << GetLastError() << std::endl;
+		}
+		MODULEINFO moduleInfo;
+		if (!GetModuleInformation(GetCurrentProcess(), module, &moduleInfo, sizeof(moduleInfo))) {
+			std::cerr << "GetModuleInformation failed: " << GetLastError() << std::endl;
+		}
+		SIZE_T moduleSize = moduleInfo.SizeOfImage;
+		DWORD oldProtect;
+		if (!VirtualProtect(module, moduleSize, PAGE_EXECUTE_READWRITE, &oldProtect)) {
+			std::cerr << "VirtualProtect failed: " << GetLastError() << std::endl;
+		}
+
+		std::cout << "Memory protection removed" << std::endl;
+	}
 }
