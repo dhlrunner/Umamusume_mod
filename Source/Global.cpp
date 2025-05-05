@@ -27,4 +27,10 @@ namespace Global
 	std::vector<Gallop::MasterCharaData_CharaData*> MasterCharaData;
 
 	bool isNeedFullscreen = false;
+
+	//race
+	int raceHorseCount = 0;
+	Il2CppObject* raceManager = nullptr;
+	Gallop::HorseData* playerHorseData = nullptr;
+	float raceHorseSpeed = 0.0f;
 }

@@ -26,3 +26,31 @@ bool EnableHook(LPVOID pTarget, LPVOID pDetour, LPVOID* ppOriginal, const wchar_
 	}
 	
 }
+
+bool EnableHookApi(LPCWSTR  moduleName,
+    LPCSTR   procName,
+    LPVOID   pDetour,
+    LPVOID* ppOriginal,
+	const wchar_t* hookName)
+{
+    auto ret = MH_CreateHookApi(moduleName, procName, pDetour, ppOriginal);
+    if (ret != MH_OK)
+    {
+        Logger::Error(SECTION_NAME,
+            L"MH_CreateHookApi failed for \"%s\" (module:%s, proc:%S), Status=%d",
+            hookName, moduleName, procName, ret);
+        return false;
+    }
+    ret = MH_EnableHook(MH_ALL_HOOKS);   
+    if (ret != MH_OK)
+    {
+        Logger::Error(SECTION_NAME,
+            L"MH_EnableHook failed for \"%s\", Status=%d", hookName, ret);
+        return false;
+    }
+
+    Logger::Debug(SECTION_NAME,
+        L"Hooked \"%s\" (module:%s, proc:%S) @ detour=%p",
+        hookName, moduleName, procName, pDetour);
+    return true;
+}

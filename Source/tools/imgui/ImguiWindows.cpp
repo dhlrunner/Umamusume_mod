@@ -1388,6 +1388,7 @@ namespace ImGuiWindows {
 		}
 	}
 
+
 	// Main code loop
 	int UILoop()
 	{
@@ -1594,6 +1595,63 @@ namespace ImGuiWindows {
 				Global::isShowingSeekbar = false;
 			}
 
+			if (wcsncmp(Global::currSceneName->chars, L"Race", Global::currSceneName->length) == 0) 
+			{
+				int width = 0, height = 0;
+				float currentFps = ImGui::GetIO().Framerate;
+				static float t = 0;
+				t += ImGui::GetIO().DeltaTime;
+				RECT rect;
+				if (GetWindowRect(Global::currenthWnd, &rect))
+				{
+					width = rect.right - rect.left;
+					height = rect.bottom - rect.top;
+				}
+
+					ImGui::Begin("Horse Meter", NULL,
+						ImGuiWindowFlags_NoTitleBar |
+						ImGuiWindowFlags_NoResize |
+						ImGuiWindowFlags_NoMove |
+						ImGuiWindowFlags_NoScrollbar |
+						ImGuiWindowFlags_NoSavedSettings |
+						ImGuiWindowFlags_AlwaysAutoResize);
+
+
+
+
+					fpsValues.AddPoint(t, currentFps);
+
+
+
+
+					//glfwGetWindowSize(window, &width, &height);
+					ImGui::SetWindowPos(ImVec2(0, 0));
+					ImGui::SetWindowSize(ImVec2(static_cast<float>(width), 0));
+
+
+					string horseName = "";
+					int horseIndex = 0;
+
+					if (Global::playerHorseData) 
+					{
+						void* raceView = il2cpp_class_get_method_from_name_type<void* (*)(
+							Il2CppObject * _this
+							)>(Global::raceManager->klass, "get_RaceView", 0)->methodPointer(Global::raceManager);
+
+						if (raceView)
+						{
+							horseIndex = Global::playerHorseData->horseIndex;
+							horseName = Utils::ConvertWstringToUTF8(Global::playerHorseData->charaName->chars);
+						}
+					}
+					
+
+
+					ImGui::Text("%d %s | %.2f km/h\n", horseIndex + 1, horseName.c_str(), Global::raceHorseSpeed);
+					ImGui::SameLine();
+
+					ImGui::End();
+			}
 
 			// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 			if (show_demo_window)
@@ -1634,10 +1692,10 @@ namespace ImGuiWindows {
 					ImGui::Checkbox("자동 전체화면", &Settings::Global->autoFullscreen); ImGui::SameLine(); HelpMarker("가로모드 시 자동으로 전체화면이 됩니다.");
 					if (ImGui::Checkbox("고품질 그래픽", &Settings::Global->highQuality)) {
 						if (Settings::Global->highQuality) {
-							Settings::Local->graphics_quality = 2;
+							Settings::Local->graphics_quality = 3;
 							Settings::Local->antialiasing = 8;
-							int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-							int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+							//int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+							//int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 						}
 						else {
 							Settings::Local->graphics_quality = -1;
@@ -1726,6 +1784,31 @@ namespace ImGuiWindows {
 
 						
 						
+					}
+					// InputText for 6-character integer value
+					if (ImGui::InputText("GradeNum", numberStr, sizeof(numberStr), ImGuiInputTextFlags_CharsDecimal)) {
+						// Optional: Validate and convert the input to an integer
+						int number;
+						bool inputError = false;
+						try {
+							// Validate and convert the input to an integer
+							number = std::stoi(numberStr);
+							Settings::Local->raceResultCutinMotionGrade = number;
+							inputError = false;
+						}
+						catch (const std::invalid_argument&) {
+							// Handle invalid input (non-numeric characters)
+							inputError = true;
+							std::cerr << "Invalid input: not a number" << std::endl;
+						}
+						catch (const std::out_of_range&) {
+							// Handle out-of-range input
+							inputError = true;
+							std::cerr << "Invalid input: out of range" << std::endl;
+						}
+
+
+
 					}
 					static ImGuiTextFilter filter;
 					ImGui::Text("Search:");

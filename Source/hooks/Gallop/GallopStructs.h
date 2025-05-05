@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "..\Unity\il2cpp\il2cpp_symbols.hpp"
 
 namespace Gallop 
@@ -310,6 +310,45 @@ namespace Gallop
 		int32_t LoveRankLimit;          // 0x10C
 
 		Il2CppString* Name;
+	};
+
+	struct HorseData {
+		//IL2CPP
+		char _0x00[0x10];
+
+		//fields
+		int horseIndex;						//0x10
+		int postNumber;						//0x14
+		int HorseNumber;					//0x18
+		int charaId;						//0x1C
+		Il2CppString* charaName;			//0x20
+		int FinishOrder;					//0x28
+		float FinishTimeRaw;				//0x2C
+		float FinishTimeScaled;				//0x30
+		float FinishDiffTimeFromPrev;		//0x34
+		void* raceParam;					//0x38 IRaceParameter
+		void* responseHorseData;			//0x40 _this
+		int Popularity;						//0x48
+		int PopularityRankLeft;				//0x4C
+		int PopularityRankCenter;			//0x50
+		int PopularityRankRight;			//0x54
+		int gateInPopularity;				//0x58
+		int Rarity;							//0x5C enum
+		Il2CppString* TrainerName;			//0x60
+		bool IsGhost;						//0x68
+		bool isRunningStyleExInitialized;	//0x69
+		char pad_0x6A[0x2];					//0x6A~0x6B alignment
+		int runningStyleEx;					//0x6C
+		int Defeat;							//0x70
+		int RaceDressId;					//0x74
+		int RaceDressIdWithOption;			//0x78
+		int RunningType;					//0x7C
+		int ActiveProperDistance;			//0x80
+		int ActiveProperGroundType;			//0x84
+		int MobId;							//0x88
+		void* raceRecord;					//0x90 IRaceRecord*
+		int FinishOrderRawScore;			//0x98
+		int* TrainedCharaData;				//0xA0
 	};
 }
 

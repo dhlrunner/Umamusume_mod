@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>UnityPlayer</TargetName>
+    <TargetName>apphelp</TargetName>
     <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>build\$(ShortProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -109,7 +109,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>C:\Users\dhl\source\repos\Umamusume_mod\Source\deps\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -120,7 +120,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(TargetPath)" "C:\Users\dhl\Umamusume\umamusume.exe.local\$(TargetFileName)"</Command>
+      <Command>copy /y "$(TargetPath)" "C:\Users\dhl\Umamusume\umamusume.exe.local\$(TargetFileName)"
+copy /y "$(TargetPath)" "D:\games\umamusume_custom\umamusume.exe.local\$(TargetFileName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -155,7 +156,6 @@
     <ClCompile Include="Source\deps\lz4\lz4hc.c" />
     <ClCompile Include="Source\deps\lz4\xxhash.c" />
     <ClCompile Include="Source\dllmain.cpp" />
-    <ClCompile Include="Source\Export.cpp" />
     <ClCompile Include="Source\Global.cpp" />
     <ClCompile Include="Source\hooks\BackgroundWorker.cpp" />
     <ClCompile Include="Source\hooks\Cute\Core.Device.cpp" />
@@ -167,9 +167,11 @@
     <ClCompile Include="Source\hooks\Cute\Cute.cpp" />
     <ClCompile Include="Source\hooks\Cute\Http.WWWRequest.cpp" />
     <ClCompile Include="Source\hooks\Gallop\CutIn.cpp" />
+    <ClCompile Include="Source\hooks\Gallop\CutIn.CutInCharacter.cpp" />
     <ClCompile Include="Source\hooks\Gallop\CutInModelController.cpp" />
     <ClCompile Include="Source\hooks\Gallop\CySpringNative.cpp" />
     <ClCompile Include="Source\hooks\Gallop\CySpringUpdater.cpp" />
+    <ClCompile Include="Source\hooks\Gallop\EditableCharacterBuildInfo.cpp" />
     <ClCompile Include="Source\hooks\Gallop\Gallop.cpp" />
     <ClCompile Include="Source\hooks\Gallop\GallopUtil.cpp" />
     <ClCompile Include="Source\hooks\Gallop\GameSystem.cpp" />
@@ -181,6 +183,7 @@
     <ClCompile Include="Source\hooks\Gallop\MasterDressData.cpp" />
     <ClCompile Include="Source\hooks\Gallop\MasterEventMotionData.cpp" />
     <ClCompile Include="Source\hooks\Gallop\ModelController.cpp" />
+    <ClCompile Include="Source\hooks\Gallop\ModelLoader.cpp" />
     <ClCompile Include="Source\hooks\Gallop\RaceResultCutInHelper.cpp" />
     <ClCompile Include="Source\hooks\Gallop\RaceResultScene.cpp" />
     <ClCompile Include="Source\hooks\Gallop\Live.cpp" />
@@ -204,9 +207,9 @@
     <ClCompile Include="Source\hooks\Unity\UnityEngine.Application.cpp" />
     <ClCompile Include="Source\hooks\Unity\UnityEngine.AssetBundleModule.cpp" />
     <ClCompile Include="Source\hooks\Unity\UnityEngine.CoreModule.cpp" />
+    <ClCompile Include="Source\hooks\Unity\UnityEngine.GUI.cpp" />
     <ClCompile Include="Source\hooks\Unity\UnityEngine.InputLegacyModule.cpp" />
     <ClCompile Include="Source\hooks\Unity\UnityEngine.UI.cpp" />
-    <ClCompile Include="Source\hooks\Unity\UnityPlayer.cpp" />
     <ClCompile Include="Source\hooks\Windows\Windows.cpp" />
     <ClCompile Include="Source\Settings.cpp" />
     <ClCompile Include="Source\tools\http\url.cpp" />
@@ -247,10 +250,12 @@
     <ClInclude Include="Source\hooks\GallopDialogUtil.h" />
     <ClInclude Include="Source\hooks\Gallop\CameraController.h" />
     <ClInclude Include="Source\hooks\Gallop\CharacterBuildInfo.h" />
+    <ClInclude Include="Source\hooks\Gallop\CutIn.CutInCharacter.h" />
     <ClInclude Include="Source\hooks\Gallop\CutIn.h" />
     <ClInclude Include="Source\hooks\Gallop\CutInModelController.h" />
     <ClInclude Include="Source\hooks\Gallop\CySpringNative.h" />
     <ClInclude Include="Source\hooks\Gallop\CySpringUpdater.h" />
+    <ClInclude Include="Source\hooks\Gallop\EditableCharacterBuildInfo.h" />
     <ClInclude Include="Source\hooks\Gallop\Gallop.h" />
     <ClInclude Include="Source\hooks\Gallop\GallopStructs.h" />
     <ClInclude Include="Source\hooks\Gallop\GallopUtil.h" />
@@ -264,6 +269,7 @@
     <ClInclude Include="Source\hooks\Gallop\MasterDressData.h" />
     <ClInclude Include="Source\hooks\Gallop\MasterEventMotionData.h" />
     <ClInclude Include="Source\hooks\Gallop\ModelController.h" />
+    <ClInclude Include="Source\hooks\Gallop\ModelLoader.h" />
     <ClInclude Include="Source\hooks\Gallop\RaceResultCutInHelper.h" />
     <ClInclude Include="Source\hooks\Gallop\RaceResultScene.h" />
     <ClInclude Include="Source\hooks\Gallop\RaceUIFinishOrderFlash.h" />
@@ -304,9 +310,9 @@
     <ClInclude Include="Source\hooks\Unity\il2cpp\utils\StringView.h" />
     <ClInclude Include="Source\hooks\Unity\UnityEngine.AssetBundleModule.h" />
     <ClInclude Include="Source\hooks\Unity\UnityEngine.CoreModule.h" />
+    <ClInclude Include="Source\hooks\Unity\UnityEngine.GUI.h" />
     <ClInclude Include="Source\hooks\Unity\UnityEngine.InputLegacyModule.h" />
     <ClInclude Include="Source\hooks\Unity\UnityEngine.UI.h" />
-    <ClInclude Include="Source\hooks\Unity\UnityPlayer.hpp" />
     <ClInclude Include="Source\hooks\Unity\UnityStructs.h" />
     <ClInclude Include="Source\hooks\Windows\Windows.hpp" />
     <ClInclude Include="Source\Settings.h" />

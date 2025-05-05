@@ -47,7 +47,7 @@ void Logger::LogMessage(const char* colorAscii, const wchar_t* level, const wcha
 
     //최종출력
     wchar_t finalBuffer[2048];
-    swprintf_s(finalBuffer, L"[%s] [%s] [%s] %s\n",
+    swprintf_s(finalBuffer, L"[%s] [%s] [%s] %s\r\n",
         dateTime.c_str(),
         level,
         section,

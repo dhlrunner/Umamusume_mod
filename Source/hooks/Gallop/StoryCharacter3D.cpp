@@ -24,6 +24,7 @@ namespace Gallop::StoryCharacter3D
 			if ((Settings::Local->story3dCharID < 0) || (Settings::Local->story3dClothID < 0) || (Settings::Local->story3dHeadID < 0) || (Settings::Local->story3dMobid < 0))
 			{
 				std::string line;
+				char buffer[256] = { 0 };
 				while (true) {
 					try {
 

@@ -19,4 +19,5 @@ namespace Utils
 	std::vector <std::string> explode(const std::string& str, const char& ch);
 	std::string ConvertWstringToUTF8(const std::wstring& src);
 	void RemoveProtection(HMODULE module);
+	bool StrEndsWith(LPCWSTR path, LPCWSTR suffix);
 }

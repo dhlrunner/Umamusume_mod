@@ -1,7 +1,7 @@
 ﻿#include "hook.h"
 
 
-bool InitHooks_DLLMain()
+DWORD WINAPI InitHooks_DLLMain(void*)
 {
 	if (MH_Initialize() != MH_OK) {
 		Logger::Error(L"HOOK", L"Failed to initialize MinHook");
@@ -15,16 +15,12 @@ bool InitHooks_DLLMain()
 	//Enable windows api hooks
 	WinHook_init();
 	
-	
-
-	
-	
 	return true;
 }
 
 void InitHooks_BeforeBoot()
 {
-	
+
 }
 
 void InitHooks_AfterIl2cppInit()
@@ -33,7 +29,7 @@ void InitHooks_AfterIl2cppInit()
 	ImGuiWindows::InitKiero();
 
 	//init global
-	Global::currSceneName = il2cpp_string_new16(L"");
+	Global::currSceneName = il2cpp_string_new16(L"_Boot");
 
 	//il2cpp_dump();
 	libnative::Init(GetActiveWindow());

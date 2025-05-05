@@ -27,6 +27,9 @@
 #include "CySpringNative.h"
 #include "MasterDataManager.h"
 #include "StandaloneWindowResize.h"
+#include "ModelLoader.h"
+#include "EditableCharacterBuildInfo.h"
+#include "CutIn.CutInCharacter.h"
 
 #define SECTION_NAME L"GALLOPHOOK_MAIN"
 

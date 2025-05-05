@@ -36,4 +36,10 @@ namespace Global
 
 	extern bool isNeedFullscreen;
 
+	//Race
+	extern int raceHorseCount;
+	extern Il2CppObject* raceManager;
+	extern Gallop::HorseData* playerHorseData;
+	extern float raceHorseSpeed;
+
 }

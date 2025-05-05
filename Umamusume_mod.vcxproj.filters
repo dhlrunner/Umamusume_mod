@@ -10,17 +10,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\hooks\Unity\UnityPlayer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\tools\PEDump\PEDump.cpp">
       <Filter>Source Files\PEDump</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Export.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\tools\Logger.cpp">
       <Filter>Source Files</Filter>
@@ -235,6 +229,18 @@
     <ClCompile Include="Source\hooks\Unity\UnityEngine.UI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\hooks\Unity\UnityEngine.GUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\ModelLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\EditableCharacterBuildInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\CutIn.CutInCharacter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\stdinclude.h">
@@ -255,7 +261,6 @@
     <ClInclude Include="Source\deps\imgui\imstb_truetype.h" />
     <ClInclude Include="Source\deps\imgui\backends\imgui_impl_win32.h" />
     <ClInclude Include="Source\deps\imgui\backends\imgui_impl_dx11.h" />
-    <ClInclude Include="Source\hooks\Unity\UnityPlayer.hpp" />
     <ClInclude Include="Source\hooks\Windows\Windows.hpp" />
     <ClInclude Include="Source\tools\imgui\ImguiWindows.h" />
     <ClInclude Include="Source\tools\kiero\kiero.h" />
@@ -345,6 +350,10 @@
     <ClInclude Include="Source\hooks\Gallop\StandaloneWindowResize.h" />
     <ClInclude Include="Source\hooks\Gallop\UIManager.h" />
     <ClInclude Include="Source\hooks\Unity\UnityEngine.UI.h" />
+    <ClInclude Include="Source\hooks\Unity\UnityEngine.GUI.h" />
+    <ClInclude Include="Source\hooks\Gallop\ModelLoader.h" />
+    <ClInclude Include="Source\hooks\Gallop\EditableCharacterBuildInfo.h" />
+    <ClInclude Include="Source\hooks\Gallop\CutIn.CutInCharacter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

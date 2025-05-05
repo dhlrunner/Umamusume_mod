@@ -80,7 +80,7 @@ namespace Settings {
 			Global->forceLandscape = document.HasMember("forceLandscape") ? document["forceLandscape"].GetBool() : InitialValue->forceLandscape;
 			Global->highQuality = document.HasMember("highQuality") ? document["highQuality"].GetBool() : InitialValue->highQuality;
 			if (Global->highQuality) {
-				Local->graphics_quality = 2;
+				Local->graphics_quality = 3;
 				Local->antialiasing = 8;
 				int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 				int screenHeight = GetSystemMetrics(SM_CYSCREEN);

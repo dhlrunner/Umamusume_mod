@@ -37,6 +37,19 @@ namespace Utils {
 		return result;
 	}
 
+
+	bool StrEndsWith(LPCWSTR path, LPCWSTR suffix)
+	{
+		if (!path || !suffix) return FALSE;
+
+		size_t pathLen = wcslen(path);
+		size_t suffixLen = wcslen(suffix);
+
+		if (pathLen < suffixLen) return FALSE;
+
+		return wcscmp(path + (pathLen - suffixLen), suffix) == 0;
+	}
+
 	std::string ConvertWstringToUTF8(const std::wstring& src)
 	{
 		if (src.empty()) {

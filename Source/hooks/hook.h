@@ -16,6 +16,6 @@
 
 #include "BackgroundWorker.h"
 
-bool InitHooks_DLLMain();
+DWORD WINAPI InitHooks_DLLMain(void*);
 void InitHooks_BeforeBoot();
 void InitHooks_AfterIl2cppInit();

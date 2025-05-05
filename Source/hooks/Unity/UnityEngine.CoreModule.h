@@ -30,4 +30,5 @@ namespace UnityEngine::CoreModule
 	void Init();
 	void adjustScreenSize(int w = 0, int h = 0);
 	void get_resolution_stub(Resolution_t* r);
+	void set_antiAliasing_hook(int value);
 }

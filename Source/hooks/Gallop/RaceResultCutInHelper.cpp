@@ -3,7 +3,8 @@
 namespace Gallop::RaceResultCutInHelper
 {
 	void* LoadBodyMotion_orig = nullptr;
-	void* LoadBodyMotion_hook(int characterId, MasterDressData* dress, int personalityType, int rank, int grade, int raceType, void* resultSwapData, void* resultSwapMotionData) {
+	void* LoadBodyMotion_hook(int characterId, MasterDressData* dress, int personalityType, int 
+		rank , int grade, int raceType, void* resultSwapData, void* resultSwapMotionData) {
 
 		Logger::Info(SECTION_NAME, L"LoadBodyMotion: charaId=%d,dressid=%d,rank=%d,grade=%d", characterId, dress->Id, rank, grade);
 		if (Settings::Global->winMotion564) {

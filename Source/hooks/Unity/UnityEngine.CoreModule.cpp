@@ -65,13 +65,7 @@ namespace UnityEngine::CoreModule
 			Settings::Local->antialiasing == -1 ? value : Settings::Local->antialiasing);
 	}
 
-	//void* Get3DAntiAliasingLevel_orig;
-	//int Get3DAntiAliasingLevel_hook(Il2CppObject* _this, bool allowMSAA) {
-	//	if (Settings::Local->antialiasing != -1) allowMSAA = true;
-	//	auto data = reinterpret_cast<decltype(Get3DAntiAliasingLevel_hook)*>(Get3DAntiAliasingLevel_orig)(_this, allowMSAA);
-	//	//Logger::Info(SECTION_NAME, L"Get3DAntiAliasingLevel: %d %d", allowMSAA, data);
-	//	return data;
-	//}
+	
 
 	void* Application_Quit_orig;
 	void Application_Quit_hook(int code) {
@@ -316,14 +310,9 @@ namespace UnityEngine::CoreModule
 			"UnityEngine.CoreModule.dll", "UnityEngine",
 			"RenderTexture", "set_antiAliasing", 1
 		);
-		EnableHook(set_RenderTextureAntiAliasing_addr, &set_antiAliasing_hook, &set_antiAliasing_orig, L"set_RenderTextureAntiAliasing");
+		EnableHook(set_RenderTextureAntiAliasing_addr, &set_RenderTextureAntiAliasing_hook, &set_RenderTextureAntiAliasing_orig, L"set_RenderTextureAntiAliasing");
 
-		/*auto Get3DAntiAliasingLevel_addr = il2cpp_symbols::get_method_pointer(
-			"umamusume.dll", "Gallop",
-			"GraphicSettings", "Get3DAntiAliasingLevel", 1
-		);*/
-		//not working
-		//EnableHook(Get3DAntiAliasingLevel_addr, &Get3DAntiAliasingLevel_hook, &Get3DAntiAliasingLevel_orig, L"Get3DAntiAliasingLevel");
+		
 		
 		LoadScene = reinterpret_cast<void(*)(Il2CppString*, LoadSceneParameters*)>(
 			il2cpp_symbols::get_method_pointer(
@@ -354,7 +343,9 @@ namespace UnityEngine::CoreModule
 		
 
 		get_resolution = reinterpret_cast<decltype(get_resolution)>(il2cpp_resolve_icall("UnityEngine.Screen::get_currentResolution_Injected(UnityEngine.Resolution&)"));
-		adjustScreenSize();
+		//if (Settings::Global->autoFullscreen)
+		//	adjustScreenSize();
+		//adjustScreenSize();
 	
 	}
 }

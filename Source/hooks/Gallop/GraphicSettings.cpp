@@ -5,9 +5,14 @@ namespace Gallop::GraphicSettings
 	void* ApplyGraphicsQuality_orig = nullptr;
 	void ApplyGraphicsQuality_hook(Il2CppObject* thisObj, int quality, bool force) {
 		Logger::Info(SECTION_NAME, L"setGraphicsQuality: %d -> %d", quality, Settings::Local->graphics_quality);
-		return reinterpret_cast<decltype(ApplyGraphicsQuality_hook)*>(ApplyGraphicsQuality_orig)(thisObj,
+		reinterpret_cast<decltype(ApplyGraphicsQuality_hook)*>(ApplyGraphicsQuality_orig)(thisObj,
 			Settings::Local->graphics_quality == -1 ? quality : Settings::Local->graphics_quality,
 			true);
+		if (Settings::Local->graphics_quality >= 3) {
+			UnityEngine::CoreModule::set_antiAliasing_hook(8);
+			Logger::Info(SECTION_NAME, L"Force antialiasing to 8");
+		}
+
 	}
 
 	void* GetVirtualResolution3D_orig;
@@ -42,6 +47,14 @@ namespace Gallop::GraphicSettings
 		return ret;
 	}
 
+	/*void* Get3DAntiAliasingLevel_orig;
+	int Get3DAntiAliasingLevel_hook(Il2CppObject* _this, bool allowMSAA) {
+		if (Settings::Local->antialiasing != -1) allowMSAA = true;
+		auto data = reinterpret_cast<decltype(Get3DAntiAliasingLevel_hook)*>(Get3DAntiAliasingLevel_orig)(_this, allowMSAA);
+		Logger::Info(SECTION_NAME, L"Get3DAntiAliasingLevel: %d %d", allowMSAA, data);
+		return data;
+	}*/
+
 	void Init()
 	{
 		Logger::Info(SECTION_NAME, L"Init");
@@ -68,6 +81,11 @@ namespace Gallop::GraphicSettings
 		);
 		EnableHook(GetVirtualResolutionWidth3D_addr, &GetVirtualResolutionWidth3D_hook, &GetVirtualResolutionWidth3D_orig, L"GetVirtualResolutionWidth3D");
 
-
+		/*auto Get3DAntiAliasingLevel_addr = il2cpp_symbols::get_method_pointer(
+			"umamusume.dll", "Gallop",
+			"GraphicSettings", "Get3DAntiAliasingLevel", 1
+		);*/
+		//not working
+		//EnableHook(Get3DAntiAliasingLevel_addr, &Get3DAntiAliasingLevel_hook, &Get3DAntiAliasingLevel_orig, L"Get3DAntiAliasingLevel");
 	}
 }

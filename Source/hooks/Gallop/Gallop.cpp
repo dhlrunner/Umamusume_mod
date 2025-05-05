@@ -30,5 +30,9 @@ namespace Gallop
 		Gallop::WorkDressData::Init();
 		Gallop::CySpringNative::Init();
 		Gallop::MasterDataManager::Init();
+		Gallop::ModelLoader::Init();
+		Gallop::EditableCharacterBuildInfo::Init();
+		Gallop::CutIn::CutInCharacter::Init();
+
 	}
 }
