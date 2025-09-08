@@ -7,5 +7,6 @@ namespace Cyan
 	{
 		Logger::Info(SECTION_NAME, L"Init");
 		Loader::AssetLoader::Init();
+		LocalFile::Init();
 	}
 }

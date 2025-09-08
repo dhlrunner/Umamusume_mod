@@ -10,7 +10,16 @@ DWORD WINAPI InitHooks_DLLMain(void*)
 	
 	//init settings
 	Settings::Init();
-	Settings::LoadSettings("umamusume.exe.local\\config.json");
+
+	switch (Global::gameType) {
+	case Global::GameType::UMAMUSUME_DMM_JP:
+		Settings::LoadSettings("umamusume.exe.local\\config.json");
+		break;
+	case Global::GameType::UMAMUSUME_STEAM_JP:
+		Settings::LoadSettings("UmamusumePrettyDerby_Jpn.exe.local\\config.json");
+		break;
+	}
+
 
 	//Enable windows api hooks
 	WinHook_init();
@@ -20,7 +29,8 @@ DWORD WINAPI InitHooks_DLLMain(void*)
 
 void InitHooks_BeforeBoot()
 {
-
+	//Unity Init
+	Unity::HookInit();
 }
 
 void InitHooks_AfterIl2cppInit()
@@ -34,8 +44,7 @@ void InitHooks_AfterIl2cppInit()
 	//il2cpp_dump();
 	libnative::Init(GetActiveWindow());
 
-	//Unity Init
-	Unity::HookInit();
+	
 
 	//Cyan Init
 	Cyan::Init();

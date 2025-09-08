@@ -1,7 +1,5 @@
 ﻿#include "GallopDialogUtil.h"
 
-using namespace std;
-
 namespace GallopDialog
 {
 	/// <summary>
@@ -11,7 +9,7 @@ namespace GallopDialog
 	/// <param name="text">내용</param>
 	/// <param name="canClose">바깥쪽 터치로 닫을수 있는지 여부</param>
 	/// <returns></returns>
-	Il2CppObject* ShowTextDialog(wstring title, wstring text, bool canClose)
+	Il2CppObject* ShowTextDialog(std::wstring title, std::wstring text, bool canClose)
 	{
 		Il2CppString* titleStr = il2cpp_string_new16(title.data());
 		Il2CppString* textStr = il2cpp_string_new16(text.data());
@@ -33,7 +31,7 @@ namespace GallopDialog
 	/// </summary>
 	/// <param name="targetDialogObj">타겟 다이얼로그 오브젝트</param>
 	/// <param name="text">갱신 텍스트</param>
-	void SetDialogMessage(Il2CppObject* targetDialogObj, wstring text)
+	void SetDialogMessage(Il2CppObject* targetDialogObj, std::wstring text)
 	{
 		Il2CppString* textStr = il2cpp_string_new16(text.data());
 		auto get_CurrentDialogObj = reinterpret_cast<Il2CppObject * (*)(Il2CppObject * _this)>(il2cpp_symbols::get_method_pointer("umamusume.dll", "Gallop", "DialogCommon", "get_CurrentDialogObj", 0));
@@ -64,7 +62,7 @@ namespace GallopDialog
 	/// 화면 중간에 뜨는 토스트 메세지
 	/// </summary>
 	/// <param name="text">텍스트</param>
-	void ShowToast(wstring text)
+	void ShowToast(std::wstring text)
 	{
 		Il2CppString* textStr = il2cpp_string_new16(text.data());
 		auto UIManager = il2cpp::GetSingletonInstance(il2cpp_symbols::get_class("umamusume.dll", "Gallop", "UIManager"));

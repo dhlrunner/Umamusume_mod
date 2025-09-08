@@ -34,12 +34,12 @@ namespace Gallop::GallopUtil
 		);
 		EnableHook(GotoTitleOnError_addr, &GotoTitleOnError_hook, &GotoTitleOnError_orig, L"GotoTitleOnError");
 
-		auto IsUseDressInMode_addr = reinterpret_cast<bool(*)(CharacterClothMode, Il2CppObject*)>(
+		/*auto IsUseDressInMode_addr = reinterpret_cast<bool(*)(CharacterClothMode, Il2CppObject*)>(
 			il2cpp_symbols::get_method_pointer(
 				"umamusume.dll", "Gallop",
-				"GallopUtil", "IsUseDressInMode", 2
+				"GallopUtil", "IsUseDressInMode", 2 
 			));
-		EnableHook(IsUseDressInMode_addr, &IsUseDressInMode_hook, &IsUseDressInMode_orig, L"GallopUtil_IsUseDressInMode");
+		EnableHook(IsUseDressInMode_addr, &IsUseDressInMode_hook, &IsUseDressInMode_orig, L"GallopUtil_IsUseDressInMode");*/
 
 
 	}

@@ -4,17 +4,12 @@
 #include "il2cpp\il2cpp-tabledefs.h"
 #include "..\..\Settings.h"
 #include "..\..\Utils.h"
-#include "../../Settings.h"
 #include "../../Global.h"
 #include "..\hook-helper.h"
-#include "UnityStructs.h"
 
-#define SECTION_NAME L"UNITYASSETBUNDLE"
-using namespace Unity;
+#define SECTION_NAME L"UNITYEVENTSYST"
 
-namespace UnityEngine::AssetBundle
+namespace UnityEngine::EventSystems
 {
-	extern void* (*LoadInternal)(Il2CppString*, unsigned int, unsigned long);
-
 	void Init();
 }

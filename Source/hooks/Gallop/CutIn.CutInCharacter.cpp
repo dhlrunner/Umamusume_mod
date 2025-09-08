@@ -9,12 +9,12 @@ namespace Gallop::CutIn::CutInCharacter
 		FieldInfo* _clothIdField = il2cpp_class_get_field_from_name(info->klass, "_clothId");
 		FieldInfo* _headIdField = il2cpp_class_get_field_from_name(info->klass, "_headId");
 
-		int charaId = 1007;
+		/*int charaId = 1007;
 		il2cpp_field_set_value(info, _charaIdField, &charaId);
 		int clothId = 100701;
 		il2cpp_field_set_value(info, _clothIdField, &clothId);
 		int headId = 0;
-		il2cpp_field_set_value(info, _headIdField, &headId);
+		il2cpp_field_set_value(info, _headIdField, &headId);*/
 
 		return reinterpret_cast<decltype(CreateModel_hook)*>(CreateModel_orig)(_this, info, controllerType);
 	}
@@ -31,12 +31,12 @@ namespace Gallop::CutIn::CutInCharacter
 		FieldInfo* _charaIdField = il2cpp_class_get_field_from_name(model->klass, "_charaId");
 		FieldInfo* _clothIdField = il2cpp_class_get_field_from_name(model->klass, "_clothId");
 		FieldInfo* _headIdField = il2cpp_class_get_field_from_name(model->klass, "_headId");
-		int charaId = 1007;
+		/*int charaId = 1007;
 		il2cpp_field_set_value(model, _charaIdField, &charaId);
 		int clothId = 100701;
 		il2cpp_field_set_value(model, _clothIdField, &clothId);
 		int headId = 0;
-		il2cpp_field_set_value(model, _headIdField, &headId);
+		il2cpp_field_set_value(model, _headIdField, &headId);*/
 		return reinterpret_cast<decltype(SetupModelComponent_hook)*>(SetupModelComponent_orig)(_this, model);
 	}
 	void Init() {

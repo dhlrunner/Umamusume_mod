@@ -218,6 +218,20 @@ namespace il2cpp_symbols
 		DEFAULTS_INIT_OPTIONAL(uint64_shared_enum, "System", "UInt64Enum");
 	}
 
+	Il2CppImage* get_image(const char* assemblyName)
+	{
+		auto assembly = il2cpp_domain_assembly_open(il2cpp_domain, assemblyName);
+		if (assembly)
+		{
+			auto image = il2cpp_assembly_get_image(assembly);
+			if (image)
+			{
+				return (Il2CppImage*)image;
+			}
+		}
+		return nullptr;
+	}
+
 	Il2CppClass* get_class(const char* assemblyName, const char* namespaze, const char* klassName)
 	{
 		auto assembly = il2cpp_domain_assembly_open(il2cpp_domain, assemblyName);
@@ -227,6 +241,23 @@ namespace il2cpp_symbols
 			if (image)
 			{
 				return il2cpp_class_from_name(image, namespaze, klassName);
+			}
+		}
+		return nullptr;
+	}
+
+	Il2CppClass* get_global_class(const char* namespaze, const char* klassName)
+	{
+		Il2CppImage* img = get_image(namespaze);
+		size_t classCount = il2cpp_image_get_class_count(img);
+
+		for (size_t i = 0; i < classCount; i++) {
+			Il2CppClass* klass = (Il2CppClass*)il2cpp_image_get_class(img, i);
+			if (!klass) continue;
+			const char* ns = il2cpp_class_get_namespace(klass);
+			const char* name = il2cpp_class_get_name(klass);
+			if (strcmp(name, klassName) == 0) {
+				return klass;
 			}
 		}
 		return nullptr;

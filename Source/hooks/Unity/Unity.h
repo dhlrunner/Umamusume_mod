@@ -4,6 +4,7 @@
 #include "UnityEngine.CoreModule.h"
 #include "UnityEngine.InputLegacyModule.h"
 #include "UnityEngine.AssetBundleModule.h"
+#include "UnityEngine.EventSystems.h"
 #include "UnityEngine.UI.h"
 
 namespace Unity {

@@ -3,11 +3,14 @@
 namespace Gallop::CharacterBuildInfo_
 {
 	void* ctor_orig = nullptr;
-	void ctor_hook(CharacterBuildInfo* _this,
+	void ctor_hook(Il2CppObject* _this,
 		int charaId, int dressId, int controllerType, int headId = 0, int zekken = 0, int mobId = 0,
 		int backDancerColorId = -1, bool isUseDressDataHeadModelSubId = true,
 		int audienceId = 0, int motionDressId = -1, bool isEnableModelCache = true) {
-		Logger::Debug(SECTION_NAME, L"CharacterBuildInfo_ctor called origcharaid=%d, origdressid=%d, mini=%d, mobid=%d", charaId, dressId, _this->_miniMobParentCharaId, mobId);
+				
+		CharacterBuildInfo* info =
+			(CharacterBuildInfo*)((uint8_t*)_this + sizeof(Il2CppObject));
+		Logger::Debug(SECTION_NAME, L"CharacterBuildInfo_ctor called origcharaid=%d, origdressid=%d, mini=%d, mobid=%d", charaId, dressId, info->_miniMobParentCharaId, mobId);
 
 		//if(_this.)
 		if (Settings::Global->homeAllDiamond) {
@@ -20,7 +23,7 @@ namespace Gallop::CharacterBuildInfo_
 				/*if (charaId == 9001)
 					charaId = 9002;*/
 					//else
-				_this->_charaId = Settings::Local->gachaCutinChara;
+				info->_charaId = Settings::Local->gachaCutinChara;
 				charaId = Settings::Local->gachaCutinChara;
 			}
 			if (Settings::Local->gachaCutinDress > -1) {
@@ -28,14 +31,71 @@ namespace Gallop::CharacterBuildInfo_
 					dressId = 900201;*/
 					//else
 
-				_this->_dressId = Settings::Local->gachaCutinDress;
+				info->_dressId = Settings::Local->gachaCutinDress;
 				dressId = Settings::Local->gachaCutinDress;
 			}
 			if (Settings::Local->gachaCutinHeadid > -1) {
-				_this->_headModelSubId = Settings::Local->gachaCutinHeadid;
+				info->_headModelSubId = Settings::Local->gachaCutinHeadid;
 				headId = Settings::Local->gachaCutinHeadid;
 			}
 		}
+
+		if (Settings::Local->changeStoryChar) {
+			if ((Settings::Local->story3dCharID < 0) || (Settings::Local->story3dClothID < 0) || (Settings::Local->story3dHeadID < 0))
+			{
+				std::string line;
+				while (true) {
+					try {
+
+
+						std::cout << "Enter charaid, mobid, dressid, headid" << line << "\n";
+						std::cout << "Default is: " << charaId << " " << mobId << " " << dressId << " " << headId << "\n";
+
+						std::getline(std::cin, line);
+
+						//std::cout <<  "Entered: " << line;
+						std::vector < std::string > arg = Utils::explode(line, ' ');
+
+
+						int _charaId = std::stoi(arg.at(0).c_str());
+						int _mobId = std::stoi(arg.at(1).c_str());
+						int _dressId = std::stoi(arg.at(2).c_str());
+						int _headid = std::stoi(arg.at(3).c_str());
+
+						charaId = _charaId;
+						mobId = _mobId;
+						dressId = _dressId;
+						headId = _headid;
+
+						printf("CutInModelController.Context set manual %d %d %d %d\n", charaId, mobId, dressId, headId);
+						break;
+					}
+					catch (std::invalid_argument&) {
+						printf("Value Error: please enter number only\n");
+					}
+					catch (std::out_of_range&) {
+						std::cout << "You entered " << line << "\n";
+						printf_s("Argument Error: please enter {CharID} {mob id} {Dress id} {Head ID} \n");
+					}
+				}
+
+
+
+				//printf("Enter charaid, clothid, headid, mobid: ");
+
+				//scanf_s("%d %d %d %d", &charaId, &clothId, &headId, &mobId);
+				printf("\n");
+			}
+			else
+			{
+				charaId = Settings::Local->story3dCharID;
+				dressId = Settings::Local->story3dClothID;
+				headId = Settings::Local->story3dHeadID;
+				printf("CharacterBuildInfo_ctor set %d %d %d\n", charaId, dressId, headId);
+			}
+		}
+		
+
 		//controllerType = 0x0c;
 		
 		Logger::Debug(SECTION_NAME, L"CharacterBuildInfo_ctor called ccharaid=%d, cdressid=%d", charaId, dressId);

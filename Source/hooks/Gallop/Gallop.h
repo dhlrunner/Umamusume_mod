@@ -30,6 +30,11 @@
 #include "ModelLoader.h"
 #include "EditableCharacterBuildInfo.h"
 #include "CutIn.CutInCharacter.h"
+#include "UIManager.h"
+#include "MasterLiveFixMemberData.h"
+#include "MasterLiveData.h"
+#include "MasterDressData.h"
+#include "ResourceManager.h"
 
 #define SECTION_NAME L"GALLOPHOOK_MAIN"
 

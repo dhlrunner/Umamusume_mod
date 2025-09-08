@@ -79,6 +79,14 @@ namespace libnative {
 		}
 		//rpc->set(decrypted, ret, currentUrl.str().c_str());
 		//printf("%s\n", msgPackToJson(decrypted, ret));
+
+		if (Settings::Global->saveMsgPack) {
+
+			auto out_path = std::string("umamusume.exe.local\\msgpack_dump\\").append(Utils::GetCurrentTimeAsMS()).append(Utils::StrReplaceAll(CurrentUrl.path(), "/", "_")).append("R.msgpack");
+			Utils::WriteStrToFile(out_path, decrypted, ret);
+			Logger::Info(L"LIBNATIVE", L"wrote response to %S", out_path.c_str());
+
+		}
 		delete[] decrypted;
 		//dst = {0};
 		return ret;
@@ -95,6 +103,7 @@ namespace libnative {
 		//char* decrypted = new char[dstCapacity] {};
 		char* raw_data = new char[srcSize] {};
 		memcpy(raw_data, src, srcSize);
+		int ret = 0;
 
 		/*auto dialogData = il2cpp_object_new(
 			il2cpp_symbols::get_class("umamusume.dll", "Gallop", "DialogCommon/Data"));
@@ -130,7 +139,6 @@ namespace libnative {
 				memcpy(src, raw_data, clength);
 			}
 			
-			int ret = 0;
 			if (Settings::Global->lz4Encrypt) {
 				ret = reinterpret_cast<decltype(LZ4_compress_default_ext_hook)*>(LZ4_compress_default_ext_orig)(
 					src, dst, clength, dstCapacity);
@@ -142,12 +150,9 @@ namespace libnative {
 
 
 			//printf("-------------------------------------------------------------------------\n");
-			delete[] raw_data;
-
-			return ret;
+			
 		}
 		else {
-			int ret = 0;
 			if (Settings::Global->lz4Encrypt) {
 				ret = reinterpret_cast<decltype(LZ4_compress_default_ext_hook)*>(LZ4_compress_default_ext_orig)(
 					src, dst, srcSize, dstCapacity);
@@ -159,12 +164,16 @@ namespace libnative {
 
 			Logger::Debug(L"LIBNATIVE",L"Raw Client data: %d Bytes (Compressed/Encrypted to %d bytes) -> ", srcSize, ret);
 
-
-			delete[] raw_data;
-			return ret;
 		}
 
+		if (Settings::Global->saveMsgPack) {
+			auto out_path = std::string("umamusume.exe.local\\msgpack_dump\\").append(Utils::GetCurrentTimeAsMS()).append(Utils::StrReplaceAll(LastUrl.path(), "/", "_")).append("Q.msgpack");
+			Utils::WriteStrToFile(out_path, src, srcSize);
+			Logger::Info(L"LIBNATIVE", L"wrote clinet request to %S", out_path.c_str());
+		}
 
+		delete[] raw_data;
+		return ret;
 	}
 
 	void Init(HWND currentHWND) {

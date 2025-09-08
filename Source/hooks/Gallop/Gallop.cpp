@@ -4,7 +4,7 @@ namespace Gallop
 {
 	void Init() {
 		Logger::Info(SECTION_NAME, L"Init");
-		Gallop::StandaloneWindowResize::Init();
+		StandaloneWindowResize::Init();
 		Live::Init();
 		Live::Cutt::Init();
 		Live::Cutt::LiveTimelineControl::Init();
@@ -26,13 +26,17 @@ namespace Gallop
 		CameraController::Init();
 		SingleModeStartResultCharaViewer::Init();
 		GameSystem::Init();
-		Gallop::Model::Component::CySpringUpdater::Init();
-		Gallop::WorkDressData::Init();
-		Gallop::CySpringNative::Init();
-		Gallop::MasterDataManager::Init();
-		Gallop::ModelLoader::Init();
-		Gallop::EditableCharacterBuildInfo::Init();
-		Gallop::CutIn::CutInCharacter::Init();
-
+		Model::Component::CySpringUpdater::Init();
+		WorkDressData::Init();
+		CySpringNative::Init();
+		MasterDataManager::Init();
+		ModelLoader::Init();
+		EditableCharacterBuildInfo::Init();
+		CutIn::CutInCharacter::Init();
+		UIManager::Init();
+		MasterLiveFixMemberData::Init();
+		MasterLiveData::Init();
+		MasterDressData_::Init();
+		ResourceManager::Init();
 	}
 }

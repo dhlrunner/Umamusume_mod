@@ -20,4 +20,8 @@ namespace Utils
 	std::string ConvertWstringToUTF8(const std::wstring& src);
 	void RemoveProtection(HMODULE module);
 	bool StrEndsWith(LPCWSTR path, LPCWSTR suffix);
+	bool StrEndsWith(std::string const& fullString, std::string const& ending);
+	std::string StrReplaceAll(std::string str, const std::string& from, const std::string& to);
+	void WriteStrToFile(std::string file_name, char* buffer, int len);
+	std::string GetCurrentTimeAsMS();
 }

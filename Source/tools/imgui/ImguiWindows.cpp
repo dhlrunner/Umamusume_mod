@@ -47,6 +47,7 @@ namespace ImGuiWindows {
 	ID3D11RenderTargetView* mainRenderTargetView;
 	IDXGISwapChain* g_pSwapChain = NULL;
 
+	static std::vector<void*> rootObjList;
 	ID3D11ShaderResourceView* texture_kimura = NULL;
 	int kimura_image_width = 0;
 	int kimura_image_height = 0;
@@ -1629,7 +1630,7 @@ namespace ImGuiWindows {
 					ImGui::SetWindowSize(ImVec2(static_cast<float>(width), 0));
 
 
-					string horseName = "";
+					std::string horseName = "";
 					int horseIndex = 0;
 
 					if (Global::playerHorseData) 
@@ -1646,11 +1647,20 @@ namespace ImGuiWindows {
 					}
 					
 
+					static float maxSpeed = 0;
 
-					ImGui::Text("%d %s | %.2f km/h\n", horseIndex + 1, horseName.c_str(), Global::raceHorseSpeed);
+					ImGui::Text("[%d] %s | %.2f km/h | Max %.2f km/h\n", horseIndex + 1, horseName.c_str(), Global::raceHorseSpeed, maxSpeed);
 					ImGui::SameLine();
 
 					ImGui::End();
+					if (maxSpeed < Global::raceHorseSpeed)
+					{
+						maxSpeed = Global::raceHorseSpeed;
+					}
+					else if (Global::raceHorseSpeed < 1)
+					{
+						maxSpeed = 0;
+					}
 			}
 
 			// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
@@ -1837,7 +1847,7 @@ namespace ImGuiWindows {
 				if (ImGui::CollapsingHeader("라이브", ImGuiTreeNodeFlags_DefaultOpen)) {
 					ImGui::Checkbox("라이브 카메라 멈추기", &Settings::Local->stopLiveCam); ImGui::SameLine(); HelpMarker("라이브에서 카메라 워크를 정지합니다.\n단축키: S");
 					ImGui::Checkbox("라이브 제목 창 출력", &Settings::Global->showLiveTitleWindow); ImGui::SameLine(); HelpMarker("라이브 시작 시 제목 창을 표시합니다.");
-
+					ImGui::Checkbox("강제 세로모드 해제", &Settings::Global->ignoreLiveForcePortrait); ImGui::SameLine(); HelpMarker("세로 모드 고정 라이브를 강제로 가로모드로 전환합니다.");
 					BeginGroupPanel("타임라인");
 
 					//int minutes = static_cast<int>(liveTimeSec / 60); // 분 계산
@@ -1871,6 +1881,7 @@ namespace ImGuiWindows {
 						//showAlertMessage(5.0, "수동 조정이 활성화되었습니다.");
 					} ImGui::SameLine(); HelpMarker("타임라인 수동 조정을 활성화합니다.");
 					ImGui::SliderInt("타겟 타임라인 갱신 fps 설정", &Global::liveTimeLineFPS, 0, Settings::Global->maxFps);
+					
 					EndGroupPanel();
 					//ImGui::Checkbox("isCameraShake", &IsCamShake);
 
@@ -2008,6 +2019,9 @@ namespace ImGuiWindows {
 
 			}
 
+			/*if (true) {
+				ImGuiTreeNodeFlags a = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet;
+			}*/
 			
 			ImGui::Render();
 			//const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };

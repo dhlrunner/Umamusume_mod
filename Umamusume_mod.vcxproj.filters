@@ -241,6 +241,21 @@
     <ClCompile Include="Source\hooks\Gallop\CutIn.CutInCharacter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\MasterLiveFixMemberData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Cyan\Cyan.LocalFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Unity\UnityEngine.EventSystems.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\MasterLiveData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\Gallop\ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\stdinclude.h">
@@ -354,6 +369,11 @@
     <ClInclude Include="Source\hooks\Gallop\ModelLoader.h" />
     <ClInclude Include="Source\hooks\Gallop\EditableCharacterBuildInfo.h" />
     <ClInclude Include="Source\hooks\Gallop\CutIn.CutInCharacter.h" />
+    <ClInclude Include="Source\hooks\Gallop\MasterLiveFixMemberData.h" />
+    <ClInclude Include="Source\hooks\Cyan\Cyan.LocalFile.h" />
+    <ClInclude Include="Source\hooks\Unity\UnityEngine.EventSystems.h" />
+    <ClInclude Include="Source\hooks\Gallop\MasterLiveData.h" />
+    <ClInclude Include="Source\hooks\Gallop\ResourceManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

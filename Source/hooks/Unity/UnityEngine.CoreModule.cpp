@@ -1,7 +1,7 @@
 ﻿#include "Unityengine.CoreModule.h"
 
 using namespace Unity;
-using namespace std;
+//using namespace std;
 
 namespace UnityEngine::CoreModule
 {
@@ -12,15 +12,159 @@ namespace UnityEngine::CoreModule
 	float (*get_TimeScale)();
 	void (*get_resolution)(Resolution_t* buffer);
 
+
+
+	std::string HttpGetWithPort(const std::wstring& host, INTERNET_PORT port, const std::wstring& path, bool useHttps = false) {
+		HINTERNET hSession = WinHttpOpen(L"UmaMod/1.0",
+			WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+			WINHTTP_NO_PROXY_NAME,
+			WINHTTP_NO_PROXY_BYPASS, 0);
+		if (!hSession) return "";
+
+		HINTERNET hConnect = WinHttpConnect(hSession, host.c_str(), port, 0);
+		if (!hConnect) {
+			WinHttpCloseHandle(hSession);
+			return "";
+		}
+
+		DWORD flags = useHttps ? WINHTTP_FLAG_SECURE : 0;
+		HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", path.c_str(),
+			NULL, WINHTTP_NO_REFERER,
+			WINHTTP_DEFAULT_ACCEPT_TYPES,
+			flags);
+
+		if (!hRequest) {
+			WinHttpCloseHandle(hConnect);
+			WinHttpCloseHandle(hSession);
+			return "";
+		}
+
+		std::string response;
+		if (WinHttpSendRequest(hRequest,
+			WINHTTP_NO_ADDITIONAL_HEADERS, 0,
+			WINHTTP_NO_REQUEST_DATA, 0,
+			0, 0) && WinHttpReceiveResponse(hRequest, NULL))
+		{
+			DWORD dwSize = 0;
+			do {
+				DWORD dwDownloaded = 0;
+				if (!WinHttpQueryDataAvailable(hRequest, &dwSize)) break;
+				if (dwSize == 0) break;
+
+				std::vector<char> buffer(dwSize);
+				if (!WinHttpReadData(hRequest, buffer.data(), dwSize, &dwDownloaded)) break;
+
+				response.append(buffer.begin(), buffer.begin() + dwDownloaded);
+			} while (dwSize > 0);
+		}
+
+		WinHttpCloseHandle(hRequest);
+		WinHttpCloseHandle(hConnect);
+		WinHttpCloseHandle(hSession);
+
+		return response;
+		//return "";
+	}
+
+
 	void ResetGame() {
 		LoadSceneParameters p = { 0 };
 		p.LoadSceneMode = 0; //Single
 		p.LocalPhysicsMode = 0;
-		LoadScene(il2cpp_string_new(string("_Boot").data()), &p);
+		LoadScene(il2cpp_string_new(std::string("_Boot").data()), &p);
+	}
+
+	void SetCustomLiveFixMembersThread() {
+		Il2CppDomain* domain = il2cpp_domain_get();                
+		Il2CppThread* t = il2cpp_thread_attach(domain);      
+
+		
+		Global::customLiveFixMemberData.clear();
+		auto dialog = GallopDialog::ShowTextDialog(L"Loading custom assets", L"Connecting to server...", false);
+
+		//GallopDialog::SetDialogMessage(dialog, L"Dumping GameAssembly.dll ...");
+
+		GallopDialog::CloseDialog(dialog);
+		//get data from custom server
+		//json format
+		/* "data" : [
+		*	{
+		*		"Id": 0,
+				"MusicId": 0,
+				"Order": 0,
+				"CharaId": 1001,
+				"DressId1": 100101,
+				"DressId2": 0,
+				"DressColor1": 0,
+				"DressColor2": 0
+			},
+			...
+		]
+		*/
+
+		std::string result = HttpGetWithPort(L"localhost", 10564, L"/getCustomFixedLiveMemberData");
+		if (result != "") {
+			rapidjson::Document document;
+			document.Parse(result.c_str());
+			if (document.HasParseError()) {
+				Logger::Error(SECTION_NAME, L"JSON Parse Error: %d", document.GetParseError());
+				GallopDialog::SetDialogMessage(dialog, L"Failed to parse custom live fix member data (JSON Parse Error).");
+				Sleep(3000);
+				GallopDialog::CloseDialog(dialog);
+				return;
+			}
+
+			//parse json
+			const rapidjson::Value& data = document["data"];
+			if (!data.IsArray()) {
+				Logger::Error(SECTION_NAME, L"JSON data is not array.");
+				GallopDialog::SetDialogMessage(dialog, L"Failed to parse custom live fix member data (data is not array).");
+				Sleep(3000);
+				GallopDialog::CloseDialog(dialog);
+				return;
+			}
+
+			//document["data"].GetArray();
+			Global::customLiveFixMemberData.resize(data.Size());
+			for (rapidjson::SizeType i = 0; i < data.Size(); i++) {
+				Gallop::LiveFixMemberData* fixMemberData = new Gallop::LiveFixMemberData(
+					data[i]["Id"].GetInt(),
+					data[i]["MusicId"].GetInt(),
+					data[i]["Order"].GetInt(),
+					data[i]["CharaId"].GetInt(),
+					data[i]["DressId1"].GetInt(),
+					data[i]["DressId2"].GetInt(),
+					data[i]["DressColor1"].GetInt(),
+					data[i]["DressColor2"].GetInt()
+				);
+				Global::customLiveFixMemberData[i] = fixMemberData;
+			}
+			GallopDialog::SetDialogMessage(dialog, L"Load completed.");
+			Sleep(3000);
+			GallopDialog::CloseDialog(dialog);
+
+			//if (res->status == 200) {
+			//	
+			//}
+			//else {
+			//	Logger::Error(SECTION_NAME, L"Failed to get custom live fix member data from server. Status: %d", res->status);
+			//	GallopDialog::SetDialogMessage(dialog, L"Failed to get custom live fix member data from server.");
+			//	Sleep(3000);
+			//	GallopDialog::CloseDialog(dialog);
+			//}
+		}
+		else {
+			Logger::Error(SECTION_NAME, L"Failed to connect to custom server.");
+			GallopDialog::SetDialogMessage(dialog, L"Failed to connect to custom server.");
+			Sleep(3000);
+			GallopDialog::CloseDialog(dialog);
+		}
+
+		il2cpp_thread_detach(t);
 	}
 
 	void GameObject_SetActive(const char* path, bool enable) {
-		Il2CppObject* gobj = (Il2CppObject*)GameObject_Find(il2cpp_string_new(string(path).data()));
+		Il2CppObject* gobj = (Il2CppObject*)GameObject_Find(il2cpp_string_new(std::string(path).data()));
 		auto gobj_setActive = reinterpret_cast<void (*)
 			(Il2CppObject * _instance, bool value)>(il2cpp_class_get_method_from_name(gobj->klass, "SetActive", 1)->methodPointer);
 		if (gobj != nullptr) {
@@ -84,7 +228,7 @@ namespace UnityEngine::CoreModule
 		//wcscpy_s(Global::currSceneName, sceneName->length, sceneName->chars);
 		Logger::Debug(SECTION_NAME, L"LoadSceneAsyncNameIndexInternal hooked name=%S", Utils::ConvertWstringToUTF8(sceneName->chars).c_str());
 		Global::currSceneName = sceneName;
-		wstring sceneN = sceneName->chars;
+		std::wstring sceneN = sceneName->chars;
 		//Home인경우 DB로드 다 된걸로 예상
 		if (sceneN == L"Home")
 		{
@@ -161,6 +305,10 @@ namespace UnityEngine::CoreModule
 				Global::MasterCharaData.push_back(charaData);*/
 			}
 
+			//Load LiveFixMemberData
+			Logger::Info(SECTION_NAME, L"Loading custom live fix member data from server...");
+			std::thread(SetCustomLiveFixMembersThread).detach();
+			Logger::Info(SECTION_NAME, L"Setted %d MasterLiveFixedMember data", Global::customLiveFixMemberData);
 
 			Logger::Info(SECTION_NAME, L"Setted %d Master character data", data->count);
 		}
@@ -248,7 +396,7 @@ namespace UnityEngine::CoreModule
 	void adjustScreenSize(int w, int h)
 	{
 		Logger::Info(SECTION_NAME, L"Adjusting screen size %d %d", w, h);
-		thread([&]() {
+		std::thread([&]() {
 			auto tr = il2cpp_thread_attach(il2cpp_domain_get());
 
 			Resolution_t r ;

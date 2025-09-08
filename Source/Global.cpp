@@ -27,10 +27,13 @@ namespace Global
 	std::vector<Gallop::MasterCharaData_CharaData*> MasterCharaData;
 
 	bool isNeedFullscreen = false;
+	GameType gameType = GameType::UMAMUSUME_DMM_JP;
 
 	//race
 	int raceHorseCount = 0;
 	Il2CppObject* raceManager = nullptr;
 	Gallop::HorseData* playerHorseData = nullptr;
 	float raceHorseSpeed = 0.0f;
+
+	std::vector <Gallop::LiveFixMemberData*> customLiveFixMemberData;
 }

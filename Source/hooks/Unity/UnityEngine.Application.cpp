@@ -11,7 +11,7 @@ namespace UnityEngine::Application {
 
 		if (strlen(Settings::Global->customDataPath) > 0) {
 			Il2CppString* custompath = il2cpp_string_new(Settings::Global->customDataPath);
-			//wprintf(L"[unityengine_get_persistentDataPath] originalpersistentpath=%s, replacedpersistentpath=%s\n", ret->start_char, custompath->start_char);
+			//wprintf(L"[unityengine_get_persistentDataPath] originalpersistentpath=%s, replacedpersistentpath=%s\n", ret->chars, custompath->chars);
 			return custompath;
 		}
 

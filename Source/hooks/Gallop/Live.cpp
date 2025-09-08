@@ -33,6 +33,16 @@ namespace Gallop::Live
 		return ret;
 	}
 
+	void* Director_get_IsScreenModeFullPortrait_orig = nullptr;
+	bool Director_get_IsScreenModeFullPortrait_hook(Il2CppObject* _instance) {
+		bool ret = reinterpret_cast<decltype(Director_get_IsScreenModeFullPortrait_hook)*>(Director_get_IsScreenModeFullPortrait_orig)(_instance);
+		//Logger::Info(SECTION_NAME, L"IsScreenModeFullPortrait=%d", ret);
+		if (Settings::Global->ignoreLiveForcePortrait) {
+			ret = false;
+		}
+		return ret;
+	}
+
 	void Init()
 	{
 		Logger::Info(SECTION_NAME, L"Init");
@@ -54,6 +64,11 @@ namespace Gallop::Live
 		));
 		EnableHook(Director_get_LiveTotalTime_addr, &Director_get_LiveTotalTime_hook, &Director_get_LiveTotalTime_orig, L"Director_get_LiveTotalTime");
 
+		auto Director_get_IsScreenModeFullPortrait_addr = reinterpret_cast<bool(*)()>(il2cpp_symbols::get_method_pointer(
+			"umamusume.dll", "Gallop.Live",
+			"Director", "get_IsScreenModeFullPortrait", 0
+		));
+		EnableHook(Director_get_IsScreenModeFullPortrait_addr, &Director_get_IsScreenModeFullPortrait_hook, &Director_get_IsScreenModeFullPortrait_orig, L"Director_get_IsScreenModeFullPortrait");
 
 	}
 }

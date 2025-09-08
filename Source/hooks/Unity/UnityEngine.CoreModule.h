@@ -1,6 +1,9 @@
 #pragma once
+
 #include "../../Global.h"
 #include "..\..\tools\Logger.hpp"
+#include <winhttp.h>
+#include "../GallopDialogUtil.h"
 #include "il2cpp\il2cpp_symbols.hpp"
 #include "il2cpp\il2cpp-tabledefs.h"
 #include "il2cpp/il2cpp-tools.hpp"
@@ -9,9 +12,12 @@
 #include "..\hook-helper.h"
 #include "UnityStructs.h"
 #include "../Gallop/StandaloneWindowResize.h"
+//#include "../rapidjson/document.h"
 
 #include <thread>
 #include <numeric>
+
+#pragma comment(lib, "winhttp.lib")
 
 #define SECTION_NAME L"UNITY_CORE"
 

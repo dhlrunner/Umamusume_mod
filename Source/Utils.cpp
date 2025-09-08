@@ -50,6 +50,24 @@ namespace Utils {
 		return wcscmp(path + (pathLen - suffixLen), suffix) == 0;
 	}
 
+	bool StrEndsWith(std::string const& fullString, std::string const& ending) {
+		if (fullString.length() >= ending.length()) {
+			return (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
+		}
+		else {
+			return false;
+		}
+	}
+
+	std::string StrReplaceAll(std::string str, const std::string& from, const std::string& to) {
+		size_t start_pos = 0;
+		while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+			str.replace(start_pos, from.length(), to);
+			start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+		}
+		return str;
+	}
+
 	std::string ConvertWstringToUTF8(const std::wstring& src)
 	{
 		if (src.empty()) {
@@ -60,6 +78,33 @@ namespace Utils {
 		std::string result(size_needed, 0);
 		WideCharToMultiByte(CP_UTF8, 0, &src[0], (int)src.size(), &result[0], size_needed, NULL, NULL);
 		return result;
+	}
+
+	/// <summary>
+	/// Get the current time in milliseconds since epoch
+	/// </summary>
+	/// <returns></returns>
+	std::string GetCurrentTimeAsMS()
+	{
+		auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+			std::chrono::system_clock::now().time_since_epoch());
+		return std::to_string(ms.count());
+	}
+
+	/// <summary>
+	/// Write a string to a file
+	/// </summary>
+	/// <param name="file_name"></param>
+	/// <param name="buffer"></param>
+	/// <param name="len"></param>
+	void WriteStrToFile(std::string file_name, char* buffer, int len)
+	{
+		FILE* fp;
+		fopen_s(&fp, file_name.c_str(), "wb");
+		if (fp != nullptr) {
+			fwrite(buffer, 1, len, fp);
+			fclose(fp);
+		}
 	}
 
 	void RemoveProtection(HMODULE module) 

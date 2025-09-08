@@ -55,7 +55,7 @@ namespace Settings {
         bool walkMotionAllUrara = false;
         bool homeAllDiamond = false;
         bool winMotion564 = false;
-
+		bool ignoreLiveForcePortrait = false;
     };
 
     struct LocalUmaSettings {

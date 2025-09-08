@@ -9,11 +9,10 @@
 #include "Gallop/GallopStructs.h"
 #include "Gallop/GallopUtil.h"
 
-using namespace std;
 namespace GallopDialog 
 {
-	Il2CppObject* ShowTextDialog(wstring title, wstring text, bool canClose = true);
-	void SetDialogMessage(Il2CppObject* targetDialogObj, wstring text);
+	Il2CppObject* ShowTextDialog(std::wstring title, std::wstring text, bool canClose = true);
+	void SetDialogMessage(Il2CppObject* targetDialogObj, std::wstring text);
 	void CloseDialog(Il2CppObject* targetDialogObj);
-	void ShowToast(wstring text);
+	void ShowToast(std::wstring text);
 }

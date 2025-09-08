@@ -5,4 +5,4 @@
 
 #include "il2cpp_symbols.hpp"
 
-void il2cpphook_init(const FARPROC init_addr);
+void il2cpphook_init(HMODULE il2cpp_module);

@@ -7,6 +7,15 @@
 
 namespace Global 
 {
+	enum class GameType
+	{
+		UMAMUSUME_DMM_JP,
+		UMAMUSUME_STEAM,
+		UMAMUSUME_STEAM_JP,
+		UMAMUSUME_STEAM_CN,
+		UMAMUSUME_STEAM_KR
+	};
+
 	//레이스 결과 화면에서 착순 아이콘 플래시 표시 여부
 	extern bool showFinishOrderFlash;
 
@@ -41,5 +50,9 @@ namespace Global
 	extern Il2CppObject* raceManager;
 	extern Gallop::HorseData* playerHorseData;
 	extern float raceHorseSpeed;
+
+	extern GameType gameType;
+
+	extern std::vector <Gallop::LiveFixMemberData*> customLiveFixMemberData;
 
 }

@@ -102,6 +102,8 @@ namespace Settings {
 
 
 			Global->virtualResolutionMultiple = document.HasMember("virtualResolutionMultiple") ? document["virtualResolutionMultiple"].GetFloat() : InitialValue->virtualResolutionMultiple;
+			Global->ignoreLiveForcePortrait = document.HasMember("ignoreLiveForcePortrait") ? document["ignoreLiveForcePortrait"].GetBool() : InitialValue->ignoreLiveForcePortrait;
+			
 			// Looks like not working for now
 			// g_aspect_ratio = document["customAspectRatio"].GetFloat();
 
@@ -164,6 +166,7 @@ namespace Settings {
 		document.AddMember("walkMotionAllUrara", Global->walkMotionAllUrara, allocator);
 		document.AddMember("homeAllDiamond", Global->homeAllDiamond, allocator);
 		document.AddMember("winMotion564", Global->winMotion564, allocator);
+		document.AddMember("ignoreLiveForcePortrait", Global->ignoreLiveForcePortrait, allocator);
 
 
 		rapidjson::Value dictArr(rapidjson::Type::kArrayType);

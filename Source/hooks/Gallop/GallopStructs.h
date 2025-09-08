@@ -96,60 +96,103 @@ namespace Gallop
 		int32_t AttachmentModelId;
 	};
 
+#pragma pack(push, 4)          /* Unity/IL2CPP 기본 4-byte alignment */
 
-	//Gallop.CharacterBuildInfo
-	struct CharacterBuildInfo {
-	public:
-		char dummy[0x10];
-		int32_t _cardId;
-		int32_t _charaId;
-		int32_t _mobId;
-		int32_t _headModelSubId;
-		bool _isUseDressDataHeadModelSubId;
-		int32_t _bodyModelSubId;
-		int32_t _dressId;
-		int32_t _controllerType;
-		int32_t _zekken;
-		int dummy5;
-		Il2CppString* _name;
-		int32_t _genderType;
-		int32_t _heightType;
-		int32_t _bodySize;
-		int32_t _bustType;
-		float _height;
-		int32_t _skinType;
-		int32_t _socksType;
-		int32_t _defaultPersonalityType;
-		int32_t _raceGateInPersonalityType;
-		int32_t _raceRunPersonalityType;
-		int32_t _raceOverRunPersonalityType;
-		int32_t _raceRunningType;
-		int32_t _zekkenColor;
-		int32_t _zekkenFontColor;
-		int32_t _zekkenFontStyle;
-		void* _wetTextureArray;
-		void* _dirtTextureArray;
-		void* _sweatLocator;
-		void* _sweatObject;
+	typedef struct AudienceBuildInfo
+	{
+		/*0x10*/ int32_t  faceKindId;
+		/*0x14*/ int32_t  hairKindId;
+		/*0x18*/ int32_t  hairColorId;
+		/*0x1C*/ int32_t  dressColorId;   /* 주의: C# 필드명은 대문자 D */
 
-		int32_t _frameColor;
-		int32_t _popularity;
-		int32_t _npcType;
-		void* _charaBuildPathInfo;
-		void* _clothBuildPathInfo;
-		MasterDressData* _dressElement;
-		int32_t _backDancerColorId;
-		struct MobBuildInfo _mobInfo;
-		bool _isPersonalDress;
-		int32_t _miniMobTailId;
-		int32_t _miniMobParentCharaId;
-		int32_t _overrideClothCategory;
-		int32_t _loadHashKey;
-		bool _isPreCreatedLoadHashKey;
-		bool _initialized;
+		/* 생성자∙메서드는 IL2CPP 변환 후 별도 함수이므로
+		   본 구조체에는 포함되지 않습니다 */
+	} AudienceBuildInfo;
 
+#pragma pack(pop)
 
-	};
+	/* ─── Instance-layout (x86_64 IL2CPP) ───────────────────────────────── */
+#pragma pack(push, 4)               /* 4-byte alignment like Mono/IL2CPP */
+
+	typedef struct CharacterBuildInfo
+	{
+		/*0x10*/ int32_t      _cardId;
+		/*0x14*/ int32_t      _charaId;
+		/*0x18*/ int32_t      _mobId;
+		/*0x1C*/ int32_t      _audienceId;
+
+		/*0x20*/ int32_t      _headModelSubId;
+		/*0x24*/ bool         _isUseDressDataHeadModelSubId;
+		uint8_t      _pad24[3];                /* →0x28 */
+
+		/*0x28*/ int32_t      _bodyModelSubId;
+		/*0x2C*/ int32_t      _motionBodyModelSubId;
+		/*0x30*/ int32_t      _dressId;
+		/*0x34*/ int32_t      _motionDressId;
+		/*0x38*/ int32_t      _controllerType;          /* enum */
+		/*0x3C*/ int32_t      _zekken;
+
+		/*0x40*/ Il2CppString* _name;
+		/*0x48*/ int32_t      _genderType;              /* enum */
+		/*0x4C*/ int32_t      _heightType;              /* enum */
+		/*0x50*/ int32_t      _bodySize;                /* enum */
+		/*0x54*/ int32_t      _bustType;                /* enum */
+		/*0x58*/ float        _height;
+		/*0x5C*/ int32_t      _skinType;                /* enum */
+		/*0x60*/ int32_t      _socksType;               /* enum */
+		/*0x64*/ int32_t      _defaultPersonalityType;
+		/*0x68*/ int32_t      _raceGateInPersonalityType;
+		/*0x6C*/ int32_t      _raceRunPersonalityType;
+		/*0x70*/ int32_t      _raceOverRunPersonalityType;
+		/*0x74*/ int32_t      _raceRunningType;
+		/*0x78*/ int32_t      _zekkenColor;             /* enum */
+		/*0x7C*/ int32_t      _zekkenFontColor;         /* enum */
+		/*0x80*/ int32_t      _zekkenFontStyle;         /* enum */
+		uint8_t      _pad84[4];                /* →0x88 */
+
+		/*0x88*/ Il2CppArray* _wetTextureArray;         /* Texture[] */
+		/*0x90*/ Il2CppArray* _dirtTextureArray;        /* Texture[] */
+		/*0x98*/ void* _sweatLocator;
+		/*0xA0*/ void* _sweatObject;
+
+		/*0xA8*/ int32_t      _frameColor;              /* enum */
+		/*0xAC*/ int32_t      _popularity;
+		/*0xB0*/ int32_t      _npcType;                 /* enum */
+		uint8_t      _padB4[4];                /* →0xB8 */
+
+		/*0xB8*/ void* _charaBuildPathInfo;
+		/*0xC0*/ void* _clothBuildPathInfo;
+		/*0xC8*/ void* _dressElement;
+
+		/*0xD0*/ int32_t      _backDancerColorId;
+		/*0xD4*/ int32_t      _attachmentModelId;
+		/*0xD8*/ bool         _isAttachmentModel;
+		uint8_t      _padD9[3];                /* →0xDC */
+
+		/*0xDC*/ MobBuildInfo* _mobInfo;
+		uint8_t      _padE4[0x10];             /* reserve to 0xF4 */
+
+		/*0xF4*/ AudienceBuildInfo* _audienceInfo;
+		uint8_t      _padFC[0x8];              /* →0x104 */
+
+		/*0x104*/ bool         _isPersonalDress;
+		uint8_t      _pad105[3];               /* →0x108 */
+
+		/*0x108*/ int32_t      _miniMobTailId;
+		/*0x10C*/ int32_t      _miniMobParentCharaId;
+		/*0x110*/ int32_t      _overrideClothCategory;   /* enum */
+		/*0x114*/ void* _loadHashKey;
+
+		/*0x118*/ bool         _isPreCreatedLoadHashKey;
+		/*0x119*/ bool         _isEnableModelCache;
+		uint8_t      _pad11A[2];               /* →0x11C */
+
+		/*0x11C*/ int32_t      _charaDressColorSetId;
+		/*0x120*/ bool         _initialized;
+		uint8_t      _pad121[3];               /* →0x124 */
+	} CharacterBuildInfo;
+
+#pragma pack(pop)
 
 	//Gallop.CySpringDataContainer.Category
 	namespace CySpringDataContainer {
@@ -349,6 +392,60 @@ namespace Gallop
 		void* raceRecord;					//0x90 IRaceRecord*
 		int FinishOrderRawScore;			//0x98
 		int* TrainedCharaData;				//0xA0
+	};
+
+	// IL2CPP는 C#의 sealed class를 C++에서 final class로 처리할 수 있지만,
+	// 데이터 전용 클래스이므로 간단한 struct로 표현하는 것이 일반적입니다.
+	// IL2CPP 내부적으로는 클래스 메타데이터와 함께 관리됩니다.
+
+	// C#의 Int32는 C++의 int32_t에 해당합니다.
+	struct LiveFixMemberData : Il2CppObject
+	{
+		// Fields (readonly in C# -> const in C++ with constructor initialization)
+		const int32_t Id;
+		const int32_t MusicId;
+		const int32_t Order;
+		const int32_t CharaId;
+		const int32_t DressId1;
+		const int32_t DressId2;
+		const int32_t DressColor1;
+		const int32_t DressColor2;
+
+		// Constructor (C# .ctor -> C++ constructor)
+		// RVA 및 VA 주석은 IL2CPP 런타임 내부 주소이므로 C++ 코드에는 직접 포함되지 않습니다.
+		LiveFixMemberData(
+			int32_t id,
+			int32_t musicId,
+			int32_t order,
+			int32_t charaId,
+			int32_t dressId1,
+			int32_t dressId2,
+			int32_t dressColor1,
+			int32_t dressColor2
+		) :
+			Id(id),
+			MusicId(musicId),
+			Order(order),
+			CharaId(charaId),
+			DressId1(dressId1),
+			DressId2(dressId2),
+			DressColor1(dressColor1),
+			DressColor2(dressColor2)
+		{
+		}
+
+	};
+
+
+	struct List_1_Fields {
+		Il2CppArray* _items;
+		int32_t _size;
+		int32_t _version;
+		Il2CppObject* _syncRoot;
+	};
+
+	struct List_1_LiveFixMemberData : Il2CppObject {
+		List_1_Fields fields;
 	};
 }
 

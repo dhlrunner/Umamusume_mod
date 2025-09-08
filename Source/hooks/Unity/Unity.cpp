@@ -9,6 +9,6 @@ namespace Unity {
 		UnityEngine::InputLegacyModule::Init();
 		UnityEngine::AssetBundle::Init();
 		UnityEngine::UI::Init();
-		
+		UnityEngine::EventSystems::Init();
 	}
 }

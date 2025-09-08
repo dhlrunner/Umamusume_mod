@@ -7,7 +7,7 @@ namespace Gallop::StoryCharacter3D
 		int clothId, int zekkenNumber, int headId, bool isWet, bool isDirt, int mobId,
 		int dressColorId = 0, int charaDressColorSetId = 0,
 		Il2CppString* zekkenName = nullptr, int zekkenFontStyle = 1, int color = 3, int fontColor = 1, int suitColor = 1,
-		bool isUseDressDataHeadModelSubId = true, bool useCircleShadow = false) {
+		bool isUseDressDataHeadModelSubId = true, bool useCircleShadow = false, int wetTexturePartsFlag = 0) {
 		printf("StoryCharacter3D_LoadModel called charaid=%d, cardid=%d, clothid=%d, headid=%d mobid=%d\n", charaId, cardId, clothId, headId, mobId);
 		/*std::random_device rd;
 		std::mt19937 gen(rd());
@@ -106,7 +106,7 @@ namespace Gallop::StoryCharacter3D
 		flag = !flag;*/
 		return reinterpret_cast<decltype(LoadModel_hook)*>
 			(LoadModel_orig)(charaId, cardId, clothId, zekkenNumber, headId, isWet, isDirt, mobId, dressColorId,
-				charaDressColorSetId, zekkenName, zekkenFontStyle, color, fontColor, suitColor, isUseDressDataHeadModelSubId, useCircleShadow);
+				charaDressColorSetId, zekkenName, zekkenFontStyle, color, fontColor, suitColor, isUseDressDataHeadModelSubId, useCircleShadow, wetTexturePartsFlag);
 	}
 
 
@@ -114,10 +114,10 @@ namespace Gallop::StoryCharacter3D
 	{
 		Logger::Info(SECTION_NAME, L"Init");
 
-		auto LoadModel_addr = reinterpret_cast<void(*)(int, int, int, int, int, bool, bool, int, int, Il2CppString*, int, int, int, int, bool, bool)> (
+		auto LoadModel_addr = reinterpret_cast<void(*)(int, int, int, int, int, bool, bool, int, int, int, Il2CppString* , int, int, int, TrackSuitColor, bool, bool, int)> (
 			il2cpp_symbols::get_method_pointer(
 				"umamusume.dll", "Gallop",
-				"StoryCharacter3D", "LoadModel", 16 + 1
+				"StoryCharacter3D", "LoadModel", 18
 			)
 		);
 		EnableHook(LoadModel_addr, &LoadModel_hook, &LoadModel_orig, L"StoryCharacter3D_LoadModel");
