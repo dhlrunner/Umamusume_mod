@@ -17,7 +17,7 @@ namespace Gallop::ModelController
 			ret = Settings::Local->cardid;
 			Logger::Info(SECTION_NAME, L"GetCardid ret=%d, replace=%d", ret, Settings::Local->cardid);
 		}
-		return 109701;
+		return ret;
 
 	}
 	void Init() {

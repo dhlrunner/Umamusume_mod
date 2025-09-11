@@ -6,7 +6,7 @@ namespace Gallop::MasterLiveData
 	Il2CppObject* Get_hook(Il2CppObject* _this, int id) {
 		Il2CppObject* ret = reinterpret_cast<decltype(Get_hook)*>(Get_orig)(_this, id);
 		//change only 1052,1080,9051,1091,1152,1153
-		if (id == 1052 || id == 1080 || id == 9051 || id == 1091 || id == 1152 || id == 1153) {
+		if (id == 1052 || id == 1080 || id == 9051 || id == 1091 || id == 1152 || id == 1153 || id == 1174) {
 			bool enable = true;
 			il2cpp_field_set_value(ret, il2cpp_class_get_field_from_name(ret->klass, "HasLive"), &enable);
 			Logger::Info(SECTION_NAME, L"Force enabled hidden live");

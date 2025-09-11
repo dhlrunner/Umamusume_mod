@@ -84,7 +84,7 @@ namespace UnityEngine::CoreModule
 
 		//GallopDialog::SetDialogMessage(dialog, L"Dumping GameAssembly.dll ...");
 
-		GallopDialog::CloseDialog(dialog);
+		//GallopDialog::CloseDialog(dialog);
 		//get data from custom server
 		//json format
 		/* "data" : [
@@ -140,7 +140,7 @@ namespace UnityEngine::CoreModule
 				Global::customLiveFixMemberData[i] = fixMemberData;
 			}
 			GallopDialog::SetDialogMessage(dialog, L"Load completed.");
-			Sleep(3000);
+			Sleep(1000);
 			GallopDialog::CloseDialog(dialog);
 
 			//if (res->status == 200) {
@@ -156,7 +156,7 @@ namespace UnityEngine::CoreModule
 		else {
 			Logger::Error(SECTION_NAME, L"Failed to connect to custom server.");
 			GallopDialog::SetDialogMessage(dialog, L"Failed to connect to custom server.");
-			Sleep(3000);
+			Sleep(1000);
 			GallopDialog::CloseDialog(dialog);
 		}
 

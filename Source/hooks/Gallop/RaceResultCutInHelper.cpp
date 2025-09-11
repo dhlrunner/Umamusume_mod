@@ -31,7 +31,6 @@ namespace Gallop::RaceResultCutInHelper
 		}
 
 
-
 		//return nullptr;
 		return reinterpret_cast<decltype(LoadBodyMotion_hook)*>
 			(LoadBodyMotion_orig)(characterId, dress, personalityType, rank, grade, raceType, resultSwapData, resultSwapMotionData);

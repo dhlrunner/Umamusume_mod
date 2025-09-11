@@ -38,7 +38,7 @@ namespace Gallop::UIManager
 			"umamusume.dll", "Gallop",
 			"UIManager", "ChangeResizeUIForPC", 2
 		);
-		EnableHook(ChangeResizeUIForPC_addr, &change_resize_ui_for_pc_hook, &change_resize_ui_for_pc_orig, L"Gallop_UIManager_ChangeResizeUIForPC");
+		//EnableHook(ChangeResizeUIForPC_addr, &change_resize_ui_for_pc_hook, &change_resize_ui_for_pc_orig, L"Gallop_UIManager_ChangeResizeUIForPC");
 
 		GetCanvasScalerList = reinterpret_cast<decltype(GetCanvasScalerList)>(il2cpp_symbols::get_method_pointer(
 			"umamusume.dll", "Gallop",

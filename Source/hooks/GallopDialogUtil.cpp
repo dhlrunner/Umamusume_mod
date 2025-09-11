@@ -66,13 +66,13 @@ namespace GallopDialog
 	{
 		Il2CppString* textStr = il2cpp_string_new16(text.data());
 		auto UIManager = il2cpp::GetSingletonInstance(il2cpp_symbols::get_class("umamusume.dll", "Gallop", "UIManager"));
-		//printf("UIManager ptr=%p\n", UIManager->klass);
+		printf("UIManager ptr=%p\n", UIManager->klass);
 		//il2cpp_class_get_method_from_name_type<void (*)(Il2CppObject*, Il2CppString*)>(UIManager->klass, "get_UserData", 0)->methodPointer(UIManager, textStr);
 
 		//il2cpp_runtime_object_init(dialogData);
 		//printf("dialogData pointer: %p\n", dialogData);
 		auto show = reinterpret_cast<void(*)(Il2CppObject*, Il2CppString*)>(il2cpp_symbols::get_method_pointer("umamusume.dll", "Gallop", "UIManager", "ShowNotification", 1));
-		//printf("show pointer: %p\n", show);
+		printf("show pointer: %p\n", show);
 		show(UIManager, textStr);
 	}
 }
