@@ -71,8 +71,10 @@ namespace GallopDialog
 
 		//il2cpp_runtime_object_init(dialogData);
 		//printf("dialogData pointer: %p\n", dialogData);
-		auto show = reinterpret_cast<void(*)(Il2CppObject*, Il2CppString*)>(il2cpp_symbols::get_method_pointer("umamusume.dll", "Gallop", "UIManager", "ShowNotification", 1));
+		auto show = reinterpret_cast<void(*)(Il2CppObject*, Il2CppString*, Unity::CameraType__Enum)>(il2cpp_symbols::get_method_pointer("umamusume.dll", "Gallop", "UIManager", "ShowNotification", 2));
 		printf("show pointer: %p\n", show);
-		show(UIManager, textStr);
+		Unity::CameraType__Enum camType = Unity::CameraType__Enum::Game;
+
+		show(UIManager, textStr, Unity::CameraType__Enum::Game);
 	}
 }

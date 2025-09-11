@@ -8,6 +8,7 @@
 #include "..\Global.h"
 #include "Gallop/GallopStructs.h"
 #include "Gallop/GallopUtil.h"
+#include "Unity/UnityStructs.h"
 
 namespace GallopDialog 
 {
