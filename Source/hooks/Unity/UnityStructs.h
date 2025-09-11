@@ -408,4 +408,21 @@ namespace Unity
 		int32_t herz;
 		char _stackDummy[1024]; //이거 안하면 stack around the variable was corrupted 에러남
 	};
+
+	// UnityEngine.CameraType
+	struct CameraType__Enum {
+		int32_t value__; // 0x0
+
+		CameraType__Enum() = default; // Default constructor
+		CameraType__Enum(int32_t val) : value__(val) {} // Constructor to allow initialization from int32_t
+
+		enum : int32_t {
+			Game = 1,
+			SceneView = 2,
+			Preview = 4,
+			VR = 8,
+			Reflection = 16
+		};
+	};
+
 }
