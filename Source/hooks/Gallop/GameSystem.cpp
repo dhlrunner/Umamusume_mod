@@ -6,6 +6,9 @@ namespace Gallop::GameSystem
 	void ApplicationQuit_hook() {
 		Logger::Debug(SECTION_NAME, L"GameSystem.ApplicationQuit() hooked");
 		Global::gameTerminating = true;
+		//save settings on exit
+		Settings::SaveSettings();
+
 		return reinterpret_cast<decltype(ApplicationQuit_hook)*>
 			(ApplicationQuit_orig)();
 	}
@@ -14,6 +17,7 @@ namespace Gallop::GameSystem
 	void OnApplicationQuit_hook() {
 		Logger::Debug(SECTION_NAME, L"GameSystem.OnApplicationQuit() hooked");
 		Global::gameTerminating = true;
+		Settings::SaveSettings();
 		return reinterpret_cast<decltype(OnApplicationQuit_hook)*>
 			(OnApplicationQuit_orig)();
 	}

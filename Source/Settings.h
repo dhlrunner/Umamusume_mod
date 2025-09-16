@@ -13,6 +13,7 @@
 #include "../../deps/rapidjson/stringbuffer.h"
 #include "../../tools/Logger.hpp"
 #include "../../hooks/Unity/il2cpp/il2cpp_symbols.hpp"
+#include "Global.h"
 
 
 namespace Settings {
@@ -90,5 +91,5 @@ namespace Settings {
 
 	void Init();
 	bool LoadSettings(const char* fileName);
-	bool SaveSettings(const char* fileName);
+	bool SaveSettings();
 }

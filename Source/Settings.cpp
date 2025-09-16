@@ -120,7 +120,7 @@ namespace Settings {
 			
 	}
 
-	bool SaveSettings(const char* fileName) {
+	bool SaveSettings() {
 
 
 		rapidjson::Document document;
@@ -177,7 +177,23 @@ namespace Settings {
 		document.AddMember("dicts", dictArr, allocator);
 
 		// Save to file
-		FILE* fp = fopen("config.json", "wb"); // non-Windows use "w"
+		FILE* fp = nullptr;
+
+
+		switch (Global::gameType) {
+		case Global::GameType::UMAMUSUME_DMM_JP:
+			fp = fopen("umamusume.exe.local\\config.json", "wb"); // non-Windows use "w"
+			break;
+		case Global::GameType::UMAMUSUME_STEAM_JP:
+			fp = fopen("UmamusumePrettyDerby_Jpn.exe.local\\config.json", "wb");
+			break;
+		}
+
+		if (!fp) {
+			MessageBoxA(NULL, "Failed to open config.json for writing", "Error", MB_OK | MB_ICONERROR);
+			Logger::Error(L"SETTINGS", L"Failed to open file for writing");
+			return false;
+		}
 
 		char writeBuffer[65536];
 		rapidjson::FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
