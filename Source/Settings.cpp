@@ -103,6 +103,7 @@ namespace Settings {
 
 			Global->virtualResolutionMultiple = document.HasMember("virtualResolutionMultiple") ? document["virtualResolutionMultiple"].GetFloat() : InitialValue->virtualResolutionMultiple;
 			Global->ignoreLiveForcePortrait = document.HasMember("ignoreLiveForcePortrait") ? document["ignoreLiveForcePortrait"].GetBool() : InitialValue->ignoreLiveForcePortrait;
+			Global->homeAllDiamond = document.HasMember("enableForceAllLiveDressUse") ? document["enableForceAllLiveDressUse"].GetBool() : InitialValue->enableForceAllLiveDressUse;
 			
 			// Looks like not working for now
 			// g_aspect_ratio = document["customAspectRatio"].GetFloat();
@@ -116,8 +117,29 @@ namespace Settings {
 
 				dicts.push_back(dict);
 			}
+
+			if (document.HasMember("forceEnabledLiveIDs"))
+			{
+				if (document["forceEnabledLiveIDs"].IsArray()) {
+
+					auto& enabled_live_arr = document["forceEnabledLiveIDs"];
+					auto len2 = enabled_live_arr.Size();
+
+
+					Global->forceEnabledLiveIDs.clear();
+					Global->forceEnabledLiveIDs.resize(0);
+					for (size_t i = 0; i < len2; i++)
+					{
+						Global->forceEnabledLiveIDs.push_back(enabled_live_arr[i].GetInt());
+						//printf("Enabled live ID: %d\n", enabled_live_arr[i].GetInt());
+					}
+
+					Logger::Info(L"SETTINGS", L"Live enabled IDs count=%d", len2);
+				}
+			}
+
 		}
-			
+		
 	}
 
 	bool SaveSettings() {
@@ -167,6 +189,7 @@ namespace Settings {
 		document.AddMember("homeAllDiamond", Global->homeAllDiamond, allocator);
 		document.AddMember("winMotion564", Global->winMotion564, allocator);
 		document.AddMember("ignoreLiveForcePortrait", Global->ignoreLiveForcePortrait, allocator);
+		document.AddMember("enableForceAllLiveDressUse", Global->enableForceAllLiveDressUse, allocator);
 
 
 		rapidjson::Value dictArr(rapidjson::Type::kArrayType);
@@ -175,6 +198,12 @@ namespace Settings {
 			dictArr.PushBack(rapidjson::StringRef(s.c_str()), allocator);
 		}
 		document.AddMember("dicts", dictArr, allocator);
+
+		rapidjson::Value enabledLiveArr(rapidjson::Type::kArrayType);
+		for (int i = 0; i < Global->forceEnabledLiveIDs.size(); i++) {
+			enabledLiveArr.PushBack(Global->forceEnabledLiveIDs[i], allocator);
+		}
+		document.AddMember("forceEnabledLiveIDs", enabledLiveArr, allocator);
 
 		// Save to file
 		FILE* fp = nullptr;

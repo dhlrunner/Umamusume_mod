@@ -1848,6 +1848,7 @@ namespace ImGuiWindows {
 					ImGui::Checkbox("라이브 카메라 멈추기", &Settings::Local->stopLiveCam); ImGui::SameLine(); HelpMarker("라이브에서 카메라 워크를 정지합니다.\n단축키: S");
 					ImGui::Checkbox("라이브 제목 창 출력", &Settings::Global->showLiveTitleWindow); ImGui::SameLine(); HelpMarker("라이브 시작 시 제목 창을 표시합니다.");
 					ImGui::Checkbox("강제 세로모드 해제", &Settings::Global->ignoreLiveForcePortrait); ImGui::SameLine(); HelpMarker("세로 모드 고정 라이브를 강제로 가로모드로 전환합니다.");
+					ImGui::Checkbox("모든 의상 강제 활성화", &Settings::Global->enableForceAllLiveDressUse); ImGui::SameLine(); HelpMarker("모든 의상을 선택할 수 있게 합니다. (서버 지원 필요)");
 					BeginGroupPanel("타임라인");
 
 					//int minutes = static_cast<int>(liveTimeSec / 60); // 분 계산

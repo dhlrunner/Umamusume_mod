@@ -57,6 +57,8 @@ namespace Settings {
         bool homeAllDiamond = false;
         bool winMotion564 = false;
 		bool ignoreLiveForcePortrait = false;
+		bool enableForceAllLiveDressUse = false;
+		std::vector<int> forceEnabledLiveIDs = std::vector<int>();
     };
 
     struct LocalUmaSettings {

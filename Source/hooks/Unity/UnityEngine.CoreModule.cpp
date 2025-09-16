@@ -305,12 +305,15 @@ namespace UnityEngine::CoreModule
 				Global::MasterCharaData.push_back(charaData);*/
 			}
 
+			Logger::Info(SECTION_NAME, L"Setted %d Master character data", data->count);
+		}
+		else if (sceneN == L"Title") {
 			//Load LiveFixMemberData
 			Logger::Info(SECTION_NAME, L"Loading custom live fix member data from server...");
 			std::thread(SetCustomLiveFixMembersThread).detach();
 			Logger::Info(SECTION_NAME, L"Setted %d MasterLiveFixedMember data", Global::customLiveFixMemberData);
 
-			Logger::Info(SECTION_NAME, L"Setted %d Master character data", data->count);
+			
 		}
 
 		return reinterpret_cast<decltype(LoadSceneAsyncNameIndexInternal_hook)*>(LoadSceneAsyncNameIndexInternal_orig)(sceneName, sceneBuildIndex, parameters, mustCompleteNextFrame);
