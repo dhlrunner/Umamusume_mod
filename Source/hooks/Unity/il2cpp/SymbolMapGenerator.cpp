@@ -4,7 +4,8 @@
 #include "SymbolMapGenerator.hpp"
 
 namespace il2cpp {
-    const uint32_t START_RVA = 0x7834a2;
+    //const uint32_t START_RVA = 0x7834a2;
+	const uint32_t START_RVA = 0x782c12; //new
 
     const std::vector<std::string> SYMBOL_LIST = {
         "il2cpp_init",
@@ -18,6 +19,8 @@ namespace il2cpp {
         "il2cpp_set_config_utf16",
         "il2cpp_set_config",
         "il2cpp_set_memory_callbacks",
+        "il2cpp_memory_pool_set_region_size",
+        "il2cpp_memory_pool_get_region_size",
         "il2cpp_get_corlib",
         "il2cpp_add_internal_call",
         "il2cpp_resolve_icall",

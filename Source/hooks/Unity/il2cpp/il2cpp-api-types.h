@@ -34,26 +34,26 @@ typedef enum
 {
     IL2CPP_PROFILE_NONE = 0,
     IL2CPP_PROFILE_APPDOMAIN_EVENTS = 1 << 0,
-    IL2CPP_PROFILE_ASSEMBLY_EVENTS  = 1 << 1,
-    IL2CPP_PROFILE_MODULE_EVENTS    = 1 << 2,
-    IL2CPP_PROFILE_CLASS_EVENTS     = 1 << 3,
-    IL2CPP_PROFILE_JIT_COMPILATION  = 1 << 4,
-    IL2CPP_PROFILE_INLINING         = 1 << 5,
-    IL2CPP_PROFILE_EXCEPTIONS       = 1 << 6,
-    IL2CPP_PROFILE_ALLOCATIONS      = 1 << 7,
-    IL2CPP_PROFILE_GC               = 1 << 8,
-    IL2CPP_PROFILE_THREADS          = 1 << 9,
-    IL2CPP_PROFILE_REMOTING         = 1 << 10,
-    IL2CPP_PROFILE_TRANSITIONS      = 1 << 11,
-    IL2CPP_PROFILE_ENTER_LEAVE      = 1 << 12,
-    IL2CPP_PROFILE_COVERAGE         = 1 << 13,
-    IL2CPP_PROFILE_INS_COVERAGE     = 1 << 14,
-    IL2CPP_PROFILE_STATISTICAL      = 1 << 15,
-    IL2CPP_PROFILE_METHOD_EVENTS    = 1 << 16,
-    IL2CPP_PROFILE_MONITOR_EVENTS   = 1 << 17,
-    IL2CPP_PROFILE_IOMAP_EVENTS     = 1 << 18, /* this should likely be removed, too */
-    IL2CPP_PROFILE_GC_MOVES         = 1 << 19,
-    IL2CPP_PROFILE_FILEIO           = 1 << 20
+    IL2CPP_PROFILE_ASSEMBLY_EVENTS = 1 << 1,
+    IL2CPP_PROFILE_MODULE_EVENTS = 1 << 2,
+    IL2CPP_PROFILE_CLASS_EVENTS = 1 << 3,
+    IL2CPP_PROFILE_JIT_COMPILATION = 1 << 4,
+    IL2CPP_PROFILE_INLINING = 1 << 5,
+    IL2CPP_PROFILE_EXCEPTIONS = 1 << 6,
+    IL2CPP_PROFILE_ALLOCATIONS = 1 << 7,
+    IL2CPP_PROFILE_GC = 1 << 8,
+    IL2CPP_PROFILE_THREADS = 1 << 9,
+    IL2CPP_PROFILE_REMOTING = 1 << 10,
+    IL2CPP_PROFILE_TRANSITIONS = 1 << 11,
+    IL2CPP_PROFILE_ENTER_LEAVE = 1 << 12,
+    IL2CPP_PROFILE_COVERAGE = 1 << 13,
+    IL2CPP_PROFILE_INS_COVERAGE = 1 << 14,
+    IL2CPP_PROFILE_STATISTICAL = 1 << 15,
+    IL2CPP_PROFILE_METHOD_EVENTS = 1 << 16,
+    IL2CPP_PROFILE_MONITOR_EVENTS = 1 << 17,
+    IL2CPP_PROFILE_IOMAP_EVENTS = 1 << 18, /* this should likely be removed, too */
+    IL2CPP_PROFILE_GC_MOVES = 1 << 19,
+    IL2CPP_PROFILE_FILEIO = 1 << 20
 } Il2CppProfileFlags;
 
 typedef enum
@@ -111,8 +111,11 @@ typedef enum
 
 typedef struct Il2CppStackFrameInfo
 {
-    const MethodInfo *method;
+    const MethodInfo* method;
     uintptr_t raw_ip;
+    int sourceCodeLineNumber;
+    int ilOffset;
+    const char* filePath;
 } Il2CppStackFrameInfo;
 
 typedef void(*Il2CppMethodPointer)();
@@ -121,29 +124,29 @@ typedef struct Il2CppMethodDebugInfo
 {
     Il2CppMethodPointer methodPointer;
     int32_t code_size;
-    const char *file;
+    const char* file;
 } Il2CppMethodDebugInfo;
 
 typedef struct
 {
     void* (*malloc_func)(size_t size);
     void* (*aligned_malloc_func)(size_t size, size_t alignment);
-    void (*free_func)(void *ptr);
-    void (*aligned_free_func)(void *ptr);
+    void (*free_func)(void* ptr);
+    void (*aligned_free_func)(void* ptr);
     void* (*calloc_func)(size_t nmemb, size_t size);
-    void* (*realloc_func)(void *ptr, size_t size);
-    void* (*aligned_realloc_func)(void *ptr, size_t size, size_t alignment);
+    void* (*realloc_func)(void* ptr, size_t size);
+    void* (*aligned_realloc_func)(void* ptr, size_t size, size_t alignment);
 } Il2CppMemoryCallbacks;
 
 typedef struct
 {
-    const char *name;
-    void(*connect)(const char *address);
+    const char* name;
+    void(*connect)(const char* address);
     int(*wait_for_attach)(void);
     void(*close1)(void);
     void(*close2)(void);
-    int(*send)(void *buf, int len);
-    int(*recv)(void *buf, int len);
+    int(*send)(void* buf, int len);
+    int(*recv)(void* buf, int len);
 } Il2CppDebuggerTransport;
 
 #if !__SNC__ // SNC doesn't like the following define: "warning 1576: predefined meaning of __has_feature discarded"
@@ -169,15 +172,15 @@ typedef char Il2CppNativeChar;
 #endif
 
 typedef void (*il2cpp_register_object_callback)(Il2CppObject** arr, int size, void* userdata);
-typedef void (*il2cpp_WorldChangedCallback)();
-typedef void (*Il2CppFrameWalkFunc) (const Il2CppStackFrameInfo *info, void *user_data);
+typedef void* (*il2cpp_liveness_reallocate_callback)(void* ptr, size_t size, void* userdata);
+typedef void (*Il2CppFrameWalkFunc) (const Il2CppStackFrameInfo* info, void* user_data);
 typedef void (*Il2CppProfileFunc) (Il2CppProfiler* prof);
-typedef void (*Il2CppProfileMethodFunc) (Il2CppProfiler* prof, const MethodInfo *method);
-typedef void (*Il2CppProfileAllocFunc) (Il2CppProfiler* prof, Il2CppObject *obj, Il2CppClass *klass);
+typedef void (*Il2CppProfileMethodFunc) (Il2CppProfiler* prof, const MethodInfo* method);
+typedef void (*Il2CppProfileAllocFunc) (Il2CppProfiler* prof, Il2CppObject* obj, Il2CppClass* klass);
 typedef void (*Il2CppProfileGCFunc) (Il2CppProfiler* prof, Il2CppGCEvent event, int generation);
 typedef void (*Il2CppProfileGCResizeFunc) (Il2CppProfiler* prof, int64_t new_size);
 typedef void (*Il2CppProfileFileIOFunc) (Il2CppProfiler* prof, Il2CppProfileFileIOKind kind, int count);
-typedef void (*Il2CppProfileThreadFunc) (Il2CppProfiler *prof, unsigned long tid);
+typedef void (*Il2CppProfileThreadFunc) (Il2CppProfiler* prof, unsigned long tid);
 
 typedef const Il2CppNativeChar* (*Il2CppSetFindPlugInCallback)(const Il2CppNativeChar*);
 typedef void (*Il2CppLogCallback)(const char*);
@@ -188,3 +191,5 @@ struct Il2CppManagedMemorySnapshot;
 
 typedef uintptr_t il2cpp_array_size_t;
 #define ARRAY_LENGTH_AS_INT32(a) ((int32_t)a)
+
+typedef uint8_t(*Il2CppAndroidUpStateFunc)(const char* ifName, uint8_t* is_up);

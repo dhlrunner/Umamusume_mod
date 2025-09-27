@@ -38,38 +38,38 @@ HMODULE WINAPI __stdcall LoadLibraryW__hook(const wchar_t* path) {
 }
 
 
-void* LoadLibraryExW_orig = nullptr;
-HMODULE WINAPI __stdcall LoadLibraryExW__hook(const wchar_t* path, HANDLE hFile, DWORD dwFlags) {
-	Logger::Debug(L"HOOK", L"LoadLibraryExW called with path=%s, hFile=%p, dwFlags=%d", path, hFile, dwFlags);
-	//MessageBoxW(NULL, path, L"LoadLibraryExW", MB_OK);
-	if (path == L"cri_ware_unity.dll"s) {
-		//auto h = GetModuleHandle(L"GameAssembly.dll");
-		//Logger::Debug(L"HOOK", L"GameAssembly handle=%p", h);
-		//pedump(h, "umamusume.exe.local\\GameAssembly.dumped.dll");
-		static bool loaded = false;
-		if (!loaded) {
-			/*auto h = GetModuleHandle(L"GameAssembly.dll");
-			Logger::Debug(L"HOOK", L"Dumping GameAssembly handle=%p", h);
-			pedump(h, "umamusume.exe.local\\GameAssembly.dumped.dll");*/
-			//while (true) {}
-			InitHooks_AfterIl2cppInit();
-			loaded = true;
-
-		}
-	}
-	else if (path == L"GameAssembly.dll"s) {
-		Logger::Info(L"HOOK", L"Loading GameAssembly.dll");
-		HMODULE module = reinterpret_cast<decltype(LoadLibraryExW)*>(LoadLibraryExW_orig)(path,hFile,dwFlags);
-		Logger::Debug(L"HOOK", L"GameAssembly handle=%p", module);
-		il2cpp_symbols::init(module);
-		il2cpphook_init(module);
-		Global::currenthWnd = GetActiveWindow();
-		return module;
-		//Utils::RemoveProtection(module);
-		//Utils::RemoveProtection(GetModuleHandle(L"umamusume.exe"));
-	}
-	return reinterpret_cast<decltype(LoadLibraryExW)*>(LoadLibraryExW_orig)(path, hFile, dwFlags);
-}
+//void* LoadLibraryExW_orig = nullptr;
+//HMODULE WINAPI __stdcall LoadLibraryExW__hook(const wchar_t* path, HANDLE hFile, DWORD dwFlags) {
+//	Logger::Debug(L"HOOK", L"LoadLibraryExW called with path=%s, hFile=%p, dwFlags=%d", path, hFile, dwFlags);
+//	MessageBoxW(NULL, path, L"LoadLibraryExW", MB_OK);
+//	if (path == L"cri_ware_unity.dll"s) {
+//		//auto h = GetModuleHandle(L"GameAssembly.dll");
+//		//Logger::Debug(L"HOOK", L"GameAssembly handle=%p", h);
+//		//pedump(h, "umamusume.exe.local\\GameAssembly.dumped.dll");
+//		static bool loaded = false;
+//		if (!loaded) {
+//			/*auto h = GetModuleHandle(L"GameAssembly.dll");
+//			Logger::Debug(L"HOOK", L"Dumping GameAssembly handle=%p", h);
+//			pedump(h, "umamusume.exe.local\\GameAssembly.dumped.dll");*/
+//			//while (true) {}
+//			InitHooks_AfterIl2cppInit();
+//			loaded = true;
+//
+//		}
+//	}
+//	else if (path == L"GameAssembly.dll"s) {
+//		Logger::Info(L"HOOK", L"Loading GameAssembly.dll");
+//		HMODULE module = reinterpret_cast<decltype(LoadLibraryExW)*>(LoadLibraryExW_orig)(path,hFile,dwFlags);
+//		Logger::Debug(L"HOOK", L"GameAssembly handle=%p", module);
+//		il2cpp_symbols::init(module);
+//		il2cpphook_init(module);
+//		Global::currenthWnd = GetActiveWindow();
+//		return module;
+//		//Utils::RemoveProtection(module);
+//		//Utils::RemoveProtection(GetModuleHandle(L"umamusume.exe"));
+//	}
+//	return reinterpret_cast<decltype(LoadLibraryExW)*>(LoadLibraryExW_orig)(path, hFile, dwFlags);
+//}
 
 void LoadLibraryProc(const wchar_t* path) {
 	

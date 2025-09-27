@@ -20,13 +20,16 @@ void CreateConsole()
 	SetConsoleTitle(L"Umamusume - Debug Console");
 
 	HANDLE hInput = GetStdHandle(STD_INPUT_HANDLE);
-	SetConsoleMode(hInput, ENABLE_VIRTUAL_TERMINAL_INPUT          // 필요한 것만 켜기
-		| ENABLE_ECHO_INPUT
+	DWORD originalMode;
+	GetConsoleMode(hInput, &originalMode);
+	SetConsoleMode(hInput, originalMode & ENABLE_ECHO_INPUT
 		| ENABLE_LINE_INPUT
-		| ENABLE_PROCESSED_INPUT
-		| ENABLE_WRAP_AT_EOL_OUTPUT );
+		| ENABLE_PROCESSED_INPUT );
+
 	HANDLE hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleMode(hOutput, ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+	DWORD outMode;
+	GetConsoleMode(hOutput, &outMode);
+	SetConsoleMode(hOutput, outMode & ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 
 	// set this to avoid turn japanese texts into question mark
 	SetConsoleOutputCP(CP_UTF8);

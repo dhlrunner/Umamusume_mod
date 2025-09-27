@@ -59,9 +59,9 @@ namespace Cyan::Loader::AssetLoader
 	}
 
 	void* GetOrCreateLoadRequests_orig;
-	Il2CppArray* GetOrCreateLoadRequests_hook(Il2CppObject* _this, Il2CppString* path, bool isLowerCase) {
+	Il2CppArray* GetOrCreateLoadRequests_hook(Il2CppObject* _this, Il2CppString* path, bool isLowerCase, bool createTutorialAssetRequest) {
 		//Logger::Info(SECTION_NAME, L"GetOrCreateLoadRequests_hook: path=%s", path->chars);
-		auto ret = reinterpret_cast<decltype(GetOrCreateLoadRequests_hook)*>(GetOrCreateLoadRequests_orig)(_this, path, isLowerCase);
+		auto ret = reinterpret_cast<decltype(GetOrCreateLoadRequests_hook)*>(GetOrCreateLoadRequests_orig)(_this, path, isLowerCase, createTutorialAssetRequest);
 
 		if (ret == nullptr) {
 			wstring modFullPath(wstring(UnityEngine::Application::get_persistentDataPath_hook()->chars) + L"/dat_mod/" + path->chars);
@@ -133,7 +133,7 @@ namespace Cyan::Loader::AssetLoader
 
 		auto GetOrCreateLoadRequests_addr = reinterpret_cast<Il2CppArray * (*)(void*, Il2CppString*, bool)>(il2cpp_symbols::get_method_pointer(
 			"_Cyan.dll", "Cyan.Loader",
-			"AssetLoader", "GetOrCreateLoadRequests", 2
+			"AssetLoader", "GetOrCreateLoadRequests", 3
 		));
 		EnableHook(GetOrCreateLoadRequests_addr, &GetOrCreateLoadRequests_hook, &GetOrCreateLoadRequests_orig, L"GetOrCreateLoadRequests");
 	}

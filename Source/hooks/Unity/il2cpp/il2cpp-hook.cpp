@@ -3,11 +3,11 @@
 void* il2cpp_init_orig = nullptr;
 bool __stdcall il2cpp_init_hook(const char* domain_name) {
 	Logger::Info(L"IL2CPP", L"il2cpp_init called");
-
+	
 	const auto result = reinterpret_cast<decltype(il2cpp_init_hook)*>(il2cpp_init_orig)(domain_name);
 	InitHooks_BeforeBoot();
 	//il2cpp_symbols::init(GetModuleHandle(L"GameAssembly.dll"));
-	return true;
+	return result;
 }
 
 void* il2cpp_unhandled_exception_orig = nullptr;
@@ -45,5 +45,7 @@ void il2cpphook_init(HMODULE il2cpp_module) {
 	auto exception_raise_addr = GetProcAddress(il2cpp_module, il2cpp_symbols::GetObsfucatedFnName("il2cpp_raise_exception"));
 	EnableHook(exception_raise_addr, il2cpp_raise_exception_hook, &il2cpp_raise_exception_orig, L"il2cpp_raise_exception");
 	
+	//printf("il2cpphook_init done\n");
+	//scanf_s("%*c");
 	
 }

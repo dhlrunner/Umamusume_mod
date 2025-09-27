@@ -38,6 +38,7 @@ namespace UnityEngine::Application {
 		Logger::Info(L"UNITYHOOK", L"UnityEngine.Application Hook Init");
 
 		auto set_fps_addr = il2cpp_resolve_icall("UnityEngine.Application::set_targetFrameRate(System.Int32)");
+		//printf("set_fps_addr=%p\n", set_fps_addr);
 		EnableHook(set_fps_addr, &set_targetFrameRate_hook, &set_targetFrameRate_orig, L"Unity_set_targetFrameRate");
 
 		get_persistentDataPath_addr = reinterpret_cast<Il2CppString * (*)()>(il2cpp_resolve_icall("UnityEngine.Application::get_persistentDataPath()"));

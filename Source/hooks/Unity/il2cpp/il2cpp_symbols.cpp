@@ -221,6 +221,7 @@ namespace il2cpp_symbols
 	Il2CppImage* get_image(const char* assemblyName)
 	{
 		auto assembly = il2cpp_domain_assembly_open(il2cpp_domain, assemblyName);
+		printf("get_assembly %s, %p\n", assemblyName, assembly);
 		if (assembly)
 		{
 			auto image = il2cpp_assembly_get_image(assembly);
@@ -235,6 +236,7 @@ namespace il2cpp_symbols
 	Il2CppClass* get_class(const char* assemblyName, const char* namespaze, const char* klassName)
 	{
 		auto assembly = il2cpp_domain_assembly_open(il2cpp_domain, assemblyName);
+		printf("get_class %s %s %s, %p\n", assemblyName, namespaze, klassName, assembly);
 		if (assembly)
 		{
 			auto image = il2cpp_assembly_get_image(assembly);
@@ -269,7 +271,9 @@ namespace il2cpp_symbols
 		auto assembly = il2cpp_domain_assembly_open(il2cpp_domain, assemblyName);
 		if (assembly)
 		{
-			auto image = il2cpp_assembly_get_image(assembly);		
+			auto image = il2cpp_assembly_get_image(assembly);
+			//printf("get_assembly %s\n", assemblyName);
+			//scanf_s("%*c");
 			if (image)
 			{
 				//printf("get_method_pointer %s\n", image->name);
