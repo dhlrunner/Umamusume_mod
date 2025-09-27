@@ -256,6 +256,15 @@
     <ClCompile Include="Source\hooks\Gallop\ResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\hooks\LibNative.Runtime\LibNative.Runtime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\LibNative.Runtime\LibNative.Sqlite3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\hooks\LibNative.Runtime\Log.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\stdinclude.h">
@@ -374,6 +383,9 @@
     <ClInclude Include="Source\hooks\Unity\UnityEngine.EventSystems.h" />
     <ClInclude Include="Source\hooks\Gallop\MasterLiveData.h" />
     <ClInclude Include="Source\hooks\Gallop\ResourceManager.h" />
+    <ClInclude Include="Source\hooks\LibNative.Runtime\LibNative.Runtime.h" />
+    <ClInclude Include="Source\hooks\LibNative.Runtime\LibNative.Sqlite3.h" />
+    <ClInclude Include="Source\hooks\LibNative.Runtime\Log.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

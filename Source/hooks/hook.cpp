@@ -29,6 +29,9 @@ DWORD WINAPI InitHooks_DLLMain(void*)
 
 void InitHooks_BeforeBoot()
 {
+	//LibNative.Runtume Init
+	LibNative::Runtime::Init();
+
 	//Unity Init
 	Unity::HookInit();
 }

@@ -5,6 +5,7 @@
 #include "../hooks/Windows/Windows.hpp"
 #include "../hooks/Cute/Cute.h"
 #include "../hooks/Cyan/Cyan.h"
+#include "../hooks/LibNative.Runtime/LibNative.Runtime.h"
 
 #include "../../tools/Logger.hpp"
 #include "../../tools/imgui/ImguiWindows.h"

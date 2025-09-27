@@ -203,6 +203,9 @@ copy /y "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Umamusume
     <ClCompile Include="Source\hooks\Gallop\WorkDressData.cpp" />
     <ClCompile Include="Source\hooks\hook-helper.cpp" />
     <ClCompile Include="Source\hooks\hook.cpp" />
+    <ClCompile Include="Source\hooks\LibNative.Runtime\LibNative.Runtime.cpp" />
+    <ClCompile Include="Source\hooks\LibNative.Runtime\LibNative.Sqlite3.cpp" />
+    <ClCompile Include="Source\hooks\LibNative.Runtime\Log.cpp" />
     <ClCompile Include="Source\hooks\Plugins\libNative.cpp" />
     <ClCompile Include="Source\hooks\Unity\il2cpp\il2cpp-hook.cpp" />
     <ClCompile Include="Source\hooks\Unity\il2cpp\il2cpp_dump.cpp" />
@@ -293,6 +296,9 @@ copy /y "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Umamusume
     <ClInclude Include="Source\hooks\Gallop\WorkDressData.h" />
     <ClInclude Include="Source\hooks\hook-helper.h" />
     <ClInclude Include="Source\hooks\hook.h" />
+    <ClInclude Include="Source\hooks\LibNative.Runtime\LibNative.Runtime.h" />
+    <ClInclude Include="Source\hooks\LibNative.Runtime\LibNative.Sqlite3.h" />
+    <ClInclude Include="Source\hooks\LibNative.Runtime\Log.h" />
     <ClInclude Include="Source\hooks\Plugins\libNative.h" />
     <ClInclude Include="Source\hooks\Unity\il2cpp\il2cpp-hook.h" />
     <ClInclude Include="Source\hooks\Unity\il2cpp\il2cppDictionary.hpp" />

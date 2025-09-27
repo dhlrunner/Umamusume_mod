@@ -34,7 +34,7 @@ namespace Gallop::ResourceManager
 	//public static bool IsExistInAssetBundle(string filePath, bool isLowerCase = false)
 	void* IsExistInAssetBundle_orig = nullptr;
 	bool IsExistInAssetBundle_hook(Il2CppString* filePath, bool isLowerCase) {
-		Logger::Info(SECTION_NAME, L"ResourceManager::IsExistInAssetBundle_hook: filePath=%s isLowerCase=%d", filePath->chars, isLowerCase);
+		//Logger::Info(SECTION_NAME, L"ResourceManager::IsExistInAssetBundle_hook: filePath=%s isLowerCase=%d", filePath->chars, isLowerCase);
 		bool ret = reinterpret_cast<decltype(IsExistInAssetBundle_hook)*>(IsExistInAssetBundle_orig)(filePath, isLowerCase);
 		return ret;
 	}

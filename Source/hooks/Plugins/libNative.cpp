@@ -194,5 +194,6 @@ namespace libnative {
 		auto LZ4_compress_default_ext_ptr = GetProcAddress(libnative_module, "LZ4_compress_default_ext");
 		Logger::Debug(L"LIBNATIVE", L"LZ4_compress_default_ext at %p", LZ4_compress_default_ext_ptr);
 		EnableHook(LZ4_compress_default_ext_ptr, &LZ4_compress_default_ext_hook, &LZ4_compress_default_ext_orig, L"LZ4_compress_default_ext");
+
 	}
 }
