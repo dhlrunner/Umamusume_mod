@@ -28,7 +28,8 @@ namespace Global
 	extern bool isShowingSeekbar;
 	//extern int currSceneID;
 	extern Il2CppString* currSceneName;
-	extern bool isKimuraChallenge;
+	//수고하셨습니다. 기무라 유이토씨
+	//extern bool isKimuraChallenge;
 
 	extern bool settingUpImageEffect;
 

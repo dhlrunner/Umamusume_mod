@@ -20,7 +20,9 @@ namespace Global
 	bool isShowingSeekbar = false;
 	//int currSceneID = -1;
 	Il2CppString* currSceneName;
-	bool isKimuraChallenge = false;
+
+	//수고하셨습니다. 기무라 유이토씨
+	//bool isKimuraChallenge = false;
 	HWND currenthWnd = NULL;
 	bool Game_HookFinished = false;
 
