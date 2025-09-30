@@ -37,6 +37,6 @@ namespace Gallop
 		MasterLiveFixMemberData::Init();
 		MasterLiveData::Init();
 		MasterDressData_::Init();
-		ResourceManager::Init();
+		//ResourceManager::Init();
 	}
 }

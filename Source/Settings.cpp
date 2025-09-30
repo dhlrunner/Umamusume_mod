@@ -103,7 +103,7 @@ namespace Settings {
 
 			Global->virtualResolutionMultiple = document.HasMember("virtualResolutionMultiple") ? document["virtualResolutionMultiple"].GetFloat() : InitialValue->virtualResolutionMultiple;
 			Global->ignoreLiveForcePortrait = document.HasMember("ignoreLiveForcePortrait") ? document["ignoreLiveForcePortrait"].GetBool() : InitialValue->ignoreLiveForcePortrait;
-			Global->homeAllDiamond = document.HasMember("enableForceAllLiveDressUse") ? document["enableForceAllLiveDressUse"].GetBool() : InitialValue->enableForceAllLiveDressUse;
+			Global->enableForceAllLiveDressUse = document.HasMember("enableForceAllLiveDressUse") ? document["enableForceAllLiveDressUse"].GetBool() : InitialValue->enableForceAllLiveDressUse;
 			
 			// Looks like not working for now
 			// g_aspect_ratio = document["customAspectRatio"].GetFloat();
