@@ -4,8 +4,20 @@
 #include "SymbolMapGenerator.hpp"
 
 namespace il2cpp {
+    typedef struct {
+        const BYTE* base;
+        SIZE_T      size;
+        HANDLE      hMap;
+        WORD        nsec;
+        DWORD       sizeOfHeaders;
+        PIMAGE_SECTION_HEADER sec0;
+    } PECTX;
+
     //const uint32_t START_RVA = 0x7834a2;
-	const uint32_t START_RVA = 0x782c12; //new
+	uint32_t START_RVA = 0;
+
+    unsigned char pat[] = { 0x48,0x8D,0x15,0,0,0,0,0xB3,0x01,0xE8,0x53,0x3C,0xF3,0xFF,0x48,0x89,0x05 };
+    char mask[] = "xxx????xxxxxxxxx";
 
     const std::vector<std::string> SYMBOL_LIST = {
         "il2cpp_init",
@@ -250,6 +262,42 @@ namespace il2cpp {
         explicit RuntimeError(const std::string& message) : std::runtime_error(message) {}
     };
 
+    //memmem with mask: mask[i]=='x' must match, '?' wildcard
+    const unsigned char* memmem_masked(const unsigned char* hay, SIZE_T hlen, const unsigned char* pat, const char* mask, SIZE_T plen) {
+        if (plen == 0 || hlen < plen) return NULL;
+        for (SIZE_T i = 0; i + plen <= hlen; ++i) {
+            SIZE_T j;
+            for (j = 0; j < plen; ++j) {
+                if (mask[j] == 'x' && hay[i + j] != pat[j]) break;
+            }
+            if (j == plen) return hay + i;
+        }
+        return NULL;
+    }
+
+    DWORD find_pattern_in_module_RVA(HMODULE moduleBase, const unsigned char* pattern, const char* mask, SIZE_T plen) {
+        unsigned char* base = (unsigned char*)moduleBase;
+        if (!base) return 0;
+        PIMAGE_DOS_HEADER dos = (PIMAGE_DOS_HEADER)base;
+        if (dos->e_magic != IMAGE_DOS_SIGNATURE) return 0;
+        PIMAGE_NT_HEADERS nt = (PIMAGE_NT_HEADERS)(base + dos->e_lfanew);
+        if (nt->Signature != IMAGE_NT_SIGNATURE) return 0;
+        WORD nsec = nt->FileHeader.NumberOfSections;
+        PIMAGE_SECTION_HEADER sec0 = IMAGE_FIRST_SECTION(nt);
+        for (WORD i = 0; i < nsec; ++i) {
+            PIMAGE_SECTION_HEADER s = &sec0[i];
+            DWORD rva = s->VirtualAddress;
+            DWORD vsize = s->Misc.VirtualSize ? s->Misc.VirtualSize : s->SizeOfRawData;
+            unsigned char* secBase = base + rva;
+            const unsigned char* found = memmem_masked(secBase, vsize, pattern, mask, plen);
+            if (found) {
+                SIZE_T off = found - secBase;
+                return rva + (DWORD)off;
+            }
+        }
+        return 0;
+    }
+
     //여기서 복붙
     //https://github.com/scrt/avcleaner/blob/master/patch_enum_syscalls.c
     static DWORD rva_to_file_offset(PIMAGE_SECTION_HEADER sections_headers, DWORD nb_sections, DWORD file_size, DWORD rva) {
@@ -321,6 +369,12 @@ namespace il2cpp {
 
         PIMAGE_SECTION_HEADER section_headers = IMAGE_FIRST_SECTION(nt_headers);
         DWORD nb_sections = nt_headers->FileHeader.NumberOfSections;
+
+        START_RVA = find_pattern_in_module_RVA(GetModuleHandleW(L"UnityPlayer.dll"), pat, mask, sizeof(pat)) + 3;
+        if (!START_RVA) {
+            MessageBoxA(NULL, "Failed to find pattern in UnityPlayer.dll", "Error", MB_OK | MB_ICONERROR);
+			exit(1);
+        }
 
         DWORD rva = START_RVA;
         for (const auto& symbol : SYMBOL_LIST) {

@@ -1,4 +1,5 @@
-#include <windows.h>
+#pragma once
+#include <Windows.h>
 #include <stdexcept>
 #include <unordered_map>
 #include <string>
