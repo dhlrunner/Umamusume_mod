@@ -316,6 +316,9 @@ namespace UnityEngine::CoreModule
 			
 		}
 
+		if(!Settings::Global->isTapEffectEnabled)
+			GameObject_SetActive("Gallop.GameSystem/SystemManagerRoot/SystemSingleton/UIManager/SystemCanvas/TapEffectCanvas", false);
+
 		return reinterpret_cast<decltype(LoadSceneAsyncNameIndexInternal_hook)*>(LoadSceneAsyncNameIndexInternal_orig)(sceneName, sceneBuildIndex, parameters, mustCompleteNextFrame);
 	}
 
