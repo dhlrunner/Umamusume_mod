@@ -371,6 +371,7 @@ namespace il2cpp {
         DWORD nb_sections = nt_headers->FileHeader.NumberOfSections;
 
         START_RVA = find_pattern_in_module_RVA(GetModuleHandleW(L"UnityPlayer.dll"), pat, mask, sizeof(pat)) + 3;
+		//MessageBoxA(NULL, std::to_string(START_RVA).c_str(), "Info", MB_OK | MB_ICONINFORMATION);
         if (!START_RVA) {
             MessageBoxA(NULL, "Failed to find pattern in UnityPlayer.dll", "Error", MB_OK | MB_ICONERROR);
 			exit(1);

@@ -59,6 +59,7 @@ namespace Settings {
 		bool ignoreLiveForcePortrait = false;
 		bool enableForceAllLiveDressUse = false;
 		std::vector<int> forceEnabledLiveIDs = std::vector<int>();
+		bool enableGameCursor = false;
     };
 
     struct LocalUmaSettings {

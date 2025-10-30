@@ -786,6 +786,8 @@ namespace ImGuiWindows {
 						}
 
 					}
+					
+					ImGui::Checkbox("게임 커서 사용", &Settings::Global->enableGameCursor); ImGui::SameLine(); HelpMarker("이 옵션을 끄면 윈도우 기본 마우스 커서를 사용합니다.\n변경사항 적용은 게임 재시작이 필요합니다.");
 					EndGroupPanel();
 
 

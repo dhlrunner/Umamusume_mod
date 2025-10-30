@@ -311,7 +311,7 @@ namespace UnityEngine::CoreModule
 			//Load LiveFixMemberData
 			Logger::Info(SECTION_NAME, L"Loading custom live fix member data from server...");
 			std::thread(SetCustomLiveFixMembersThread).detach();
-			Logger::Info(SECTION_NAME, L"Setted %d MasterLiveFixedMember data", Global::customLiveFixMemberData);
+			Logger::Info(SECTION_NAME, L"Setted %d MasterLiveFixedMember data", Global::customLiveFixMemberData.size());
 
 			
 		}
@@ -383,6 +383,20 @@ namespace UnityEngine::CoreModule
 			(width, height, fullscreenMode, perferredRefreshRate);
 	}
 
+
+	void* SetCursor_Injected_orig;
+	void SetCursor_Injected_hook(void* texture, Unity::Vector2_t* hotspot, int cursorMode)
+	{
+		Logger::Info(SECTION_NAME, L"SetCursor_Injected Hooked");
+		if (!Settings::Global->enableGameCursor)
+		{
+			Logger::Info(SECTION_NAME, L"Game cursor disabled");
+			return reinterpret_cast<decltype(SetCursor_Injected_hook)*>(SetCursor_Injected_orig)
+				(nullptr, hotspot, cursorMode);
+		}
+		return reinterpret_cast<decltype(SetCursor_Injected_hook)*>(SetCursor_Injected_orig)
+			(texture, hotspot, cursorMode);
+	}
 
 #pragma region UserCode
 	void get_resolution_stub(Resolution_t* r)
@@ -497,6 +511,9 @@ namespace UnityEngine::CoreModule
 		//if (Settings::Global->autoFullscreen)
 		//	adjustScreenSize();
 		//adjustScreenSize();
+
+		auto SetCursor_Injected_addr = il2cpp_resolve_icall("UnityEngine.Cursor::SetCursor_Injected(UnityEngine.Texture2D,UnityEngine.Vector2&,UnityEngine.CursorMode)");
+		EnableHook(SetCursor_Injected_addr, &SetCursor_Injected_hook, &SetCursor_Injected_orig, L"SetCursor_Injected");
 	
 	}
 }

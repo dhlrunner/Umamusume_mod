@@ -105,6 +105,8 @@ namespace Settings {
 			Global->ignoreLiveForcePortrait = document.HasMember("ignoreLiveForcePortrait") ? document["ignoreLiveForcePortrait"].GetBool() : InitialValue->ignoreLiveForcePortrait;
 			Global->enableForceAllLiveDressUse = document.HasMember("enableForceAllLiveDressUse") ? document["enableForceAllLiveDressUse"].GetBool() : InitialValue->enableForceAllLiveDressUse;
 			
+			
+
 			// Looks like not working for now
 			// g_aspect_ratio = document["customAspectRatio"].GetFloat();
 
@@ -137,6 +139,8 @@ namespace Settings {
 					Logger::Info(L"SETTINGS", L"Live enabled IDs count=%d", len2);
 				}
 			}
+
+			Global->enableGameCursor = document.HasMember("enableGameCursor") ? document["enableGameCursor"].GetBool() : InitialValue->enableGameCursor;
 
 		}
 		
@@ -204,6 +208,8 @@ namespace Settings {
 			enabledLiveArr.PushBack(Global->forceEnabledLiveIDs[i], allocator);
 		}
 		document.AddMember("forceEnabledLiveIDs", enabledLiveArr, allocator);
+
+		document.AddMember("enableGameCursor", Global->enableGameCursor, allocator);
 
 		// Save to file
 		FILE* fp = nullptr;
