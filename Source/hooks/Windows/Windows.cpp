@@ -108,6 +108,57 @@ BOOL WINAPI PathIsDirectoryW_hook(LPCWSTR pszPath)
 	return PathIsDirectoryW(pszPath);
 }
 
+//hook NTQueryValueKey
+static const wchar_t SPOOF_SZ[] = L"EDK II - 10000"; //test
+void* NtQueryValueKey_orig;
+NTSTATUS NTAPI NtQueryValueKey_hook(
+	HANDLE KeyHandle,
+	PUNICODE_STRING ValueName,
+	KEY_VALUE_INFORMATION_CLASS KeyValueInformationClass,
+	PVOID KeyValueInformation,
+	ULONG Length,
+	PULONG ResultLength
+) {
+	printf("Called NtQueryValueKey path=%ls\n", (ValueName && ValueName->Buffer) ? ValueName->Buffer : L"(null)");
+	//원본호출후 실패면 그대로 반환
+	NTSTATUS status = reinterpret_cast<decltype(NtQueryValueKey_hook)*>(NtQueryValueKey_orig)(KeyHandle, ValueName, KeyValueInformationClass,
+		KeyValueInformation, Length, ResultLength);
+	printf("NtQueryValueKey original status=0x%X val=%ls\n", status, (wchar_t*)((KEY_VALUE_PARTIAL_INFORMATION_WIN*)KeyValueInformation)->Data);
+	if (!NT_SUCCESS(status) || ValueName == nullptr || ValueName->Buffer == nullptr) {
+		return status;
+	}
+
+	std::wstring name(ValueName->Buffer, ValueName->Length / sizeof(wchar_t));
+	if (_wcsicmp(name.c_str(), L"SystemBiosVersion") != 0) {
+		return status;
+	}
+
+	if (KeyValueInformationClass == KeyValuePartialInformation && KeyValueInformation != nullptr) {
+
+		auto p = reinterpret_cast<KEY_VALUE_PARTIAL_INFORMATION_WIN*>(KeyValueInformation);
+		
+		//문자열 타입일때만 값 바꿔치기
+		if (p->Type == REG_SZ || p->Type == REG_MULTI_SZ) {
+			SIZE_T bytesNeeded = (wcslen(SPOOF_SZ) + 1) * sizeof(wchar_t);
+			if (bytesNeeded <= p->DataLength) {
+
+				printf("Spoofing smbios value from '%ls' to '%ls'\n", (wchar_t*)p->Data, SPOOF_SZ);
+				memcpy(p->Data, SPOOF_SZ, bytesNeeded);
+				p->DataLength = (ULONG)bytesNeeded;
+				if (ResultLength) *ResultLength = (ULONG)(FIELD_OFFSET(KEY_VALUE_PARTIAL_INFORMATION_WIN, Data) + bytesNeeded);
+				
+				return STATUS_SUCCESS;
+			}
+			else {
+				if (ResultLength) *ResultLength = (ULONG)(FIELD_OFFSET(KEY_VALUE_PARTIAL_INFORMATION_WIN, Data) + bytesNeeded);
+				return STATUS_BUFFER_OVERFLOW;
+			}
+		}
+	}
+	return status;
+}
+
+
 //void* FindFirstFileW_orig = nullptr;
 //HANDLE WINAPI FindFirstFileW_hook(LPCWSTR lpPathName, LPWIN32_FIND_DATAW lpFindFileData)
 //{
@@ -202,6 +253,10 @@ void WinHook_init() {
 	if (!EnableHookApi(L"kernel32.dll", "IsDebuggerPresent",
 		IsDebuggerPresent_hook, &IsDebuggerPresent_orig, L"IsDebuggerPresent"))
 		MessageBox(nullptr, L"Hook IsDebuggerPresent failed", L"MinHook", MB_OK);
+	/*
+	if (!EnableHookApi(L"ntdll.dll", "NtQueryValueKey",
+		NtQueryValueKey_hook, &NtQueryValueKey_orig, L"NtQueryValueKey"))
+		MessageBox(nullptr, L"Hook NtQueryValueKey failed", L"MinHook", MB_OK);*/
 
 
 	//if (!EnableHookApi(L"kernel32.dll", "FindFirstFileW",

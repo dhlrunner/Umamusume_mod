@@ -8,6 +8,295 @@ namespace ImGuiWindows {
 	typedef HRESULT(__stdcall* Present) (IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags);
 	typedef HRESULT(__stdcall* ResizeBuffers)(IDXGISwapChain* pSwapChain, UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags);
 
+	struct GameObjectNode {
+		uint32_t gameObjectHandle;
+		uint32_t transformHandle;
+		uint32_t nameHandle;
+		Il2CppObject* gameObject;
+		Il2CppObject* transform;
+		Il2CppString* name;
+		bool isActive;
+		std::vector<std::unique_ptr<GameObjectNode>> children;
+
+		~GameObjectNode() {
+			if (gameObjectHandle) il2cpp_gchandle_free(gameObjectHandle);
+			if (transformHandle) il2cpp_gchandle_free(transformHandle);
+			if (nameHandle) il2cpp_gchandle_free(nameHandle);
+		}
+
+		GameObjectNode(void* go) {
+			GameObjectNode(static_cast<Il2CppObject*>(go));
+		}
+
+		GameObjectNode(Il2CppObject* go) : gameObject(go), transform(nullptr), isActive(false) {
+			if (go) {
+				gameObjectHandle = il2cpp_gchandle_new(go, false);
+				gameObject = go;
+				//Logger::Debug(SECTION_NAME, L"Creating GameObjectNode for GO 0x%p", go);
+				//Transform 가져오기
+				if (UnityEngine::CoreModule::GameObject_get_transform) {
+					transform = UnityEngine::CoreModule::GameObject_get_transform(go);
+					if (transform) {
+						transformHandle = il2cpp_gchandle_new(transform, false);
+					}
+				}
+
+				//이름
+				if (UnityEngine::CoreModule::GameObject_get_name) {
+					Il2CppString* nameStr = UnityEngine::CoreModule::GameObject_get_name(go);
+					if (nameStr) {
+						nameHandle = il2cpp_gchandle_new((Il2CppObject*)nameStr, false);
+						name = nameStr;
+
+					}
+					else {
+						name = il2cpp_string_new("Unknown");
+					}
+				}
+				else {
+					name = il2cpp_string_new("Unknown");
+				}
+
+				//활성화상태
+				if (UnityEngine::CoreModule::GameObject_get_activeSelf) {
+					isActive = UnityEngine::CoreModule::GameObject_get_activeSelf(go);
+				}
+
+				
+			}
+			else {
+				name = il2cpp_string_new("Null GameObject");
+			}
+		}
+	};
+
+	class GameObjectTree {
+	private:
+		std::vector<std::unique_ptr<GameObjectNode>> rootNodes;
+		bool needsRefresh = true;
+
+		int CountNodes(const GameObjectNode* node) const {
+			if (!node) return 0;
+			int count = 1;
+			for (const auto& child : node->children) {
+				count += CountNodes(child.get());
+			}
+			return count;
+		}
+
+	public:
+		int GetNodeCount() const {
+			int count = 0;
+			for (const auto& root : rootNodes) {
+				count += CountNodes(root.get());
+			}
+			return count;
+		}
+
+		void RefreshTree() {
+			rootNodes.clear();
+
+			//루트 GameObject 취득
+			auto rootGameObjects = GetRootGameObjects();
+
+			for (auto go : rootGameObjects) {
+				auto node = std::make_unique<GameObjectNode>(go);
+				BuildTreeRecursive(node.get());
+				rootNodes.push_back(std::move(node));
+			}
+
+			needsRefresh = false;
+		}
+
+	private:
+		void BuildTreeRecursive(GameObjectNode* node) {
+			if (!node || !node->transform || !UnityEngine::CoreModule::Transform_get_childCount || !UnityEngine::CoreModule::Transform_GetChild) {
+				Logger::Error(SECTION_NAME, L"BuildTreeRecursive: Some invalid node or missing functions");
+				return;
+			}
+				
+
+			int childCount = UnityEngine::CoreModule::Transform_get_childCount(node->transform);
+			for (int i = 0; i < childCount; i++) {
+				Il2CppObject* childTransform = UnityEngine::CoreModule::Transform_GetChild(node->transform, i);
+				if (!childTransform) continue;
+
+				Il2CppObject* childGO = nullptr;
+				if (UnityEngine::CoreModule::Transform_get_gameObject) {
+					childGO = UnityEngine::CoreModule::Transform_get_gameObject(childTransform);
+				}
+
+				if (childGO) {
+					auto childNode = std::make_unique<GameObjectNode>(childGO);
+					BuildTreeRecursive(childNode.get());
+					node->children.push_back(std::move(childNode));
+				}
+			}
+		}
+
+		std::vector<Il2CppObject*> GetRootGameObjects() {
+			std::vector<Il2CppObject*> roots;
+
+
+			//현재 씬 루트 오브젝트 취득
+			Il2CppObject* activeScene = UnityEngine::CoreModule::SceneManager_GetActiveScene();
+			auto rootArray = UnityEngine::CoreModule::Scene_GetRootGameObjects(&activeScene);
+
+			if (rootArray) {
+				for (int i = 0; i < rootArray->max_length; i++) {
+					Il2CppObject* go = rootArray->vector[i];
+					if (go) roots.push_back(go);
+				}
+			}
+
+			return roots;
+		}
+	public:
+		bool HasMatchingNode(GameObjectNode* node, const std::string& filter) {
+			if (!node) return false;
+
+			std::string nodeName = Utils::ConvertWstringToUTF8(node->name->chars);
+			std::transform(nodeName.begin(), nodeName.end(), nodeName.begin(), ::tolower);
+
+			if (nodeName.find(filter) != std::string::npos) {
+				return true;
+			}
+
+			for (auto& child : node->children) {
+				if (HasMatchingNode(child.get(), filter)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		void DrawNodeFiltered(GameObjectNode* node, const char* filter) {
+			if (!node) return;
+
+			//필터
+			if (filter && filter[0] != '\0') {
+				std::string nodeName = Utils::ConvertWstringToUTF8(node->name->chars);
+				std::transform(nodeName.begin(), nodeName.end(), nodeName.begin(), ::tolower);
+				std::string filterStr = filter;
+				std::transform(filterStr.begin(), filterStr.end(), filterStr.begin(), ::tolower);
+
+				//이름이 필터와 일치하지 않을시 자식 확인
+				if (nodeName.find(filterStr) == std::string::npos) {
+					bool hasMatchingChild = false;
+					for (auto& child : node->children) {
+						if (HasMatchingNode(child.get(), filterStr)) {
+							hasMatchingChild = true;
+							break;
+						}
+					}
+					if (!hasMatchingChild) return;
+				}
+			}
+
+			DrawNodeRecursive(node);
+		}
+
+		void DrawTree() {
+			//검색필터 추가
+			static char searchBuffer[256] = "";
+			ImGui::InputText("Search", searchBuffer, sizeof(searchBuffer));
+			ImGui::Separator();
+
+			ImGui::BeginChild("TreeScrollArea", ImVec2(0, 0), true);
+
+			if (rootNodes.empty()) {
+				ImGui::Text("No GameObjects found. Click Refresh.");
+			}
+			else {
+				for (auto& node : rootNodes) {
+					DrawNodeFiltered(node.get(), searchBuffer);
+				}
+			}
+
+			ImGui::EndChild();
+		}
+		void DrawNodeRecursive(GameObjectNode* node, int depth = 0) {
+			if (!node) return;
+
+			ImGui::PushID((int)(uintptr_t)node->gameObject);
+
+			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow /* |
+				ImGuiTreeNodeFlags_DefaultClose |
+				ImGuiTreeNodeFlags_SpanAvailWidth*/;
+
+			if (node->children.empty()) {
+				flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+			}
+
+			//비활성 오브젝트　회색으로
+			if (!node->isActive) {
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6f, 0.6f, 0.6f, 1.0f));
+			}
+
+			bool nodeOpen = false;
+			//leaf
+			if (node->children.empty()) {
+				ImGui::TreeNodeEx(Utils::ConvertWstringToUTF8(node->name->chars).c_str(), flags);
+			}
+			else {
+				nodeOpen = ImGui::TreeNodeEx(Utils::ConvertWstringToUTF8(node->name->chars).c_str(), flags);
+			}
+
+			if (ImGui::IsItemClicked()) {
+				//test toast
+				Logger::Debug(SECTION_NAME, L"Clicked on GameObject: %s", node->name->chars);
+				
+			}
+
+			//체크박스
+			ImGui::SameLine(ImGui::GetWindowWidth() - 50);
+			bool tempActive = node->isActive;
+
+			if (ImGui::Checkbox("##check", &tempActive)) {
+				Logger::Debug(SECTION_NAME, L"Toggling active state of %s to %d", node->name->chars, tempActive);
+				if (node->gameObject) {
+					UnityEngine::CoreModule::GameObject_SetActive(node->gameObject, tempActive);
+					
+				}
+			}
+
+			//우클릭 메뉴 (작동안됨)
+			if (ImGui::BeginPopupContextItem()) {
+				if (ImGui::MenuItem("Toggle Active")) {
+					if ( node->gameObject) {
+						UnityEngine::CoreModule::GameObject_SetActive(node->gameObject, !node->isActive);
+						node->isActive = !node->isActive;
+					}
+				}
+				ImGui::Separator();
+				ImGui::Text("Path: %s", Utils::ConvertWstringToUTF8(node->name->chars).c_str());
+				ImGui::EndPopup();
+			}
+
+
+			if (!node->isActive) {
+				ImGui::PopStyleColor();
+			}
+			node->isActive = tempActive;
+			//자식 노드 재귀 호출해서 그림
+			if (nodeOpen && !node->children.empty()) {
+				for (auto& child : node->children) {
+					DrawNodeRecursive(child.get(), depth + 1);
+				}
+				ImGui::TreePop();
+			}
+
+			ImGui::PopID();
+		}
+
+		void SetNeedsRefresh() { needsRefresh = true; }
+		bool NeedsRefresh() const { return needsRefresh; }
+	};
+
+
+	GameObjectTree g_gameObjectTree;
+
 	struct ScrollingBuffer {
 		int MaxSize;
 		int Offset;
@@ -1058,6 +1347,47 @@ namespace ImGuiWindows {
 
 
 			}
+
+			if (Global::imgui_gameobjectwnd_open)
+			{
+				ImGui::Begin("GameObject 뷰어", &Global::imgui_gameobjectwnd_open,
+					ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar);
+
+				//메뉴바
+				if (ImGui::BeginMenuBar()) {
+					if (ImGui::BeginMenu("Options")) {
+						if (ImGui::MenuItem("Refresh", "F5")) {
+							g_gameObjectTree.RefreshTree();
+						}
+						if (ImGui::MenuItem("Expand All")) {
+							//todo 모든 노드 확장 로직
+						}
+						if (ImGui::MenuItem("Collapse All")) {
+							ImGui::SetNextItemOpen(false, ImGuiCond_Always);
+						}
+						ImGui::EndMenu();
+					}
+					ImGui::EndMenuBar();
+				}
+
+				if (ImGui::Button("Refresh")) {
+					g_gameObjectTree.RefreshTree();
+				}
+				ImGui::SameLine();
+				ImGui::Text("Objects: %d", g_gameObjectTree.GetNodeCount());
+
+				ImGui::Separator();
+
+				//트리그리기
+				if (g_gameObjectTree.NeedsRefresh()) {
+					g_gameObjectTree.RefreshTree();
+				}
+
+				g_gameObjectTree.DrawTree();
+				ImGui::End();
+			}
+
+			
 
 			/*if (true) {
 				ImGuiTreeNodeFlags a = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet;

@@ -5,7 +5,7 @@ namespace UnityEngine::EventSystems
 	void* ProcessMouseEvent_orig;
 	void ProcessMouseEvent_hook(void* _this, int id) {
 
-		bool isOpen = Global::imgui_settingwnd_open || Global::isShowingSeekbar;
+		bool isOpen = Global::imgui_settingwnd_open || Global::isShowingSeekbar || Global::blockInput;
 
 		if (!isOpen)
 			return reinterpret_cast<decltype(ProcessMouseEvent_hook)*>(ProcessMouseEvent_orig)(_this, id);

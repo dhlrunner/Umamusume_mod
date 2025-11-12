@@ -14,6 +14,7 @@ namespace Global
 	char* toastMessage = nullptr;
 
 	bool imgui_settingwnd_open = false;
+	bool imgui_gameobjectwnd_open = false;
 
 	bool gameTerminating = false;
 
@@ -38,4 +39,6 @@ namespace Global
 	float raceHorseSpeed = 0.0f;
 
 	std::vector <Gallop::LiveFixMemberData*> customLiveFixMemberData;
+
+	bool blockInput = false; //imgui 창 열리면 입력 차단
 }

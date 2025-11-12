@@ -15,6 +15,7 @@
 
 #include <thread>
 #include <string>
+#include <array>
 
 #define SECTION_NAME L"BACKGNDWORK"
 

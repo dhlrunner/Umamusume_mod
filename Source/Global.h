@@ -36,6 +36,7 @@ namespace Global
 	extern bool toastImGui;
 	extern char* toastMessage;
 	extern bool imgui_settingwnd_open;
+	extern bool imgui_gameobjectwnd_open;
 
 	extern bool gameTerminating;
 
@@ -55,5 +56,7 @@ namespace Global
 	extern GameType gameType;
 
 	extern std::vector <Gallop::LiveFixMemberData*> customLiveFixMemberData;
+
+	extern bool blockInput; //imgui 창 열리면 입력 차단
 
 }

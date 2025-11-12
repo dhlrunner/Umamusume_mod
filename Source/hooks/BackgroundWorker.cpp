@@ -7,154 +7,212 @@ using namespace Global;
 
 namespace BackgroundWorker
 {
-	
+
+	struct KeyTracker {
+		std::array<unsigned char, 256> prev{}; //이전 프레임 눌림여부
+		std::array<unsigned char, 256> curr{}; //현재 프레임 눌림여부
+		bool chordLatched = false;             //연속눌림방지용
+
+		static inline bool IsDownVK(int vk) {
+			//최상위 비트로 현재 눌림 확인
+			return (GetAsyncKeyState(vk) & 0x8000) != 0;
+		}
+
+		void Update() {
+			prev = curr;
+			for (int vk = 0; vk < 256; ++vk) {
+				curr[vk] = IsDownVK(vk) ? 1 : 0;
+			}
+		}
+
+		bool DownEdge(int vk)  const { return curr[vk] && !prev[vk]; }
+		bool UpEdge(int vk)    const { return !curr[vk] && prev[vk]; }
+		bool IsDown(int vk)    const { return curr[vk] != 0; }
+
+		int CountKeysDown() const {
+			return (int)std::count(curr.begin(), curr.end(), (unsigned char)1);
+		}
+	};
+
+	static KeyTracker g_keys;
+
+	bool IsChordTriggered(std::initializer_list<int> chord,
+		bool strict = false,
+		bool requireAllReleasedToReset = true)
+	{
+		//모든 조합키가 현재 눌림상태인지
+		bool allDown = true;
+		for (int vk : chord) {
+			if (!g_keys.IsDown(vk)) { allDown = false; break; }
+		}
+
+		//strict 모드면 조합 외 다른 키가 눌려있으면 무효
+		if (strict && allDown) {
+			if (g_keys.CountKeysDown() != (int)chord.size()) {
+				allDown = false;
+			}
+		}
+
+		//이미 래치된 상태에서 재트리거 방기
+		if (g_keys.chordLatched) {
+			//래치 해제 조건
+			//조합의 모든 키가 올라오거나
+			//키가 하나라도 올라오면 해제
+			if (requireAllReleasedToReset) {
+				bool anyDown = false;
+				for (int vk : chord) if (g_keys.IsDown(vk)) { anyDown = true; break; }
+				if (!anyDown) g_keys.chordLatched = false;
+			}
+			else {
+				bool anyUp = false;
+				for (int vk : chord) if (g_keys.UpEdge(vk)) { anyUp = true; break; }
+				if (anyUp) g_keys.chordLatched = false;
+			}
+			return false;
+		}
+
+		//방금 조합이 성립했을 때만 트리거함
+		if (allDown) {
+			//조합을 구성하는 키 중 하나라도 다운엣지가 있으면 트리거로
+			bool anyDownEdge = false;
+			for (int vk : chord) { if (g_keys.DownEdge(vk)) { anyDownEdge = true; break; } }
+			if (anyDownEdge) {
+				g_keys.chordLatched = true;
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	void keyDownCheckThread() {
 		Logger::Debug(SECTION_NAME, L"KeyDownCheckThread IN!!!");
 
 		while (true) {
-			bool ret = GetKeyDown(KeyCode::S); //S
-			bool ctrl = GetKey(KeyCode::LeftControl); //LCtrl
-			bool alt = GetKey(KeyCode::LeftAlt);
-			bool f12 = GetKeyDown(KeyCode::F12);
-			bool f10 = GetKeyDown(KeyCode::F10);
-			bool f11 = GetKeyDown(KeyCode::F11);
-			bool f9 = GetKeyDown(KeyCode::F9);
-			bool f8 = GetKeyDown(KeyCode::F8);
-			bool f7 = GetKeyDown(KeyCode::F7);
-			if (ret) {
+			g_keys.Update();
+			if (imgui_gameobjectwnd_open || imgui_settingwnd_open)
+				blockInput = true;
+			else
+				blockInput = false;
+
+			//Control + S
+			if (IsChordTriggered({VK_CONTROL, 'S'})) {
 				printf("S is Pressed!!!!\n");
-				while (GetKeyDown(KeyCode::S)) {}
 
 				Settings::Local->stopLiveCam = !Settings::Local->stopLiveCam;
 				printf("LiveCam Stop %s.\n", Settings::Local->stopLiveCam ? "Enabled" : "Disabled");
 				if (Settings::Local->stopLiveCam) {
-					//toastImGui = true;
-					//toastMessage = (char*)"라이브 카메라를 정지했습니다.";
 					GallopDialog::ShowToast(L"라이브 카메라를 정지했습니다.");
 				}
 				else {
-					//toastImGui = true;
-					//toastMessage = (char*)"라이브 카메라를 다시 움직입니다.";
 					GallopDialog::ShowToast(L"라이브 카메라를 다시 움직입니다.");
 				}
 
 			}
-			if (ctrl) {
-				printf("LCtrl is pressed!!!!!\n");
-				while (ctrl) {
-					//printf("check R\n");
-					if (GetKeyDown(KeyCode::R)) {
-						printf("Lctrl + R pressed, reset game\n");
-						ResetGame();
-						while (GetKey(KeyCode::R));
-						break;
-					} //R
-					else if (GetKeyDown(KeyCode::P)) { //P
-						if (get_TimeScale() <= 0.0) {
-							set_TimeScale(1.0);
-						}
-						else {
-							set_TimeScale(0.0);
-						}
-						printf("Lctrl + P pressed, Set game TimeScale to %.2f\n", get_TimeScale());
-						while (GetKey(KeyCode::P));
-						break;
-					}
-					else if (GetKey(KeyCode::PageUp)) {
-						set_TimeScale(get_TimeScale() + 0.05);
-						printf("Set Timescale %.2f\n", get_TimeScale());
-						Sleep(100);
-						//while (GetKey(KeyCode::PageUp));
-						//break;
-					}
-					else if (GetKey(KeyCode::PageDown)) {
-						set_TimeScale(get_TimeScale() - 0.05);
-						printf("Set Timescale %.2f\n", get_TimeScale());
-						Sleep(100);
-						//while (GetKey(KeyCode::PageDown));
-						//break;
-					}
-					else if (GetKeyDown(KeyCode::End)) {
-						set_TimeScale(1.0);
-						printf("Reset Timescale to %.2f\n", get_TimeScale());
-						//toastImGui = true;
-						//toastMessage = (char*)"배속을 1.0으로 초기화했습니다.";
-						GallopDialog::ShowToast(L"배속을 1.0으로 초기화했습니다.");
-						while (GetKey(KeyCode::PageDown));
-						break;
-					}
-					else if (GetKey(KeyCode::LeftArrow)) {
-						if (!Settings::Local->isLiveTimeManual) {
-							Settings::Local->isLiveTimeManual = true;
-							//toastImGui = true;
-							//toastMessage = (char*)"라이브 타임라인 수동 조작이 활성화 되었습니다.";
-							GallopDialog::ShowToast(L"라이브 타임라인 수동 조작이 활성화 되었습니다.");
-						}
 
-						if (liveTimeSec <= 0.0)
-						{
-							liveTimeSec = 0.0;
-						}
-						else {
-							liveTimeSec = liveTimeSec - liveTimelineManualScale;
-						}
-
-						printf("set liveTime Second to %.4f\n", liveTimeSec);
-						Sleep(1);
-					}
-					else if (GetKey(KeyCode::RightArrow)) {
-						if (!Settings::Local->isLiveTimeManual) {
-							Settings::Local->isLiveTimeManual = true;
-							//toastImGui = true;
-							//toastMessage = (char*)"라이브 타임라인 수동 조작이 활성화 되었습니다.";
-							GallopDialog::ShowToast(L"라이브 타임라인 수동 조작이 활성화 되었습니다.");
-						}
-						liveTimeSec = liveTimeSec + liveTimelineManualScale;
-						printf("set liveTime Second to %.4f\n", liveTimeSec);
-						Sleep(1);
-					}
-					ctrl = GetKey(KeyCode::LeftControl);
-				}
+			//Control+R
+			if (IsChordTriggered({ VK_CONTROL, 'R' })) {
+				printf("LCtrl + R pressed, reset game\n");
+				ResetGame();
 			}
-			if (f12) {
+
+			//Control+P
+			if (IsChordTriggered({ VK_CONTROL, 'P' })) {
+				if (get_TimeScale() <= 0.0) {
+					set_TimeScale(1.0);
+				}
+				else {
+					set_TimeScale(0.0);
+				}
+				printf("Lctrl + P pressed, Set game TimeScale to %.2f\n", get_TimeScale());
+			}
+
+			//Control + PageUp
+			if (IsChordTriggered({ VK_CONTROL, VK_PRIOR })) {
+				set_TimeScale(get_TimeScale() + 0.05);
+				printf("Set Timescale %.2f\n", get_TimeScale());
+			}
+
+			//Control + PageDown
+			if (IsChordTriggered({ VK_CONTROL, VK_NEXT })) {
+				set_TimeScale(get_TimeScale() - 0.05);
+				printf("Set Timescale %.2f\n", get_TimeScale());
+			}
+
+			//Control + End
+			if (IsChordTriggered({ VK_CONTROL, VK_END })) {
+				set_TimeScale(1.0);
+				printf("Reset Timescale to %.2f\n", get_TimeScale());
+				GallopDialog::ShowToast(L"배속을 1.0으로 초기화했습니다.");
+			}
+
+			//Control + LeftArrow
+			if (IsChordTriggered({ VK_CONTROL, VK_LEFT })) {
+				if (!Settings::Local->isLiveTimeManual) {
+					Settings::Local->isLiveTimeManual = true;
+					GallopDialog::ShowToast(L"라이브 타임라인 수동 조작이 활성화 되었습니다.");
+				}
+
+				if (liveTimeSec <= 0.0)
+				{
+					liveTimeSec = 0.0;
+				}
+				else {
+					liveTimeSec = liveTimeSec - liveTimelineManualScale;
+				}
+
+				printf("set liveTime Second to %.4f\n", liveTimeSec);
+				Sleep(1);
+			}
+
+			//Control + RightArrow
+			if (IsChordTriggered({ VK_CONTROL, VK_RIGHT })) {
+				if (!Settings::Local->isLiveTimeManual) {
+					Settings::Local->isLiveTimeManual = true;
+					GallopDialog::ShowToast(L"라이브 타임라인 수동 조작이 활성화 되었습니다.");
+				}
+				liveTimeSec = liveTimeSec + liveTimelineManualScale;
+				printf("set liveTime Second to %.4f\n", liveTimeSec);
+				Sleep(1);
+			}
+
+			//Control + G
+			if (IsChordTriggered({ VK_CONTROL, 'G' })) {
+				GallopDialog::ShowToast(L"Toggling GameObject Window");
+				imgui_gameobjectwnd_open = !imgui_gameobjectwnd_open;
+				blockInput = imgui_gameobjectwnd_open;
+				printf("Toggle GameObject Window %s\n", imgui_gameobjectwnd_open ? "Opened" : "Closed");
+
+			}
+
+			
+			if (IsChordTriggered({ VK_F12 })) {
 				printf("F12 is Pressed!!!!\n");
-				while (GetKeyDown(KeyCode::F12)) {}
-				GallopDialog::ShowToast(L"F12 is Pressed!!!!");
-				//bool b = ShowWindow(imguiWnd, imguiShow ? SW_HIDE : SW_SHOW);
-				//imguiShow = !imguiShow;
+				GallopDialog::ShowToast(L"Opening setting window");
 				imgui_settingwnd_open = !imgui_settingwnd_open;
-				/*auto dialog = GallopDialog::ShowTextDialog(L"Test", L"Close in 3 sec", false);
-				Sleep(1000);
-				GallopDialog::SetDialogMessage(dialog, L"Close in 2 sec");
-				Sleep(1000);
-				GallopDialog::SetDialogMessage(dialog, L"Close in 1 sec");
-				Sleep(1000);
-				GallopDialog::CloseDialog(dialog);*/
+				blockInput = imgui_settingwnd_open;
 				printf("Show setting screen \n");
 			}
-			if (f10) {
-				printf("F10 is Pressed!!!!\n");
-				while (GetKeyDown(KeyCode::F10)) {}
-				Settings::Global->isShowLivePerfInfo = !Settings::Global->isShowLivePerfInfo;
-				//printf("%d\n", Settings::Global->isShowLivePerfInfo);
-			}
-			if (f11) {
+
+			if (IsChordTriggered({ VK_F11 })) {
 				printf("F11 is Pressed!!!!\n");
-				while (GetKeyDown(KeyCode::F11)) {}
 				Settings::Global->isShowLiveFPSGraph = !Settings::Global->isShowLiveFPSGraph;
 			}
-			if (f9) {
-				while (GetKeyDown(KeyCode::F9)) {}
+
+			if (IsChordTriggered({ VK_F10 })) {
+				printf("F10 is Pressed!!!!\n");
+				Settings::Global->isShowLivePerfInfo = !Settings::Global->isShowLivePerfInfo;
+			}
+			
+			if (IsChordTriggered({ VK_F9 })) {
 				Settings::Local->isLiveTimeManual = !Settings::Local->isLiveTimeManual;
 				if(Settings::Local->isLiveTimeManual)
 					GallopDialog::ShowToast(L"라이브 타임라인 수동 조작이 활성화 되었습니다.");
 				else
 					GallopDialog::ShowToast(L"라이브 타임라인 수동 조작이 비활성화 되었습니다.");
 			}
-			if (f8) {
+			if (IsChordTriggered({ VK_F8 })) {
 				printf("Dump il2cpp start");
-				while (GetKeyDown(KeyCode::F8)) {}
 				auto dialog = GallopDialog::ShowTextDialog(L"Dump il2cpp", L"Please wait...", false);
 				auto h = GetModuleHandle(L"GameAssembly.dll");
 				GallopDialog::SetDialogMessage(dialog, L"Dumping GameAssembly.dll ...");
@@ -163,174 +221,7 @@ namespace BackgroundWorker
 				Sleep(1000);
 				GallopDialog::CloseDialog(dialog);
 			}
-			if (f7) {
-				while (GetKeyDown(KeyCode::F7)) {}
-				//auto c = il2cpp_symbols::get_class("umamusume.dll", "Gallop", "StaticVariableDefine/Data/SQLiteSaveLoadHelper");
-				////il2cpp_runtime_object_init(c);
-				//printf("SQLiteSaveLoadHelper = %p\n", c);
-				//FieldInfo* keyField = il2cpp_class_get_field_from_name(c->klass, "ENCODE_KEY_ARRAY");
-				//Il2CppArraySize_t<unsigned char>* ENCODE_KEY_ARRAY;
-				//il2cpp_field_static_get_value(keyField, &ENCODE_KEY_ARRAY);
-				////il2cpp_field_static_get_value
-				//printf("byte[] ENCODE_KEY_ARRAY = { ");
-				//for (int i = 0; i < ENCODE_KEY_ARRAY->max_length; i++) {
-				//	printf("%d,", ENCODE_KEY_ARRAY->vector[i]);
-				//}
-				//printf(" };\n");
-				//auto get_masterCharaData = reinterpret_cast<Il2CppObject * (*)(Il2CppObject * _this)>(il2cpp_symbols::get_method_pointer("umamusume.dll", "Gallop", "MasterDataManager", "get_masterCharaData", 0));
-				//auto masterCharaData = get_masterCharaData(il2cpp::GetSingletonInstance(il2cpp_symbols::get_class("umamusume.dll", "Gallop", "MasterDataManager")));
-				////auto Get = reinterpret_cast<Il2CppObject * (*)(Il2CppObject * _this, int id)>(il2cpp_symbols::get_method_pointer("umamusume.dll", "Gallop", "MasterCharaData", "Get", 1));
-				////Logger::Debug(SECTION_NAME, L"Get ptr=%p", Get);
-				////auto d = Get(masterCharaData, 1001);
-				////auto name = il2cpp_class_get_method_from_name_type<Il2CppString * (*)(Il2CppObject * _this)>(d->klass, "get_Name", 0)->methodPointer(d);
-				//Il2CppDictionary<int, Il2CppObject*>* dict = il2cpp_class_get_method_from_name_type<Il2CppDictionary<int, Il2CppObject*> * (*)(Il2CppObject * _this)>(masterCharaData->klass, "get_dictionary", 0)->methodPointer(masterCharaData);
-				//for (int i = 0; i < dict->count; i++) {
-				//	auto name = il2cpp_class_get_method_from_name_type<Il2CppString * (*)(Il2CppObject * _this)>(dict->get_Values()[i]->klass, "get_Name", 0)->methodPointer(dict->get_Values()[i]);
-				//	int id;
-				//	il2cpp_field_get_value(dict->get_Values()[i],il2cpp_class_get_field_from_name(dict->get_Values()[i]->klass, "Id"), &id);
-				//	wprintf(L"MasterCharaData_CharaData test name=%S, id=%d\n", Utils::ConvertWstringToUTF8(name->chars).c_str(), id);
-				//}
-				//
-				//Il2CppString* name = get_Name(d);
-				//wprintf(L"MasterCharaData_CharaData test name=%S\n", Utils::ConvertWstringToUTF8( name->chars).c_str());
-				//MessageBoxW(0, name->chars, L"", 0);
-
-				// 1. 필요한 클래스 참조를 얻음
-
-				Il2CppClass* gameObjectClass = il2cpp_symbols::get_class("UnityEngine.CoreModule.dll", "UnityEngine", "GameObject");
-				Il2CppClass* canvasClass = il2cpp_symbols::get_class("UnityEngine.UIModule.dll", "UnityEngine", "Canvas");
-				Il2CppClass* canvasScalerClass = il2cpp_symbols::get_class("UnityEngine.UI.dll", "UnityEngine.UI", "CanvasScaler");
-				Il2CppClass* graphicRaycasterClass = il2cpp_symbols::get_class("UnityEngine.UI.dll", "UnityEngine.UI", "GraphicRaycaster");
-				Il2CppClass* textClass = il2cpp_symbols::get_class("UnityEngine.UI.dll", "UnityEngine.UI", "Text");
-				Il2CppClass* rectTransformClass = il2cpp_symbols::get_class("UnityEngine.CoreModule.dll", "UnityEngine", "RectTransform");
-
-				// 2. Canvas GameObject 생성 (생성자: GameObject(string name))
-				void* ctorArgs[1];
-				ctorArgs[0] = il2cpp_string_new("Canvas");
-				Il2CppObject* canvasGO = il2cpp_object_new(gameObjectClass);
-				const MethodInfo* gameObjectCtor = il2cpp_class_get_method_from_name(gameObjectClass, ".ctor", 1);
-				il2cpp_runtime_invoke(gameObjectCtor, canvasGO, ctorArgs, nullptr);
-
-				// 3. Canvas 및 관련 컴포넌트 추가 (AddComponent 호출 시 System.Type 전달)
-				const MethodInfo* addComponentMethod = il2cpp_class_get_method_from_name(gameObjectClass, "AddComponent", 1);
-				void* addArgs[1];
-
-				// Canvas 추가
-				const Il2CppType* canvasIl2CppType = il2cpp_class_get_type(canvasClass);
-				Il2CppObject* canvasTypeObj = il2cpp_type_get_object(canvasIl2CppType);
-				addArgs[0] = canvasTypeObj;
-				Il2CppObject* canvasComponent = il2cpp_runtime_invoke(addComponentMethod, canvasGO, addArgs, nullptr);
-
-				// CanvasScaler 추가
-				const Il2CppType* scalerIl2CppType = il2cpp_class_get_type(canvasScalerClass);
-				Il2CppObject* scalerTypeObj = il2cpp_type_get_object(scalerIl2CppType);
-				addArgs[0] = scalerTypeObj;
-				Il2CppObject* scalerComponent = il2cpp_runtime_invoke(addComponentMethod, canvasGO, addArgs, nullptr);
-
-				// GraphicRaycaster 추가
-				const Il2CppType* raycasterIl2CppType = il2cpp_class_get_type(graphicRaycasterClass);
-				Il2CppObject* raycasterTypeObj = il2cpp_type_get_object(raycasterIl2CppType);
-				addArgs[0] = raycasterTypeObj;
-				Il2CppObject* raycasterComponent = il2cpp_runtime_invoke(addComponentMethod, canvasGO, addArgs, nullptr);
-
-				// 4. Text GameObject 생성
-				ctorArgs[0] = il2cpp_string_new("Text");
-				Il2CppObject* textGO = il2cpp_object_new(gameObjectClass);
-				il2cpp_runtime_invoke(gameObjectCtor, textGO, ctorArgs, nullptr);
-
-				// 5. Text GameObject의 부모를 Canvas로 설정
-				// 각 GameObject는 transform 컴포넌트를 가지므로 get_transform 호출
-				const MethodInfo* getTransformMethod = il2cpp_class_get_method_from_name(gameObjectClass, "get_transform", 0);
-				Il2CppObject* canvasTransform = il2cpp_runtime_invoke(getTransformMethod, canvasGO, nullptr, nullptr);
-				Il2CppObject* textTransform = il2cpp_runtime_invoke(getTransformMethod, textGO, nullptr, nullptr);
-
-				// textTransform.SetParent(canvasTransform) 호출 (SetParent는 Transform 클래스에 있으나 RectTransform 상속)
-				const MethodInfo* setParentMethod = il2cpp_class_get_method_from_name(rectTransformClass, "SetParent", 1);
-				void* setParentArgs[1];
-				setParentArgs[0] = canvasTransform;
-				il2cpp_runtime_invoke(setParentMethod, textTransform, setParentArgs, nullptr);
-
-				// 6. Text 컴포넌트 추가 및 프로퍼티 설정
-				const Il2CppType* textIl2CppType = il2cpp_class_get_type(textClass);
-				Il2CppObject* textTypeObj = il2cpp_type_get_object(textIl2CppType);
-				addArgs[0] = textTypeObj;
-				Il2CppObject* textComponent = il2cpp_runtime_invoke(addComponentMethod, textGO, addArgs, nullptr);
-
-				// 텍스트 문자열 설정: textComponent.text = "출력할 텍스트";
-				const MethodInfo* setTextMethod = il2cpp_class_get_method_from_name(textClass, "set_text", 1);
-				void* setTextArgs[1];
-				setTextArgs[0] = il2cpp_string_new16(L"Test Text 출력할 텍스트");
-				il2cpp_runtime_invoke(setTextMethod, textComponent, setTextArgs, nullptr);
-
-				// 글자 크기 설정: textComponent.fontSize = 24;
-				const MethodInfo* setFontSizeMethod = il2cpp_class_get_method_from_name(textClass, "set_fontSize", 1);
-				int fontSize = 24;
-				void* setFontSizeArgs[1] = { &fontSize };
-				il2cpp_runtime_invoke(setFontSizeMethod, textComponent, setFontSizeArgs, nullptr);
-
-				// 7. RectTransform을 통해 위치 및 크기 설정
-				// GetComponent 호출 시에도 System.Type 객체를 사용해야 함
-				const MethodInfo* getComponentMethod = il2cpp_class_get_method_from_name(gameObjectClass, "GetComponent", 1);
-				//void* getComponentArgs[1];
-				//const Il2CppType* rectTransformIl2CppType = il2cpp_class_get_type(rectTransformClass);
-				//Il2CppObject* rectTransformTypeObj = il2cpp_type_get_object(rectTransformIl2CppType);
-				//getComponentArgs[0] = rectTransformTypeObj;
-				//Il2CppObject* rectTransform = il2cpp_runtime_invoke(getComponentMethod, textGO, getComponentArgs, nullptr);
-
-
-				// 7. RectTransform을 통해 위치 및 크기 설정 (수정본)
-				const Il2CppType* rectTransformIl2CppType = il2cpp_class_get_type(rectTransformClass);
-				Il2CppObject* rectTransformTypeObj = il2cpp_type_get_object(rectTransformIl2CppType);
-				void* getComponentArgs[1] = { rectTransformTypeObj };
-				Il2CppObject* rectTransform = il2cpp_runtime_invoke(getComponentMethod, textGO, getComponentArgs, nullptr);
-
-				// 앵커 최소값 설정: (0, 1) - 화면 좌측 상단
-				const MethodInfo* setAnchorMinMethod = il2cpp_class_get_method_from_name(rectTransformClass, "set_anchorMin", 1);
-				Vector2_t anchorMin = { 0.0f, 1.0f };
-				void* setAnchorMinArgs[1] = { &anchorMin };
-				il2cpp_runtime_invoke(setAnchorMinMethod, rectTransform, setAnchorMinArgs, nullptr);
-
-				// 앵커 최대값 설정: (0, 1)
-				const MethodInfo* setAnchorMaxMethod = il2cpp_class_get_method_from_name(rectTransformClass, "set_anchorMax", 1);
-				Vector2_t anchorMax = { 0.0f, 1.0f };
-				void* setAnchorMaxArgs[1] = { &anchorMax };
-				il2cpp_runtime_invoke(setAnchorMaxMethod, rectTransform, setAnchorMaxArgs, nullptr);
-
-				// 피벗 설정: (0, 1)
-				const MethodInfo* setPivotMethod = il2cpp_class_get_method_from_name(rectTransformClass, "set_pivot", 1);
-				Vector2_t pivot = { 0.0f, 1.0f };
-				void* setPivotArgs[1] = { &pivot };
-				il2cpp_runtime_invoke(setPivotMethod, rectTransform, setPivotArgs, nullptr);
-
-				// 위치(anchoredPosition) 설정: (0, 0) - 앵커가 상단 왼쪽이므로 0,0이 캔버스 상단 왼쪽 위치임
-				const MethodInfo* setAnchoredPosMethod = il2cpp_class_get_method_from_name(rectTransformClass, "set_anchoredPosition", 1);
-				Vector2_t anchoredPos = { 0.0f, 0.0f };
-				void* setAnchoredPosArgs[1] = { &anchoredPos };
-				il2cpp_runtime_invoke(setAnchoredPosMethod, rectTransform, setAnchoredPosArgs, nullptr);
-
-				// sizeDelta 설정 (원하는 크기에 맞게 조정)
-				const MethodInfo* setSizeDeltaMethod = il2cpp_class_get_method_from_name(rectTransformClass, "set_sizeDelta", 1);
-				Vector2_t sizeDelta = { 200.0f, 30.0f };
-				void* setSizeDeltaArgs[1] = { &sizeDelta };
-				il2cpp_runtime_invoke(setSizeDeltaMethod, rectTransform, setSizeDeltaArgs, nullptr);
-
-				// textTransform을 최상위로 이동 (다른 UI 요소보다 앞쪽에 렌더링)
-				const MethodInfo* setAsLastSiblingMethod = il2cpp_class_get_method_from_name(textTransform->klass, "SetAsLastSibling", 0);
-				if (setAsLastSiblingMethod != nullptr) {
-					il2cpp_runtime_invoke(setAsLastSiblingMethod, textTransform, nullptr, nullptr);
-				}
-
-				
-			}
-			/*else if (alt) {
-				printf("LAlt is pressed!!!!!\n");
-				while (alt) {
-
-					alt = GetKey(KeyCode::LeftAlt);
-				}
-
-			}*/
-			//std::this_thread::sleep_for(std::chrono::milliseconds(5));
+			
 			if (gameTerminating) 
 			{
 				Logger::Debug(SECTION_NAME, L"Game Terminating.. Exit loop");

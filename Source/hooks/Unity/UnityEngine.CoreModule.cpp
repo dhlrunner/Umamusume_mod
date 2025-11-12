@@ -11,7 +11,15 @@ namespace UnityEngine::CoreModule
 	void (*set_TimeScale)(float);
 	float (*get_TimeScale)();
 	void (*get_resolution)(Resolution_t* buffer);
-
+	GameObject_get_transform_t GameObject_get_transform;
+	GameObject_get_name_t GameObject_get_name;
+	GameObject_get_activeSelf_t GameObject_get_activeSelf;
+	Transform_get_childCount_t Transform_get_childCount;
+	Transform_GetChild_t Transform_GetChild;
+	Transform_get_parent_t Transform_get_parent;
+	Transform_get_gameObject_t Transform_get_gameObject;
+	Scene_GetRootGameObjects_t Scene_GetRootGameObjects;
+	SceneManager_GetActiveScene_t SceneManager_GetActiveScene;
 
 
 	std::string HttpGetWithPort(const std::wstring& host, INTERNET_PORT port, const std::wstring& path, bool useHttps = false) {
@@ -175,6 +183,13 @@ namespace UnityEngine::CoreModule
 			Logger::Error(SECTION_NAME, L"Error: Get GameObj path=%s is nullptr!!", path);
 		}
 
+	}
+
+	void GameObject_SetActive(Il2CppObject* _this, bool enable) {
+		auto gobj_setActive = reinterpret_cast<void (*)
+			(Il2CppObject * _instance, bool value)>(il2cpp_class_get_method_from_name(_this->klass, "SetActive", 1)->methodPointer);
+		Logger::Debug(SECTION_NAME, L"GameObject SetActive 0x%p %d", _this, enable);
+		gobj_setActive(_this, enable);
 	}
 
 	void* Screen_set_orientation_orig = nullptr;
@@ -517,6 +532,40 @@ namespace UnityEngine::CoreModule
 
 		auto SetCursor_Injected_addr = il2cpp_resolve_icall("UnityEngine.Cursor::SetCursor_Injected(UnityEngine.Texture2D,UnityEngine.Vector2&,UnityEngine.CursorMode)");
 		EnableHook(SetCursor_Injected_addr, &SetCursor_Injected_hook, &SetCursor_Injected_orig, L"SetCursor_Injected");
+
+		GameObject_get_transform = (GameObject_get_transform_t)
+			il2cpp_resolve_icall("UnityEngine.GameObject::get_transform");
+		GameObject_get_name = (GameObject_get_name_t)
+			il2cpp_resolve_icall("UnityEngine.Object::GetName");
+		GameObject_get_activeSelf = (GameObject_get_activeSelf_t)
+			il2cpp_resolve_icall("UnityEngine.GameObject::get_activeSelf");
+
+		Transform_get_childCount = (Transform_get_childCount_t)
+			il2cpp_resolve_icall("UnityEngine.Transform::get_childCount");
+		Transform_GetChild = (Transform_GetChild_t)
+			il2cpp_resolve_icall("UnityEngine.Transform::GetChild");
+
+		Transform_get_gameObject = (Transform_get_gameObject_t)
+			il2cpp_resolve_icall("UnityEngine.Component::get_gameObject");
+
+
+		Scene_GetRootGameObjects = (Scene_GetRootGameObjects_t)
+			reinterpret_cast<Il2CppArray*(*)()>(
+				il2cpp_symbols::get_method_pointer(
+					"UnityEngine.CoreModule.dll", "UnityEngine.SceneManagement",
+					"Scene", "GetRootGameObjects", 0
+				));
+
+		SceneManager_GetActiveScene = (SceneManager_GetActiveScene_t)
+			reinterpret_cast<void* (*)()>(
+				il2cpp_symbols::get_method_pointer(
+					"UnityEngine.CoreModule.dll", "UnityEngine.SceneManagement",
+					"SceneManager", "GetActiveScene", 0
+				));
+		
+
+
+
 	
 	}
 }
